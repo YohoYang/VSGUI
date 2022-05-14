@@ -24,7 +24,7 @@ namespace VSGUI
     {
         public static string binpath = Directory.GetCurrentDirectory() + @"\bin";
         private bool forcedStop = false;
-        private string coreversion = "v0.1.8";
+        private string coreversion = "v0.2.0";
 
         public MainWindow()
         {
