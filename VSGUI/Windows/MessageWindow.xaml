@@ -1,0 +1,26 @@
+﻿<Window x:Class="VSGUI.MessageWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:VSGUI"
+        mc:Ignorable="d"
+        x:Name="messagewindow"
+        Title="MessageWindow" d:DesignWidth="400" MinWidth="300" d:DesignHeight="220" MinHeight="180" SizeToContent="WidthAndHeight" ResizeMode="NoResize" SnapsToDevicePixels="True" ShowInTaskbar="False">
+    <Grid Margin="15,20,15,20" HorizontalAlignment="Center" VerticalAlignment="Stretch">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="auto"/>
+        </Grid.RowDefinitions>
+        <Grid Grid.Row="0" HorizontalAlignment="Center" VerticalAlignment="Center">
+            <TextBlock x:Name="desctext" Text="aaa" HorizontalAlignment="Left" MaxWidth="400" TextWrapping="Wrap"/>
+        </Grid>
+        <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,10,0,0">
+            <Button x:Name="yesbutton" Content="{DynamicResource yes}" Margin="5,0,5,0" Visibility="Collapsed" Click="yesbutton_Click"/>
+            <Button x:Name="nobutton" Content="{DynamicResource no}" Margin="5,0,5,0" Visibility="Collapsed" Click="nobutton_Click"/>
+            <Button x:Name="okbutton" Content="{DynamicResource ok}" Margin="5,0,5,0" Visibility="Collapsed" Click="okbutton_Click"/>
+            <Button x:Name="Cancelbutton" Content="{DynamicResource Cancel}" Margin="5,0,5,0" Visibility="Collapsed" Click="Cancelbutton_Click"/>
+            <Button x:Name="nomorepromptsbutton" Content="{DynamicResource nomoreprompts}" Margin="5,0,5,0" Visibility="Collapsed" Click="nomorepromptsbutton_Click"/>
+        </StackPanel>
+    </Grid>
+</Window>

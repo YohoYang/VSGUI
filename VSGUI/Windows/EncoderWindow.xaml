@@ -1,0 +1,53 @@
+﻿<Window x:Class="VSGUI.EncoderWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:VSGUI"
+        xmlns:hc="https://handyorg.github.io/handycontrol"
+        mc:Ignorable="d"
+        Title="EncoderEdit" Height="450" Width="450" ResizeMode="NoResize">
+    <Grid SnapsToDevicePixels="True">
+        <StackPanel Margin="5,10,5,6">
+            <ComboBox x:Name="encoderbox" Margin="0,0,0,5" SelectionChanged="encoderbox_SelectionChanged"/>
+            <WrapPanel HorizontalAlignment="Right" Margin="0,0,0,5">
+                <TextBlock x:Name="buttondesc" Text="" VerticalAlignment="Center" Margin="0,0,5,0" Foreground="#FF888888"/>
+                <Button x:Name="addbutton" Content="{DynamicResource add}" Style="{StaticResource ButtonPrimary}" Margin="4,0,0,0" Click="Addbutton_Click"/>
+                <Button x:Name="deletebutton" Content="{DynamicResource delete}" Grid.Column="0" Style="{StaticResource ButtonDanger}" Margin="4,0,0,0" IsEnabled="False" Click="Deletebutton_Click"/>
+                <Button x:Name="savebutton" Content="{DynamicResource save}" Grid.Column="2" Style="{StaticResource ButtonSuccess}" Margin="4,0,0,0" IsEnabled="False" Click="Savebutton_Click"/>
+            </WrapPanel>
+            <Border Style="{StaticResource BorderRegion}">
+                <hc:UniformSpacingPanel Spacing="6" Orientation="Vertical">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="100"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="0" VerticalAlignment="Center" Text="{DynamicResource profilename}"/>
+                        <TextBox x:Name="namebox" Grid.Column="1"/>
+                    </Grid>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="100"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="0" VerticalAlignment="Center" Text="{DynamicResource profiletype}"/>
+                        <ComboBox x:Name="encodertypebox" Grid.Column="1" SelectionChanged="encodertypebox_SelectionChanged"/>
+                    </Grid>
+                    <TextBlock Text="{DynamicResource profileparameter}" Margin="0,7,0,3"/>
+                    <TextBox x:Name="parameterbox" MinHeight="120" TextWrapping="Wrap" VerticalContentAlignment="Top" AcceptsReturn="False"/>
+                    <!--音频其他设置-->
+                    <CheckBox x:Name="normalizebox" Content="{DynamicResource profileaudionormalize}" Margin="0,5,0,5"/>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="100"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="0" VerticalAlignment="Center" Text="{DynamicResource profileoutputformat}"/>
+                        <ComboBox x:Name="suffixbox" Grid.Column="1"/>
+                    </Grid>
+                </hc:UniformSpacingPanel>
+            </Border>
+        </StackPanel>
+    </Grid>
+</Window>
