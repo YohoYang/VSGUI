@@ -571,9 +571,12 @@
                         <StackPanel>
                             <DockPanel HorizontalAlignment="Right">
                                 <TextBlock Text="{DynamicResource blink}"/>
-                                <TextBlock Text="VSGUI "/>
+                                <TextBlock Text="VSGUI" TextDecorations="Underline" Foreground="#FF013FFF" Cursor="Hand" MouseDown="VSGUITextBlock_MouseDown"/>
+                                <TextBlock Width="5"/>
                                 <TextBlock x:Name="coreversionshowtextblock" Text="v0.0.0"/>
-                                <TextBlock Text="  Powered by 银色子弹SBSUB  YohoYang."/>
+                                <TextBlock Text="Powered by " Margin="8,0,0,0"/>
+                                <TextBlock Text="银色子弹SBSUB" TextDecorations="Underline" Foreground="#FF013FFF" Cursor="Hand" MouseDown="SBSUBTextBlock_MouseDown"/>
+                                <TextBlock Text=" YohoYang."/>
                             </DockPanel>
                         </StackPanel>
                     </Border>

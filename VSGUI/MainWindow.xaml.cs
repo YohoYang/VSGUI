@@ -1251,5 +1251,15 @@ namespace VSGUI
         {
             VideoApi.PreviewTempVpy(VideoApi.MakeVideoScript(simplevideoinputbox.Text, resolutionbox.Text, asspathbox.Text));
         }
+
+        private void VSGUITextBlock_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            Process.Start("explorer", "https://github.com/YohoYang/VSGUI");
+        }
+
+        private void SBSUBTextBlock_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            Process.Start("explorer", "https://www.sbsub.com/");
+        }
     }
 }
