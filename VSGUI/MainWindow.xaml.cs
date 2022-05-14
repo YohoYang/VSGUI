@@ -1228,15 +1228,18 @@ namespace VSGUI
                     return;
                 }
             }
-            if (Regex.Matches(simpleresolutionbox.Text.ToUpper(), @"\d+P").Count < 1)
+            if (simpleresolutionbox.SelectedIndex != 0 && Regex.Matches(simpleresolutionbox.Text.ToUpper(), @"\d+P").Count < 1)
             {
                 MessageBoxApi.Show(LanguageApi.FindRes("resolutionFormatError"), LanguageApi.FindRes("error"));
                 return;
             }
-            if (!File.Exists(simpleasspathinputbox.Text))
+            if (simpleasspathinputbox.Text != "")
             {
-                MessageBoxApi.Show(LanguageApi.FindRes("subtitleFileError"), LanguageApi.FindRes("error"));
-                return;
+                if (!File.Exists(simpleasspathinputbox.Text))
+                {
+                    MessageBoxApi.Show(LanguageApi.FindRes("subtitleFileError"), LanguageApi.FindRes("error"));
+                    return;
+                }
             }
             //生成groud名
             string groupname = CommonApi.GetNewSeed();
