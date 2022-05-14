@@ -389,6 +389,10 @@ namespace VSGUI
             {
                 toTextBox.Text = CallSaveFileDialog(ext: EncoderApi.GetEncoderSuffix("audio", videoencoderbox.SelectedIndex));
             }
+            else if (((Button)sender).Tag.ToString() == "simplevideoout")
+            {
+                toTextBox.Text = CallSaveFileDialog(ext: simplemuxsuffixbox.Text.ToLower());
+            }
         }
 
         /// <summary>
@@ -1224,12 +1228,12 @@ namespace VSGUI
                     return;
                 }
             }
-            if (Regex.Matches(resolutionbox.Text, @"\d+P").Count < 1)
+            if (Regex.Matches(simpleresolutionbox.Text.ToUpper(), @"\d+P").Count < 1)
             {
                 MessageBoxApi.Show(LanguageApi.FindRes("resolutionFormatError"), LanguageApi.FindRes("error"));
                 return;
             }
-            if (!File.Exists(asspathbox.Text))
+            if (!File.Exists(simpleasspathinputbox.Text))
             {
                 MessageBoxApi.Show(LanguageApi.FindRes("subtitleFileError"), LanguageApi.FindRes("error"));
                 return;
@@ -1238,7 +1242,7 @@ namespace VSGUI
             string groupname = CommonApi.GetNewSeed();
             string tempvideopath = Path.GetDirectoryName(simplevideoinputbox.Text) + @"\" + groupname + "_v" + EncoderApi.GetEncoderSuffix("video", simplevideoencoderbox.SelectedIndex);
             string tempaudiopath = Path.GetDirectoryName(simplevideoinputbox.Text) + @"\" + groupname + "_a" + EncoderApi.GetEncoderSuffix("audio", simpleaudioencoderbox.SelectedIndex);
-            AddJobToQueue("video", simplevideoencoderbox.SelectedIndex, new string[] { simplevideoinputbox.Text }, tempvideopath, script: VideoApi.MakeVideoScript(simplevideoinputbox.Text, resolutionbox.Text, asspathbox.Text), group: groupname);
+            AddJobToQueue("video", simplevideoencoderbox.SelectedIndex, new string[] { simplevideoinputbox.Text }, tempvideopath, script: VideoApi.MakeVideoScript(simplevideoinputbox.Text, simpleresolutionbox.Text.ToUpper(), simpleasspathinputbox.Text), group: groupname);
             AddJobToQueue("audio", simpleaudioencoderbox.SelectedIndex, new string[] { simpleaudioinputbox.Text }, tempaudiopath, deletefile: simpleaudioinputbox.Text + ".lwi", script: AudioApi.MakeAudioScript(simpleaudioencoderbox.SelectedIndex, false, "", "", simpleaudioinputbox.Text, "0"), group: groupname);
             //再添加一个混流任务
             AddJobToQueue("mux", 0, new string[] { tempvideopath, tempaudiopath, simplecapinputbox.Text }, Path.GetDirectoryName(simplevideooutputbox.Text) + @"\" + Path.GetFileNameWithoutExtension(simplevideooutputbox.Text) + @"_mux." + simplemuxsuffixbox.Text.ToLower(), deletefile: tempvideopath + "|" + tempaudiopath, group: groupname);
@@ -1249,7 +1253,7 @@ namespace VSGUI
         }
         private void SimpleOpenEditorButton_Click(object sender, RoutedEventArgs e)
         {
-            VideoApi.PreviewTempVpy(VideoApi.MakeVideoScript(simplevideoinputbox.Text, resolutionbox.Text, asspathbox.Text));
+            VideoApi.PreviewTempVpy(VideoApi.MakeVideoScript(simplevideoinputbox.Text, simpleresolutionbox.Text.ToUpper(), simpleasspathinputbox.Text));
         }
 
         private void VSGUITextBlock_MouseDown(object sender, MouseButtonEventArgs e)
