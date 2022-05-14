@@ -14,6 +14,7 @@ A video encode software like MeGUI for VapourSynth.
 - 支持高级压制，手动书写Vapoursynth脚本，并分别处理视频和音频流压制；
 - 集成[VSREPO GUI](https://github.com/theChaosCoder/VSRepoGUI "VSREPO GUI")，可以简便的选择并下载自己所需的滤镜库；
 - 集成[VS Editor](https://github.com/YomikoR/VapourSynth-Editor "VS Editor")，用以编辑和预览vpy脚本；
+- 支持音频裁剪，支持对VFR音频进行同步；
 - 使用eac3to和ffmpeg对视频进行解流；
 - 一键进行简易封装；
 - 软件自动更新；
