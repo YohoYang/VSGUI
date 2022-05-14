@@ -39,7 +39,7 @@ namespace VSGUI
             System.Diagnostics.Process[] thisProcesses = System.Diagnostics.Process.GetProcessesByName("VSGUI");//获取指定的进程名   
             if (thisProcesses.Length > 1) //如果可以获取到知道的进程名则说明已经启动
             {
-                MessageBoxApi.Show(LanguageApi.FindRes("programNotAllowedToRunRepeatedly"), LanguageApi.FindRes("error"));
+                MessageBox.Show(LanguageApi.FindRes("programNotAllowedToRunRepeatedly"), LanguageApi.FindRes("error"));
                 this.Close();
                 return;
             }
