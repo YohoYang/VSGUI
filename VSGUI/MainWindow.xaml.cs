@@ -24,7 +24,7 @@ namespace VSGUI
     {
         public static string binpath = Directory.GetCurrentDirectory() + @"\bin";
         private bool forcedStop = false;
-        private string coreversion = "v0.2.0";
+        private string coreversion = "v0.2.1";
 
         public MainWindow()
         {
@@ -295,11 +295,12 @@ namespace VSGUI
         /// <param name="filter"></param>
         /// <param name="ext"></param>
         /// <returns></returns>
-        private string CallSaveFileDialog(string filter = "所有文件(*.*)|*.*", string ext = ".h264")
+        private string CallSaveFileDialog(string filter = "所有文件(*.*)|*.*", string filename = "", string ext = ".h264")
         {
             Microsoft.Win32.SaveFileDialog dlg = new Microsoft.Win32.SaveFileDialog();
             dlg.DefaultExt = ext;
             dlg.Filter = filter;
+            dlg.FileName = filename;
             if (dlg.ShowDialog() == true)
             {
                 return dlg.FileName;
@@ -324,6 +325,10 @@ namespace VSGUI
             else if (controlname == "audioinputbox" && audioinputbox.Text != "")
             {
                 AudioInputUpdate();
+            }
+            else if (controlname == "simplevideoinputbox" && simplevideoinputbox.Text != "")
+            {
+                SimpleVideoInputUpdate();
             }
         }
 
@@ -383,15 +388,15 @@ namespace VSGUI
             var toTextBox = (TextBox)this.FindName(controlname);
             if (((Button)sender).Tag.ToString() == "videoout")
             {
-                toTextBox.Text = CallSaveFileDialog(ext: EncoderApi.GetEncoderSuffix("video", videoencoderbox.SelectedIndex));
+                toTextBox.Text = CallSaveFileDialog(filename: Path.GetFileNameWithoutExtension(toTextBox.Text), ext: EncoderApi.GetEncoderSuffix("video", videoencoderbox.SelectedIndex));
             }
             else if (((Button)sender).Tag.ToString() == "audioout")
             {
-                toTextBox.Text = CallSaveFileDialog(ext: EncoderApi.GetEncoderSuffix("audio", videoencoderbox.SelectedIndex));
+                toTextBox.Text = CallSaveFileDialog(filename: Path.GetFileNameWithoutExtension(toTextBox.Text), ext: EncoderApi.GetEncoderSuffix("audio", videoencoderbox.SelectedIndex));
             }
             else if (((Button)sender).Tag.ToString() == "simplevideoout")
             {
-                toTextBox.Text = CallSaveFileDialog(ext: simplemuxsuffixbox.Text.ToLower());
+                toTextBox.Text = CallSaveFileDialog(filename: Path.GetFileNameWithoutExtension(toTextBox.Text), ext: simplemuxsuffixbox.Text.ToLower());
             }
         }
 
@@ -473,7 +478,8 @@ namespace VSGUI
                 MessageBoxApi.Show(LanguageApi.FindRes("noEncoderProfilesSelected"), LanguageApi.FindRes("error"));
                 return;
             }
-            AddJobToQueue("video", videoencoderbox.SelectedIndex, new string[] { videoinputbox.Text }, videooutputbox.Text);
+            QueueApi.AddQueueList("video", videoencoderbox.SelectedIndex, new string[] { videoinputbox.Text }, videooutputbox.Text);
+            UpdateQueueList();
             if (IniApi.IniReadValue("AutoStartQueue") == "true")
             {
                 NextQueue(autoStart: true);
@@ -508,9 +514,10 @@ namespace VSGUI
                 return;
             }
 
-            string scriptstr = AudioApi.MakeAudioScript(audioencoderbox.SelectedIndex, cutischecked.IsChecked == true, cuttextbox.Text, fpstextbox.Text, audioinputbox.Text, audiodelaybox.Text);
-
-            AddJobToQueue("audio", audioencoderbox.SelectedIndex, new string[] { audioinputbox.Text }, audiooutputbox.Text, deletefile: audioinputbox.Text + ".lwi", script: scriptstr);
+            string cuttext = "";
+            if (cutischecked.IsChecked == true) cuttext = cuttextbox.Text;
+            QueueApi.AddQueueList("audio", audioencoderbox.SelectedIndex, new string[] { audioinputbox.Text }, audiooutputbox.Text, deletefile: audioinputbox.Text + ".lwi", audiocuttext: cuttext, audiofpstext: fpstextbox.Text, audiodelaytext: audiodelaybox.Text);
+            UpdateQueueList();
             if (IniApi.IniReadValue("AutoStartQueue") == "true")
             {
                 NextQueue(autoStart: true);
@@ -574,23 +581,85 @@ namespace VSGUI
             //封装格式选择
             //生成groud名
             string groupname = CommonApi.GetNewSeed();
-            AddJobToQueue("video", videoencoderbox.SelectedIndex, new string[] { videoinputbox.Text }, videooutputbox.Text, group: groupname);
-            string scriptstr = AudioApi.MakeAudioScript(audioencoderbox.SelectedIndex, cutischecked.IsChecked == true, cuttextbox.Text, fpstextbox.Text, audioinputbox.Text, audiodelaybox.Text);
-            AddJobToQueue("audio", audioencoderbox.SelectedIndex, new string[] { audioinputbox.Text }, audiooutputbox.Text, deletefile: audioinputbox.Text + ".lwi", script: scriptstr, group: groupname);
+            QueueApi.AddQueueList("video", videoencoderbox.SelectedIndex, new string[] { videoinputbox.Text }, videooutputbox.Text, group: groupname);
+            string cuttext = "";
+            if (cutischecked.IsChecked == true) cuttext = cuttextbox.Text;
+            QueueApi.AddQueueList("audio", audioencoderbox.SelectedIndex, new string[] { audioinputbox.Text }, audiooutputbox.Text, deletefile: audioinputbox.Text + ".lwi", audiocuttext: cuttext, audiofpstext: fpstextbox.Text, audiodelaytext: audiodelaybox.Text, group: groupname);
             //再添加一个混流任务
-            AddJobToQueue("mux", 0, new string[] { videooutputbox.Text, audiooutputbox.Text, capinputbox.Text }, Path.GetDirectoryName(videooutputbox.Text) + @"\" + Path.GetFileNameWithoutExtension(videooutputbox.Text) + @"_mux." + muxsuffixbox.Text.ToLower(), deletefile: videooutputbox.Text + "|" + audiooutputbox.Text, group: groupname);
+            QueueApi.AddQueueList("mux", 0, new string[] { videooutputbox.Text, audiooutputbox.Text, capinputbox.Text }, Path.GetDirectoryName(videooutputbox.Text) + @"\" + Path.GetFileNameWithoutExtension(videooutputbox.Text) + @"_mux." + muxsuffixbox.Text.ToLower(), deletefile: videooutputbox.Text + "|" + audiooutputbox.Text, group: groupname);
+            UpdateQueueList();
             if (IniApi.IniReadValue("AutoStartQueue") == "true")
             {
                 NextQueue(autoStart: true);
             }
         }
 
-
-
-        private void AddJobToQueue(string type, int encoderid, string[] input, string output, string group = "", string deletefile = "", string script = "")
+        private void SimpleAutoEncodeButton_Click(object sender, RoutedEventArgs e)
         {
-            QueueApi.AddQueueList(type, encoderid, input, output, group, deletefile, script);
+            if (simplevideoinputbox.Text == "")
+            {
+                MessageBoxApi.Show(LanguageApi.FindRes("videoInputIsEmpty"), LanguageApi.FindRes("error"));
+                return;
+            }
+            if (simplevideooutputbox.Text == "")
+            {
+                MessageBoxApi.Show(LanguageApi.FindRes("videoOutputIsEmpty"), LanguageApi.FindRes("error"));
+                return;
+            }
+            if (simplevideoencoderbox.SelectedIndex == -1)
+            {
+                MessageBoxApi.Show(LanguageApi.FindRes("noEncoderProfilesSelected"), LanguageApi.FindRes("error"));
+                return;
+            }
+            if (simpleaudioinputbox.Text == "")
+            {
+                MessageBoxApi.Show(LanguageApi.FindRes("audioInputIsEmpty"), LanguageApi.FindRes("error"));
+                return;
+            }
+            if (simpleaudioencoderbox.SelectedIndex == -1)
+            {
+                MessageBoxApi.Show(LanguageApi.FindRes("noEncoderProfilesSelected"), LanguageApi.FindRes("error"));
+                return;
+            }
+            if (simplecapinputbox.Text != "")
+            {
+                if (!File.Exists(simplecapinputbox.Text))
+                {
+                    MessageBoxApi.Show(LanguageApi.FindRes("chapterFileDoesNotExist"), LanguageApi.FindRes("error"));
+                    return;
+                }
+                if (!ChapterApi.ChapterFormatCheck(simplecapinputbox.Text))
+                {
+                    return;
+                }
+            }
+            if (simpleresolutionbox.SelectedIndex != 0 && Regex.Matches(simpleresolutionbox.Text.ToUpper(), @"\d+P").Count < 1)
+            {
+                MessageBoxApi.Show(LanguageApi.FindRes("resolutionFormatError"), LanguageApi.FindRes("error"));
+                return;
+            }
+            if (simpleasspathinputbox.Text != "")
+            {
+                if (!File.Exists(simpleasspathinputbox.Text))
+                {
+                    MessageBoxApi.Show(LanguageApi.FindRes("subtitleFileError"), LanguageApi.FindRes("error"));
+                    return;
+                }
+            }
+
+            //生成groud名
+            string groupname = CommonApi.GetNewSeed();
+            string tempvideopath = Path.GetDirectoryName(simplevideooutputbox.Text) + @"\" + groupname + "_v" + EncoderApi.GetEncoderSuffix("video", simplevideoencoderbox.SelectedIndex);
+            string tempaudiopath = Path.GetDirectoryName(simplevideooutputbox.Text) + @"\" + groupname + "_a" + EncoderApi.GetEncoderSuffix("audio", simpleaudioencoderbox.SelectedIndex);
+            QueueApi.AddQueueList("video", simplevideoencoderbox.SelectedIndex, new string[] { simplevideoinputbox.Text }, tempvideopath, group: groupname);
+            QueueApi.AddQueueList("audio", simpleaudioencoderbox.SelectedIndex, new string[] { simpleaudioinputbox.Text }, tempaudiopath, deletefile: simpleaudioinputbox.Text + ".lwi", group: groupname);
+            //再添加一个混流任务
+            QueueApi.AddQueueList("mux", 0, new string[] { tempvideopath, tempaudiopath, simplecapinputbox.Text }, Path.GetDirectoryName(simplevideooutputbox.Text) + @"\" + Path.GetFileNameWithoutExtension(simplevideooutputbox.Text) + @"_mux." + simplemuxsuffixbox.Text.ToLower(), deletefile: tempvideopath + "|" + tempaudiopath, group: groupname);
             UpdateQueueList();
+            if (IniApi.IniReadValue("AutoStartQueue") == "true")
+            {
+                NextQueue(autoStart: true);
+            }
         }
 
         /// <summary>
@@ -630,44 +699,49 @@ namespace VSGUI
 
         internal void StartQueueJob(string queueid, bool isSingle = false)
         {
-            //先判断是否需要生成文件
-            QueueApi.MakeScriptFile(queueid);
-            //写入totalframes
-            QueueApi.UpdateTotalframes(queueid);
-
-            QueueApi.SetQueueListitem(queueid, "status", "running");
-            QueueApi.SetQueueListitem(queueid, "statustext", LanguageApi.FindRes("preparing"));
-            QueueApi.SetQueueListitem(queueid, "starttime", new DateTimeOffset(DateTime.UtcNow).ToUnixTimeSeconds().ToString());
-
-            ProcessApi.RunProcess(QueueApi.GetQueueListitem(queueid, "clipath"), QueueApi.GetQueueListitem(queueid, "command"), DataReceived, Exited, out string pid);
-
-            QueueApi.SetQueueListitem(queueid, "processTheadId", pid);
-
-            UpdateQueueList();
-
-
-            void DataReceived(DataReceivedEventArgs e, bool processIsExited)
-            {
-                if (!string.IsNullOrEmpty(e.Data) && !processIsExited)
+            new Thread(
+                () =>
                 {
-                    if ((new DateTimeOffset(DateTime.UtcNow).ToUnixTimeMilliseconds() - QueueApi.lastUpdateTime) < 500)
-                    {
-                        return;
-                    }
-                    QueueApi.lastUpdateTime = new DateTimeOffset(DateTime.UtcNow).ToUnixTimeMilliseconds();
-                    QueueApi.UpdateProgressStatus(queueid, e.Data);
+                    QueueApi.SetQueueListitem(queueid, "status", "running");
+                    QueueApi.SetQueueListitem(queueid, "statustext", LanguageApi.FindRes("preparing"));
+                    QueueApi.SetQueueListitem(queueid, "starttime", new DateTimeOffset(DateTime.UtcNow).ToUnixTimeSeconds().ToString());
                     UpdateQueueList();
+
+                    //特殊格式文件特殊处理
+                    QueueApi.SpecialFormatPreProcess(queueid);
+                    //判断是否需要生成文件
+                    QueueApi.MakeScriptFile(queueid);
+                    //写入totalframes
+                    QueueApi.UpdateTotalframes(queueid);
+
+                    ProcessApi.RunProcess(QueueApi.GetQueueListitem(queueid, "clipath"), QueueApi.GetQueueListitem(queueid, "command"), DataReceived, Exited, out string pid);
+
+                    QueueApi.SetQueueListitem(queueid, "processTheadId", pid);
+
+                    void DataReceived(DataReceivedEventArgs e, bool processIsExited)
+                    {
+                        if (!string.IsNullOrEmpty(e.Data) && !processIsExited)
+                        {
+                            if ((new DateTimeOffset(DateTime.UtcNow).ToUnixTimeMilliseconds() - QueueApi.lastUpdateTime) < 500)
+                            {
+                                return;
+                            }
+                            QueueApi.lastUpdateTime = new DateTimeOffset(DateTime.UtcNow).ToUnixTimeMilliseconds();
+                            QueueApi.UpdateProgressStatus(queueid, e.Data);
+                            UpdateQueueList();
+                        }
+                    }
+                    void Exited()
+                    {
+                        QueueApi.DoWhenProcessFinish(queueid);
+                        if (!isSingle && !forcedStop)
+                        {
+                            NextQueue(QueueApi.FindQueueListitemIndexFromQueueid(queueid));
+                        }
+                        UpdateQueueList();
+                    }
                 }
-            }
-            void Exited()
-            {
-                QueueApi.DoWhenProcessFinish(queueid);
-                if (!isSingle && !forcedStop)
-                {
-                    NextQueue(QueueApi.FindQueueListitemIndexFromQueueid(queueid));
-                }
-                UpdateQueueList();
-            }
+            ).Start();
 
         }
 
@@ -1189,71 +1263,7 @@ namespace VSGUI
                 IniApi.IniWriteValue("encodeTab", "advanced");
             }
         }
-        private void SimpleAutoEncodeButton_Click(object sender, RoutedEventArgs e)
-        {
-            if (simplevideoinputbox.Text == "")
-            {
-                MessageBoxApi.Show(LanguageApi.FindRes("videoInputIsEmpty"), LanguageApi.FindRes("error"));
-                return;
-            }
-            if (simplevideooutputbox.Text == "")
-            {
-                MessageBoxApi.Show(LanguageApi.FindRes("videoOutputIsEmpty"), LanguageApi.FindRes("error"));
-                return;
-            }
-            if (simplevideoencoderbox.SelectedIndex == -1)
-            {
-                MessageBoxApi.Show(LanguageApi.FindRes("noEncoderProfilesSelected"), LanguageApi.FindRes("error"));
-                return;
-            }
-            if (simpleaudioinputbox.Text == "")
-            {
-                MessageBoxApi.Show(LanguageApi.FindRes("audioInputIsEmpty"), LanguageApi.FindRes("error"));
-                return;
-            }
-            if (simpleaudioencoderbox.SelectedIndex == -1)
-            {
-                MessageBoxApi.Show(LanguageApi.FindRes("noEncoderProfilesSelected"), LanguageApi.FindRes("error"));
-                return;
-            }
-            if (simplecapinputbox.Text != "")
-            {
-                if (!File.Exists(simplecapinputbox.Text))
-                {
-                    MessageBoxApi.Show(LanguageApi.FindRes("chapterFileDoesNotExist"), LanguageApi.FindRes("error"));
-                    return;
-                }
-                if (!ChapterApi.ChapterFormatCheck(simplecapinputbox.Text))
-                {
-                    return;
-                }
-            }
-            if (simpleresolutionbox.SelectedIndex != 0 && Regex.Matches(simpleresolutionbox.Text.ToUpper(), @"\d+P").Count < 1)
-            {
-                MessageBoxApi.Show(LanguageApi.FindRes("resolutionFormatError"), LanguageApi.FindRes("error"));
-                return;
-            }
-            if (simpleasspathinputbox.Text != "")
-            {
-                if (!File.Exists(simpleasspathinputbox.Text))
-                {
-                    MessageBoxApi.Show(LanguageApi.FindRes("subtitleFileError"), LanguageApi.FindRes("error"));
-                    return;
-                }
-            }
-            //生成groud名
-            string groupname = CommonApi.GetNewSeed();
-            string tempvideopath = Path.GetDirectoryName(simplevideoinputbox.Text) + @"\" + groupname + "_v" + EncoderApi.GetEncoderSuffix("video", simplevideoencoderbox.SelectedIndex);
-            string tempaudiopath = Path.GetDirectoryName(simplevideoinputbox.Text) + @"\" + groupname + "_a" + EncoderApi.GetEncoderSuffix("audio", simpleaudioencoderbox.SelectedIndex);
-            AddJobToQueue("video", simplevideoencoderbox.SelectedIndex, new string[] { simplevideoinputbox.Text }, tempvideopath, script: VideoApi.MakeVideoScript(simplevideoinputbox.Text, simpleresolutionbox.Text.ToUpper(), simpleasspathinputbox.Text), group: groupname);
-            AddJobToQueue("audio", simpleaudioencoderbox.SelectedIndex, new string[] { simpleaudioinputbox.Text }, tempaudiopath, deletefile: simpleaudioinputbox.Text + ".lwi", script: AudioApi.MakeAudioScript(simpleaudioencoderbox.SelectedIndex, false, "", "", simpleaudioinputbox.Text, "0"), group: groupname);
-            //再添加一个混流任务
-            AddJobToQueue("mux", 0, new string[] { tempvideopath, tempaudiopath, simplecapinputbox.Text }, Path.GetDirectoryName(simplevideooutputbox.Text) + @"\" + Path.GetFileNameWithoutExtension(simplevideooutputbox.Text) + @"_mux." + simplemuxsuffixbox.Text.ToLower(), deletefile: tempvideopath + "|" + tempaudiopath, group: groupname);
-            if (IniApi.IniReadValue("AutoStartQueue") == "true")
-            {
-                NextQueue(autoStart: true);
-            }
-        }
+
         private void SimpleOpenEditorButton_Click(object sender, RoutedEventArgs e)
         {
             VideoApi.PreviewTempVpy(VideoApi.MakeVideoScript(simplevideoinputbox.Text, simpleresolutionbox.Text.ToUpper(), simpleasspathinputbox.Text));

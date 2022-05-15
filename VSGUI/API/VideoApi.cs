@@ -27,13 +27,13 @@ namespace VSGUI.API
                     if (!videoInfo[0].ToString().Contains("attached pic"))
                     {
                         var resolutionInfo = Regex.Matches(result, @", (\d+)x(\d+)");
-                        if (resolutionInfo[0].Groups.Count >= 3)
+                        if (resolutionInfo.Count > 0 && resolutionInfo[0].Groups.Count >= 3)
                         {
                             sourceWidth = int.Parse(resolutionInfo[0].Groups[1].ToString());
                             sourceHeight = int.Parse(resolutionInfo[0].Groups[2].ToString());
                         }
                         var sarInfo = Regex.Matches(result, @"SAR (\d+):(\d+)");
-                        if (sarInfo[0].Groups.Count >= 3)
+                        if (sarInfo.Count > 0 && sarInfo[0].Groups.Count >= 3)
                         {
                             sourceWidth = (int)Math.Round((sourceWidth * (double.Parse(sarInfo[0].Groups[1].ToString()) / double.Parse(sarInfo[0].Groups[2].ToString()))) / 2, MidpointRounding.AwayFromZero) * 2;
                         }

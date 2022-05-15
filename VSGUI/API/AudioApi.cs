@@ -9,7 +9,7 @@ namespace VSGUI.API
 {
     internal class AudioApi
     {
-        public static string MakeAudioScript(int audioencoderid, bool iscutenable, string cutstr, string fpsstr, string inputstr, string delay)
+        public static string MakeAudioScript(int audioencoderid, string cutstr, string fpsstr, string inputstr, string delay)
         {
             string temppath = Path.GetTempPath();
 
@@ -28,7 +28,7 @@ namespace VSGUI.API
             {
                 isVideoinput = true;
             }
-            if (iscutenable && cutstr != "" && fpsstr != "")
+            if (cutstr != "" && fpsstr != "")
             {
                 if (isVideoinput)
                 {

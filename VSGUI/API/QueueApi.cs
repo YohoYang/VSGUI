@@ -141,7 +141,7 @@ namespace VSGUI.API
 
         }
 
-        public static void AddQueueList(string type, int encoderid, string[] input, string output, string group, string deletefile, string script)
+        public static void AddQueueList(string type, int encoderid, string[] input, string output, string group = "", string deletefile = "", string resolution = "", string subtitle = "", string audiocuttext = "", string audiofpstext = "", string audiodelaytext = "")
         {
             JsonArray queueJobj = GetQueueList();
             int newid;
@@ -152,18 +152,6 @@ namespace VSGUI.API
             else
             {
                 newid = int.Parse(queueJobj[queueJobj.Count - 1]["queueid"].ToString()) + 1;
-            }
-            //script
-            string scriptfilepath = "";
-            if (script != "")
-            {
-                string pathsuffix = ".vpy";
-                if (type == "audio")
-                {
-                    pathsuffix = ".avs";
-                }
-                scriptfilepath = Path.GetTempPath() + @"vsgui\" + "Job_" + newid + pathsuffix;
-                deletefile += "|" + scriptfilepath;
             }
 
             JsonObject newqueue = new JsonObject();
@@ -179,15 +167,20 @@ namespace VSGUI.API
             newqueue.Add("starttime", "");
             newqueue.Add("endtime", "");
             newqueue.Add("fps", "");
-            newqueue.Add("command", ProcessCommandStr(newid, type, encoderid, input, output, scriptfilepath, out tempoutputpath, out string clipathnew));
+            newqueue.Add("command", ProcessCommandStr(newid, type, encoderid, input, output, "", out tempoutputpath, out string clipathnew));
             newqueue.Add("clipath", clipathnew);
             newqueue.Add("deletefile", deletefile);
             newqueue.Add("processvalue", "0");
             newqueue.Add("processTheadId", "");
             newqueue.Add("totalFrames", "");
-            newqueue.Add("script", script);
-            newqueue.Add("scriptfilepath", scriptfilepath);
+            newqueue.Add("script", "");
+            newqueue.Add("scriptfilepath", "");
             newqueue.Add("outputtemp", tempoutputpath);
+            newqueue.Add("resolution", resolution);
+            newqueue.Add("subtitle", subtitle);
+            newqueue.Add("audiocuttext", audiocuttext);
+            newqueue.Add("audiofpstext", audiofpstext);
+            newqueue.Add("audiodelaytext", audiodelaytext);
 
             queueJobj.Add(newqueue);
 
@@ -290,7 +283,9 @@ namespace VSGUI.API
                     {
                         if (QueueApi.GetQueueListitem(queueid, "totalFrames") != "")
                         {
-                            string finalSpeed = decimal.Round((decimal.Parse(QueueApi.GetQueueListitem(queueid, "totalFrames")) / (decimal.Parse(QueueApi.GetQueueListitem(queueid, "endtime")) - decimal.Parse(QueueApi.GetQueueListitem(queueid, "starttime")))), 2).ToString();
+                            var timeuse = long.Parse(QueueApi.GetQueueListitem(queueid, "endtime")) - long.Parse(QueueApi.GetQueueListitem(queueid, "starttime"));
+                            if (timeuse == 0) timeuse = 1;
+                            string finalSpeed = decimal.Round((decimal.Parse(QueueApi.GetQueueListitem(queueid, "totalFrames")) / (decimal)timeuse), 2).ToString();
                             QueueApi.SetQueueListitem(queueid, "statustext", LanguageApi.FindRes("queueFinish") + " " + LanguageApi.FindRes("timeConsuming") + timeConsuming + " (" + finalSpeed + "fps)");
                         }
                         else
@@ -478,7 +473,7 @@ namespace VSGUI.API
             bool needCopyFile = true;
             if (File.Exists(Path.GetTempPath() + @"vsgui\LSMASHSource.dll"))
             {
-                if (UpdateApi.CalculateMD5(MainWindow.binpath + @"\avs\LSMASHSource.dll") == UpdateApi.CalculateMD5(Path.GetTempPath() + @"vsgui\LSMASHSource.dll"))
+                if (UpdateApi.CalculateMD5(MainWindow.binpath + @"\vs\vapoursynth64\plugins\LSMASHSource.dll") == UpdateApi.CalculateMD5(Path.GetTempPath() + @"vsgui\LSMASHSource.dll"))
                 {
                     needCopyFile = false;
                 }
@@ -488,17 +483,82 @@ namespace VSGUI.API
             {
                 try
                 {
-                    File.Copy(MainWindow.binpath + @"\avs\LSMASHSource.dll", Path.GetTempPath() + @"vsgui\LSMASHSource.dll");
+                    File.Copy(MainWindow.binpath + @"\vs\vapoursynth64\plugins\LSMASHSource.dll", Path.GetTempPath() + @"vsgui\LSMASHSource.dll");
                 }
                 catch (Exception)
                 {
 
                 }
             }
+            //生成文件 v0.2.1
+            if (GetQueueListitem(queueid, "type") == "video")
+            {
+                if (Path.GetExtension(GetQueueListitem(queueid, "input")) != ".vpy")
+                {
+                    string script = VideoApi.MakeVideoScript(GetQueueListitem(queueid, "input"), GetQueueListitem(queueid, "resolution"), GetQueueListitem(queueid, "subtitle"));
+                    string scriptpath = Path.GetTempPath() + @"vsgui\" + "Job_" + queueid + ".vpy";
+                    string command = ProcessCommandStr(int.Parse(queueid), "video", int.Parse(GetQueueListitem(queueid, "encoderid")), new string[] { GetQueueListitem(queueid, "input") }, GetQueueListitem(queueid, "output"), scriptpath, out string temp1, out string temp2);
+                    SetQueueListitem(queueid, "script", script);
+                    SetQueueListitem(queueid, "scriptfilepath", scriptpath);
+                    SetQueueListitem(queueid, "deletefile", GetQueueListitem(queueid, "deletefile") + "|" + scriptpath);
+                    SetQueueListitem(queueid, "command", command);
+                }
+            }
+            else if (GetQueueListitem(queueid, "type") == "audio")
+            {
+                if (Path.GetExtension(GetQueueListitem(queueid, "input")) != ".avs")
+                {
+                    string script = AudioApi.MakeAudioScript(int.Parse(GetQueueListitem(queueid, "encoderid")), GetQueueListitem(queueid, "audiocuttext"), GetQueueListitem(queueid, "audiofpstext"), GetQueueListitem(queueid, "input"), GetQueueListitem(queueid, "audiodelaytext"));
+                    string scriptpath = Path.GetTempPath() + @"vsgui\" + "Job_" + queueid + ".avs";
+                    string command = ProcessCommandStr(int.Parse(queueid), "audio", int.Parse(GetQueueListitem(queueid, "encoderid")), new string[] { GetQueueListitem(queueid, "input") }, GetQueueListitem(queueid, "output"), scriptpath, out string temp1, out string temp2);
+                    SetQueueListitem(queueid, "script", script);
+                    SetQueueListitem(queueid, "scriptfilepath", scriptpath);
+                    SetQueueListitem(queueid, "deletefile", GetQueueListitem(queueid, "deletefile") + "|" + scriptpath);
+                    SetQueueListitem(queueid, "command", command);
+                }
+            }
+
             //写入script文件
             if (GetQueueListitem(queueid, "scriptfilepath") != "")
             {
                 File.WriteAllText(GetQueueListitem(queueid, "scriptfilepath"), GetQueueListitem(queueid, "script"));
+            }
+        }
+
+        /// <summary>
+        /// 特殊格式处理 
+        /// </summary>
+        /// <param name="queueid"></param>
+        public static void SpecialFormatPreProcess(string queueid)
+        {
+            //flv格式需要先抽取视频流（仅处理简易压制）
+            if (GetQueueListitem(queueid, "type") == "video")
+            {
+                if (Path.GetExtension(GetQueueListitem(queueid, "input")) == ".flv")
+                {
+                    string inputpath = GetQueueListitem(queueid, "input");
+                    string outputpath = "";
+                    string clipath = MainWindow.binpath + @"\tools\ffmpeg\";
+                    string defaultcommon = @"ffmpeg.exe" + " -hide_banner -y ";
+                    string info = ProcessApi.RunSyncProcess(clipath, defaultcommon + "-i " + "\"" + inputpath + "\"");
+                    var x = Regex.Matches(info, @"Stream #(\d+:\d+).*?: (.*?): (.*?) ");
+                    if (x.Count > 0)
+                    {
+                        string commonParameter = "";
+                        for (int i = 0; i < x.Count; i++)
+                        {
+                            if (x[i].Groups[2].Value.ToLower() == "video")
+                            {
+                                outputpath = Path.GetDirectoryName(GetQueueListitem(queueid, "output")) + @"\" + Path.GetFileNameWithoutExtension(inputpath) + "." + x[i].Groups[3].Value;
+                                commonParameter += " -map " + x[i].Groups[1].Value + " -c copy " + "\"" + outputpath + "\"";
+                            }
+                        }
+                        string fullcommon = defaultcommon + "-i " + inputpath + commonParameter + " & exit";
+                        string resultstr = ProcessApi.RunSyncProcess(clipath, fullcommon);
+                        SetQueueListitem(queueid, "input", outputpath);
+                        SetQueueListitem(queueid, "deletefile", GetQueueListitem(queueid, "deletefile") + "|" + outputpath);
+                    }
+                }
             }
         }
 
