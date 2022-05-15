@@ -37,6 +37,7 @@ namespace VSGUI.API
                             {
                                 PCall(LanguageApi.FindRes("updateFilesChecking"));
                                 string[] updatelist = CheckVersionByMD5();
+                                //7z包
                                 if (!(File.Exists(MainWindow.binpath + @"\7z.exe") && File.Exists(MainWindow.binpath + @"\7z.dll")))
                                 {
                                     await DownloadFile(@"https://cloud.sbsub.com/vsgui/7z.exe", MainWindow.binpath + @"\7z.exe");
@@ -59,6 +60,9 @@ namespace VSGUI.API
                                 PCall("debug mode, disable auto update.");
                                 return;
 #endif
+                                //删除遗留文件
+                                CommonApi.TryDeleteFile(MainWindow.binpath + @"\vs\vapoursynth64\plugins\libvslsmashsource.dll");
+                                //更新开始
                                 for (int i = 0; i < updatelist.Length; i++)
                                 {
                                     PCall(LanguageApi.FindRes("updateDownloading") + (i + 1) + @"/" + updatelist.Length);
