@@ -2,8 +2,9 @@
 
 ![](https://github.com/YohoYang/VSGUI/raw/master/READMEIMG/VSGUI-ICON.png)
 
+[ENIGLISH README](https://github.com/YohoYang/VSGUI/blob/master/README-en.md)
 一款全新VapourSynth视频压制软件。
-A video encode software like MeGUI for VapourSynth.
+A video encode GUI like MeGUI for VapourSynth.
 
 
 ### 主要特性
