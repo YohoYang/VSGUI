@@ -59,8 +59,8 @@ namespace VSGUI.API
         {
             if (type == "mux")
             {
-                string outputpath = "\"" + Path.GetDirectoryName(output) + @"\" + "VSGUI_Job_" + queueid.ToString() + "_temp" + Path.GetExtension(output) + "\"";
-                tempoutput = outputpath;
+                tempoutput = Path.GetDirectoryName(output) + @"\" + "VSGUI_Job_" + queueid.ToString() + "_temp" + Path.GetExtension(output);
+                string outputpath = "\"" + tempoutput + "\"";
                 string common = MuxApi.ProcessMuxCommandStr(input, outputpath, out clipath);
                 return common;
             }
@@ -72,8 +72,8 @@ namespace VSGUI.API
                 string pipeconnect = "";
                 //处理输入输出文件
                 string inputpath = "\"" + input[0] + "\"";
-                string outputpath = "\"" + Path.GetDirectoryName(output) + @"\" + "VSGUI_Job_" + queueid.ToString() + "_temp" + Path.GetExtension(output) + "\"";
-                tempoutput = outputpath;
+                tempoutput = Path.GetDirectoryName(output) + @"\" + "VSGUI_Job_" + queueid.ToString() + "_temp" + Path.GetExtension(output);
+                string outputpath = "\"" + tempoutput + "\"";
                 //根据类型处理参数
                 if (type == "video")
                 {
@@ -362,15 +362,84 @@ namespace VSGUI.API
 
         }
 
+        /// <summary>
+        /// 删除任务 v0.2.3
+        /// </summary>
+        /// <param name="queueid"></param>
         public static void DeleteQueueItem(string queueid)
         {
-            var queueJobj = GetQueueList();
-            for (int i = 0; i < queueJobj.Count; i++)
+            ArrayList queueList = new ArrayList();
+            ArrayList deleteList = new ArrayList();
+            int delFileExistCount = 0;
+            //获取列表
+            if (GetQueueListitem(queueid, "group") != "")
             {
-                if (queueJobj[i]["queueid"].ToString() == queueid)
+                var list = GetGroupQueueidList(QueueApi.GetQueueListitem(queueid, "group"));
+                foreach (string item in list)
                 {
-                    queueJobj.RemoveAt(i);
+                    queueList.Add(item);
+                }
+            }
+            else
+            {
+                queueList.Add(queueid);
+            }
+            //获取deletelist
+            foreach (string item in queueList)
+            {
+                string[] delList = GetQueueListitem(item, "deletefile").Split("|");
+                foreach (string itemdel in delList)
+                {
+                    if (itemdel != "")
+                    {
+                        if (File.Exists(itemdel))
+                        {
+                            deleteList.Add(itemdel);
+                            delFileExistCount += 1;
+                        }
+                    }
+                }
+                if (GetQueueListitem(item, "outputtemp") != "")
+                {
+                    if (File.Exists(GetQueueListitem(item, "outputtemp")))
+                    {
+                        deleteList.Add(GetQueueListitem(item, "outputtemp"));
+                        delFileExistCount += 1;
+                    }
+                }
+            }
+            //判断是否有待删除文件存在
+            if (delFileExistCount > 0)
+            {
+                string fileName = "";
+                foreach (string item in deleteList)
+                {
+                    fileName += "\r\n" + Path.GetFileName(item);
+                }
+                var result = MessageBoxApi.Show(LanguageApi.FindRes("queueDeleteCacheTipsDesc") + fileName, buttontype: MessageWindow.MessageBoxButton.YesNoCancel);
+                if (result == MessageWindow.MessageResult.Yes)
+                {
+                    foreach (string item in deleteList)
+                    {
+                        CommonApi.TryDeleteFile(item);
+                    }
+                }
+                else if (result == MessageWindow.MessageResult.Cancel)
+                {
                     return;
+                }
+            }
+            //删除任务
+            var queueJobj = GetQueueList();
+            foreach (string item in queueList)
+            {
+                for (int i = 0; i < queueJobj.Count; i++)
+                {
+                    if (queueJobj[i]["queueid"].ToString() == item)
+                    {
+                        queueJobj.RemoveAt(i);
+                        break;
+                    }
                 }
             }
         }
@@ -665,7 +734,7 @@ namespace VSGUI.API
                                         }
                                     }
                                 }
-                                if (!isCutError)
+                                if (!isCutError && cutmap.Count > 0)
                                 {
                                     finalcutstr = cutmap[finaloutVar];
                                 }

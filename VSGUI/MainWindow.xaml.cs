@@ -930,18 +930,7 @@ namespace VSGUI
         private void DeleteQueueItem_Click(object sender, RoutedEventArgs e)
         {
             string removeQueueid = QueueApi.GetQueueListitemFromSelectedIndex(QueueListView.SelectedIndex, "queueid");
-            if (QueueApi.GetQueueListitem(removeQueueid, "group") != "")
-            {
-                var list = QueueApi.GetGroupQueueidList(QueueApi.GetQueueListitem(removeQueueid, "group"));
-                foreach (var item in list)
-                {
-                    QueueApi.DeleteQueueItem(item);
-                }
-            }
-            else
-            {
-                QueueApi.DeleteQueueItem(removeQueueid);
-            }
+            QueueApi.DeleteQueueItem(removeQueueid);
             UpdateQueueList();
             QueueApi.SaveQueueList();
         }

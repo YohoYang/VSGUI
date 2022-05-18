@@ -79,18 +79,18 @@ namespace VSGUI.API
                     }
                     void Exited()
                     {
-                        //清理文件
-                        string[] filelist = CommonApi.GetFileOnlyInFolder(Path.GetDirectoryName(inputpath));
-                        foreach (var item in filelist)
-                        {
-                            if (Path.GetExtension(item) == ".unknownAudio")
-                            {
-                                CommonApi.TryDeleteFile(item);
-                            }
-                        }
+                        //清理文件 v0.2.3取消清理
+                        //string[] filelist = CommonApi.GetFileOnlyInFolder(Path.GetDirectoryName(inputpath));
+                        //foreach (var item in filelist)
+                        //{
+                        //    if (Path.GetExtension(item) == ".unknownAudio")
+                        //    {
+                        //        CommonApi.TryDeleteFile(item);
+                        //    }
+                        //}
 
                         string timecount = "";
-                        var x = Regex.Match(datarecevied, @"eac3to processing took (\d+) seconds");
+                        var x = Regex.Match(datarecevied, @"eac3to processing took (\d+) second");
                         if (x.Success)
                         {
                             timecount = x.Groups[1].ToString();
