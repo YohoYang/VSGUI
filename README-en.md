@@ -3,9 +3,17 @@
 ![](https://github.com/YohoYang/VSGUI/raw/master/READMEIMG/VSGUI-ICON.png)
 
 [中文README](https://github.com/YohoYang/VSGUI)
+
 A new VapourSynth video compression software.
 A video encode GUI like MeGUI for VapourSynth.
 
+### Download
+
+[Software](https://github.com/YohoYang/VSGUI/releases/download/v0.2.0/VSGUI-v0.2.0.zip)
+
+[.NET 6 Runtime](https://aka.ms/dotnet/6.0/windowsdesktop-runtime-win-x64.exe)
+
+`The Update will use the build in auto-update to release.`
 
 ### Main Features
 
