@@ -24,7 +24,7 @@ namespace VSGUI
     {
         public static string binpath = Directory.GetCurrentDirectory() + @"\bin";
         private bool forcedStop = false;
-        private string coreversion = "v0.2.3";
+        private string coreversion = "v0.2.4";
 
         public MainWindow()
         {
@@ -1255,7 +1255,13 @@ namespace VSGUI
 
         private void SimpleOpenEditorButton_Click(object sender, RoutedEventArgs e)
         {
-            VideoApi.PreviewTempVpy(VideoApi.MakeVideoScript(simplevideoinputbox.Text, simpleresolutionbox.Text.ToUpper(), simpleasspathinputbox.Text));
+            string script = VideoApi.MakeVideoScript(simplevideoinputbox.Text, simpleresolutionbox.Text.ToUpper(), simpleasspathinputbox.Text);
+            if (script == null)
+            {
+                MessageBoxApi.Show("DEBUG ERROR: 视频信息读取错误，麻烦提供视频文件协助调试", LanguageApi.FindRes("error"));
+                script = "";
+            }
+            VideoApi.PreviewTempVpy(script);
         }
 
         private void VSGUITextBlock_MouseDown(object sender, MouseButtonEventArgs e)
