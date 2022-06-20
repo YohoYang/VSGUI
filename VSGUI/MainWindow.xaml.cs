@@ -1190,7 +1190,11 @@ namespace VSGUI
 
         private void MkvtoolnixButton_Click(object sender, RoutedEventArgs e)
         {
-            Process.Start(binpath + @"\tools\mkvtoolnix\mkvtoolnix-gui.exe");
+            var startInfo = new ProcessStartInfo();
+            startInfo.FileName = binpath + @"\tools\mkvtoolnix\mkvtoolnix-gui.exe";
+            startInfo.WorkingDirectory = binpath + @"\tools\mkvtoolnix\";
+            Process.Start(startInfo);
+            //Process.Start(binpath + @"\tools\mkvtoolnix\mkvtoolnix-gui.exe");
         }
 
         /// <summary>
