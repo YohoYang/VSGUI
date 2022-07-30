@@ -47,7 +47,7 @@ namespace VSGUI.API
                         addstr += " " + "\"" + item + "\"";
                     }
                 }
-                string theCommandStr = @"mkvmerge.exe" + addstr + " -o " + "\"" + output + "\"";
+                string theCommandStr = @"mkvmerge.exe --ui-language en" + addstr + " -o " + "\"" + output + "\"";
                 return theCommandStr;
             }
             clipath = "";
@@ -63,7 +63,7 @@ namespace VSGUI.API
 
             string common = ProcessMuxCommandStr(input, output, out string clipath);
 
-            ProcessApi.RunProcess(clipath, common, DataReceived, Exited, out string pid, true);
+            ProcessApi.RunProcess(clipath, common, DataReceived, Exited, out string pid);
             void DataReceived(DataReceivedEventArgs e, bool processIsExited)
             {
                 datarecevied += e.Data;

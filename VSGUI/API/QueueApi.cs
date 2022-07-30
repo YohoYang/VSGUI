@@ -60,7 +60,8 @@ namespace VSGUI.API
             if (type == "mux")
             {
                 tempoutput = Path.GetDirectoryName(output) + @"\" + "VSGUI_Job_" + queueid.ToString() + "_temp" + Path.GetExtension(output);
-                string outputpath = "\"" + tempoutput + "\"";
+                //string outputpath = "\"" + tempoutput + "\"";
+                string outputpath = tempoutput;
                 string common = MuxApi.ProcessMuxCommandStr(input, outputpath, out clipath);
                 return common;
             }

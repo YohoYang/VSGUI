@@ -152,7 +152,7 @@ namespace VSGUI.API
         }
 
 
-        public static void RunProcess(string clipath, string common, Action<DataReceivedEventArgs, bool> inDataReceived, Action inExited, out string processid, bool enableutf8 = false)
+        public static void RunProcess(string clipath, string common, Action<DataReceivedEventArgs, bool> inDataReceived, Action inExited, out string processid)
         {
 
             Process proc = new Process
@@ -167,11 +167,11 @@ namespace VSGUI.API
                     RedirectStandardOutput = true,
                 }
             };
-            if (enableutf8)
-            {
-                proc.StartInfo.StandardOutputEncoding = Encoding.UTF8;
-                proc.StartInfo.StandardErrorEncoding = Encoding.UTF8;
-            }
+            //if (utf8Output)
+            //{
+            //    proc.StartInfo.StandardOutputEncoding = Encoding.UTF8;
+            //    proc.StartInfo.StandardErrorEncoding = Encoding.UTF8;
+            //}
             proc.OutputDataReceived += Proc_DataReceived;
             proc.ErrorDataReceived += Proc_DataReceived;
             proc.EnableRaisingEvents = true;
