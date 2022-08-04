@@ -45,6 +45,7 @@ namespace VSGUI.API
                                 }
                                 if (!(File.Exists(MainWindow.binpath + @"\vs\7z.exe") && File.Exists(MainWindow.binpath + @"\vs\7z.dll")))
                                 {
+                                    Directory.CreateDirectory(MainWindow.binpath + @"\vs\");
                                     File.Copy(MainWindow.binpath + @"\7z.exe", MainWindow.binpath + @"\vs\7z.exe", true);
                                     File.Copy(MainWindow.binpath + @"\7z.dll", MainWindow.binpath + @"\vs\7z.dll", true);
                                 }

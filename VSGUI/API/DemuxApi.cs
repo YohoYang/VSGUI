@@ -35,7 +35,7 @@ namespace VSGUI.API
                         {
                             commonParameter += " -map " + x[i].Groups[1].Value + " -c copy " + "\"" + Path.GetDirectoryName(inputpath) + @"\" + Path.GetFileNameWithoutExtension(inputpath) + "." + x[i].Groups[3].Value + "\"";
                         }
-                        string fullcommon = defaultcommon + "-i " + inputpath + commonParameter + " & exit";
+                        string fullcommon = defaultcommon + "-i " + "\"" + inputpath + "\"" + commonParameter + " & exit";
                         ProcessApi.RunProcess(clipath, fullcommon, DataReceived, Exited, out string pid);
                         void DataReceived(DataReceivedEventArgs e, bool processIsExited)
                         {
