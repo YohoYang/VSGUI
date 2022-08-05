@@ -60,9 +60,8 @@ namespace VSGUI.API
             if (type == "mux")
             {
                 tempoutput = Path.GetDirectoryName(output) + @"\" + "VSGUI_Job_" + queueid.ToString() + "_temp" + Path.GetExtension(output);
-                //string outputpath = "\"" + tempoutput + "\"";
                 string outputpath = tempoutput;
-                string common = MuxApi.ProcessMuxCommandStr(input, outputpath, out clipath);
+                string common = MuxApi.ProcessMuxCommandStr(input, outputpath, queueid, out clipath);
                 return common;
             }
             else
@@ -586,6 +585,10 @@ namespace VSGUI.API
                     SetQueueListitem(queueid, "deletefile", GetQueueListitem(queueid, "deletefile") + "|" + scriptpath);
                     SetQueueListitem(queueid, "command", command);
                 }
+            }
+            else if (GetQueueListitem(queueid, "type") == "mux")
+            {
+                SetQueueListitem(queueid, "deletefile", GetQueueListitem(queueid, "deletefile") + "|" + Path.GetTempPath() + @"vsgui\" + "Job_" + queueid.ToString() + ".txt");
             }
 
             //写入script文件

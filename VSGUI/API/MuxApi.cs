@@ -11,26 +11,46 @@ namespace VSGUI.API
 {
     internal class MuxApi
     {
-        public static string ProcessMuxCommandStr(string[] input, string output, out string clipath)
+        public static string ProcessMuxCommandStr(string[] input, string output, int queueid, out string clipath)
         {
             if (Path.GetExtension(output.Replace("\"", "")).ToLower() == ".mp4")
             {
-                clipath = MainWindow.binpath + @"\tools\mp4box\";
+                clipath = MainWindow.binpath + @"\tools\ffmpeg\";
                 string addstr = "";
                 foreach (var item in input)
                 {
                     if (item != "")
                     {
-                        string additionstr = "";
-                        if (Path.GetExtension(item) == ".txt")
+                        string tempitempath = item;
+                        if (Path.GetExtension(item) == ".txt" && ChapterApi.ChapterFormatCheck(item))
                         {
-                            additionstr = ":chap";
+                            string ffmeta = ChapterApi.MakeFFmpegMetaData(item);
+                            string chapterpath = Path.GetTempPath() + @"vsgui\" + "Job_" + queueid.ToString() + ".txt";
+                            File.WriteAllText(chapterpath, ffmeta);
+                            tempitempath = chapterpath;
                         }
-                        addstr += " -add " + "\"" + item + additionstr + "\"";
+                        addstr += " -i " + "\"" + tempitempath + "\"";
                     }
                 }
-                string theCommandStr = "MP4Box.exe" + addstr + " -new " + "\"" + output + "\"";
+                string theCommandStr = "ffmpeg.exe -hide_banner -y " + addstr + " -c copy " + "\"" + output + "\"";
                 return theCommandStr;
+                //mp4box mode
+                //clipath = MainWindow.binpath + @"\tools\mp4box\";
+                //string addstr = "";
+                //foreach (var item in input)
+                //{
+                //    if (item != "")
+                //    {
+                //        string additionstr = "";
+                //        if (Path.GetExtension(item) == ".txt")
+                //        {
+                //            additionstr = ":chap";
+                //        }
+                //        addstr += " -add " + "\"" + item + additionstr + "\"";
+                //    }
+                //}
+                //string theCommandStr = "MP4Box.exe" + addstr + " -new " + "\"" + output + "\"";
+                //return theCommandStr;
             }
             else if (Path.GetExtension(output.Replace("\"", "")).ToLower() == ".mkv")
             {
@@ -61,7 +81,7 @@ namespace VSGUI.API
             string output = Path.GetDirectoryName(input[0]) + @"\" + Path.GetFileNameWithoutExtension(input[0]) + @"_mux." + outputsuffix.ToLower();
             CommonApi.TryDeleteFile(output);
 
-            string common = ProcessMuxCommandStr(input, output, out string clipath);
+            string common = ProcessMuxCommandStr(input, output, -1, out string clipath);
 
             ProcessApi.RunProcess(clipath, common, DataReceived, Exited, out string pid);
             void DataReceived(DataReceivedEventArgs e, bool processIsExited)
@@ -82,6 +102,7 @@ namespace VSGUI.API
                 {
                     ExitedCall(LanguageApi.FindRes("mux") + LanguageApi.FindRes("error"));
                 }
+                CommonApi.TryDeleteFile(Path.GetTempPath() + @"vsgui\" + "Job_-1" + ".txt");
             }
 
         }
