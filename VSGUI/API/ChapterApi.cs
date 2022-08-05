@@ -93,12 +93,13 @@ namespace VSGUI.API
         {
             ChapterApi chapter = new ChapterApi();
             return chapter.LoadText(chapterpath);
-        }   
-        
+        }
+
         public static string MakeFFmpegMetaData(string chapterpath)
         {
             ChapterApi chapter = new ChapterApi();
-            return chapter.MakeFFmpegMetaDataFunc(chapterpath);
+            chapter.LoadText(chapterpath);
+            return chapter.MakeFFmpegMetaDataFunc();
         }
 
         public ChapterApi()
@@ -221,67 +222,22 @@ namespace VSGUI.API
 
         #region load file
 
-        private string MakeFFmpegMetaDataFunc(string strFileName)
+        private string MakeFFmpegMetaDataFunc()
         {
             string metastr = string.Empty;
-            try
-            {
-                int num = 0;
-                TimeSpan ts = new TimeSpan(0);
-                string time = String.Empty;
-                string name = String.Empty;
-                bool onTime = true;
-                string[] lines = File.ReadAllLines(strFileName, Encoding.Default);
-                foreach (string line in lines)
-                {
-                    if (line == "")
-                    {
-                        continue;
-                    }
-                    if (onTime)
-                    {
-                        num++;
-                        //read time
-                        time = line.Replace("CHAPTER" + num.ToString("00") + "=", "");
-                        ts = TimeSpan.Parse(time);
-                    }
-                    else
-                    {
-                        //read name
-                        if (!line.StartsWith("CHAPTER" + num.ToString("00") + "NAME="))
-                        {
-                            throw new Exception();
-                        }
-                        name = line.Replace("CHAPTER" + num.ToString("00") + "NAME=", "");
 
-                        //add it to list
-                        Chapters.Add(new Chapter() { Name = name, Time = ts });
-                    }
-                    onTime = !onTime;
-                }
-
-                SourceFilePath = strFileName;
-                Title = Path.GetFileNameWithoutExtension(strFileName);
-                if (Chapters.Count > 0)
-                {
-                    Duration = Chapters[Chapters.Count - 1].Time;
-                    metastr += ";FFMETADATA1\ntitle = VSGUI\nartist = VSGUI\n\n";
-                    foreach (var chap in Chapters)
-                    {
-                        metastr += @"[CHAPTER]" + "\n";
-                        metastr += @"TIMEBASE=1/1000" + "\n";
-                        metastr += @"START=" + Math.Round(chap.Time.TotalMilliseconds) + "\n";
-                        metastr += @"END=" + Math.Round(chap.Time.TotalMilliseconds) + "\n";
-                        metastr += @"title=" + chap.Name + "\n";
-                        metastr += "\n";
-                    }
-                }
-            }
-            catch (Exception)
+            if (Chapters.Count > 0)
             {
-                Chapters.Clear();
-                MessageBoxApi.Show(LanguageApi.FindRes("chapterFormatErrorTipsDesc"), LanguageApi.FindRes("error"));
-                return metastr;
+                metastr += ";FFMETADATA1\ntitle = VSGUI\nartist = VSGUI\n\n";
+                foreach (var chap in Chapters)
+                {
+                    metastr += @"[CHAPTER]" + "\n";
+                    metastr += @"TIMEBASE=1/1000" + "\n";
+                    metastr += @"START=" + Math.Round(chap.Time.TotalMilliseconds) + "\n";
+                    metastr += @"END=" + Math.Round(chap.Time.TotalMilliseconds) + "\n";
+                    metastr += @"title=" + chap.Name + "\n";
+                    metastr += "\n";
+                }
             }
 
             return metastr;
