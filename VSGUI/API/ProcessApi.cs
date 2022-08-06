@@ -137,12 +137,12 @@ namespace VSGUI.API
 
             proc.OutputDataReceived += Proc_DataReceived;
             proc.ErrorDataReceived += Proc_DataReceived;
-            
+
             proc.EnableRaisingEvents = true;
             proc.Start();
-            proc.StandardInput.WriteLine(common);
-            proc.StandardInput.WriteLine(".");
-            proc.StandardInput.WriteLine("exit");
+            proc.StandardInput.WriteLine(common + "&exit");
+            //proc.StandardInput.WriteLine(".");
+            //proc.StandardInput.WriteLine("exit");
 
             proc.BeginOutputReadLine();
             proc.BeginErrorReadLine();
@@ -186,9 +186,9 @@ namespace VSGUI.API
             QueueApi.runningQueueCount += 1;
             processid = proc.Id.ToString();
 
-            proc.StandardInput.WriteLine(common);
-            proc.StandardInput.WriteLine(".");
-            proc.StandardInput.WriteLine("exit");
+            proc.StandardInput.WriteLine(common + "&exit");
+            //proc.StandardInput.WriteLine(".");
+            //proc.StandardInput.WriteLine("exit");
 
             proc.BeginOutputReadLine();
             proc.BeginErrorReadLine();
