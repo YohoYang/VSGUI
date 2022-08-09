@@ -132,7 +132,6 @@ namespace VSGUI.API
                 }
             };
 
-            //proc.StartInfo.StandardOutputEncoding = Encoding.UTF8;
             proc.StartInfo.StandardErrorEncoding = Encoding.UTF8;
 
             proc.OutputDataReceived += Proc_DataReceived;
@@ -141,8 +140,6 @@ namespace VSGUI.API
             proc.EnableRaisingEvents = true;
             proc.Start();
             proc.StandardInput.WriteLine(common + "&exit");
-            //proc.StandardInput.WriteLine(".");
-            //proc.StandardInput.WriteLine("exit");
 
             proc.BeginOutputReadLine();
             proc.BeginErrorReadLine();
@@ -175,7 +172,6 @@ namespace VSGUI.API
                 }
             };
 
-            //proc.StartInfo.StandardOutputEncoding = Encoding.UTF8;
             proc.StartInfo.StandardErrorEncoding = Encoding.UTF8;
 
             proc.OutputDataReceived += Proc_DataReceived;
@@ -187,8 +183,6 @@ namespace VSGUI.API
             processid = proc.Id.ToString();
 
             proc.StandardInput.WriteLine(common + "&exit");
-            //proc.StandardInput.WriteLine(".");
-            //proc.StandardInput.WriteLine("exit");
 
             proc.BeginOutputReadLine();
             proc.BeginErrorReadLine();
