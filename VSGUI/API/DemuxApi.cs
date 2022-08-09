@@ -72,7 +72,7 @@ namespace VSGUI.API
                 }
 
                 //其余均使用ffmpeg
-                                clipath = MainWindow.binpath + @"\tools\ffmpeg\";
+                clipath = MainWindow.binpath + @"\tools\ffmpeg\";
                 string defaultcommon = @"ffmpeg.exe" + " -hide_banner -y ";
                 string info = ProcessApi.RunSyncProcess(clipath, defaultcommon + "-i " + "\"" + inputpath + "\"");
                 var x = Regex.Matches(info, @"Stream #(\d+:\d+).*?: (.*?): (.*?)\s");
@@ -99,7 +99,7 @@ namespace VSGUI.API
                             commonParameter += " -map " + x[i].Groups[1].Value + " -c copy " + "\"" + Path.GetDirectoryName(inputpath) + @"\" + Path.GetFileNameWithoutExtension(inputpath) + "." + x[i].Groups[3].Value + "\"";
                         }
                     }
-                    string fullcommon = defaultcommon + "-i " + "\"" + inputpath + "\"" + commonParameter + " & exit";
+                    string fullcommon = defaultcommon + "-i " + "\"" + inputpath + "\"" + commonParameter;
                     ProcessApi.RunProcess(clipath, fullcommon, DataReceived, Exited, out string pid);
                     void DataReceived(DataReceivedEventArgs e, bool processIsExited)
                     {
@@ -123,8 +123,6 @@ namespace VSGUI.API
                 MessageBoxApi.Show(LanguageApi.FindRes("fileNotExist"), LanguageApi.FindRes("error"));
                 return;
             }
-
-
         }
     }
 }
