@@ -79,16 +79,16 @@ namespace VSGUI.API
                 if (x.Count > 0)
                 {
                     string commonParameter = "";
+                    bool isAttachmentDump = false;
                     for (int i = 0; i < x.Count; i++)
                     {
                         if (x[i].Groups[2].Value == "Attachment")
                         {
-                            //增加字体
-                            var xa = Regex.Matches(info, @"Stream #" + x[i].Groups[1].Value + @": (.*?): (.*?)\s.*\s.*filename.*:\s(.*)\s");
-                            if (xa.Count > 0)
+                            if (isAttachmentDump == false)
                             {
-                                commonParameter += " -map " + x[i].Groups[1].Value + " -c copy " + "\"" + Path.GetDirectoryName(inputpath) + @"\" + xa[i].Groups[3].Value + "\"";
+                                commonParameter += " -dump_attachment:t \"\"";
                             }
+                            isAttachmentDump = true;
                         }
                         else if (x[i].Groups[2].Value == "Data")
                         {
