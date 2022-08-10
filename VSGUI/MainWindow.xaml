@@ -386,7 +386,7 @@
                     <Grid Margin="15,10,15,10">
                         <StackPanel Margin="0,10,0,10">
                             <!--解封区-->
-                            <TextBlock Text="{DynamicResource smartdemux}" Margin="5,3,0,6" Foreground="#a3a3a3"/>
+                            <TextBlock Text="{DynamicResource demux}" Margin="5,3,0,6" Foreground="#a3a3a3"/>
                             <Border x:Name="demuxborder" Style="{StaticResource BorderRegion}" AllowDrop="True" PreviewDrop="Border_Drop">
                                 <hc:UniformSpacingPanel Spacing="6" Orientation="Vertical">
                                     <!--输入-->
@@ -404,7 +404,12 @@
                                     <Grid>
                                         <DockPanel HorizontalAlignment="Right">
                                             <TextBlock x:Name="demuxInfoTextBox" Text="" Margin="0,0,6,0" VerticalAlignment="Center"/>
-                                            <Button x:Name="demuxStartButton" Content="{DynamicResource smartdemux}" Style="{StaticResource ButtonPrimary}" Margin="6,0,0,0" Click="DemuxStartButton_Click"/>
+                                            <ComboBox x:Name="demuxclibox" MinWidth="100" SelectedIndex="0">
+                                                <ComboBoxItem Content="auto"/>
+                                                <ComboBoxItem Content="ffmpeg"/>
+                                                <ComboBoxItem Content="eac3to"/>
+                                            </ComboBox>
+                                            <Button x:Name="demuxStartButton" Content="{DynamicResource demux}" Style="{StaticResource ButtonPrimary}" Margin="6,0,0,0" Click="DemuxStartButton_Click"/>
                                         </DockPanel>
 
                                     </Grid>

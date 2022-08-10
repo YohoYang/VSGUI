@@ -39,7 +39,6 @@
     <system:String x:Key="stopjob">停止</system:String>
     <system:String x:Key="resetjob">重置</system:String>
     <system:String x:Key="deletejob">删除</system:String>
-    <system:String x:Key="smartdemux">智能解流</system:String>
     <system:String x:Key="fileinput">文件输入</system:String>
     <system:String x:Key="openmkvtoolnix">启动MKV封装工具</system:String>
     <system:String x:Key="openmkvtoolnixdesc">启动mkvtoolnix-gui，可以拥有充分的设置混流各种东西为mkv</system:String>

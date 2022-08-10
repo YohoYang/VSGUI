@@ -962,7 +962,7 @@ namespace VSGUI
         {
             demuxInfoTextBox.Text = LanguageApi.FindRes("demuxing");
             demuxStartButton.IsEnabled = false;
-            DemuxApi.StartDemux(demuxinputbox.Text, WhenDataReceived, WhenExited);
+            DemuxApi.StartDemux(demuxinputbox.Text, ((ComboBoxItem)demuxclibox.SelectedValue).Content.ToString(), WhenDataReceived, WhenExited);
             void WhenDataReceived(string message)
             {
                 Dispatcher.Invoke(() =>

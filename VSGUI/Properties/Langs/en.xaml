@@ -39,7 +39,6 @@
     <system:String x:Key="stopjob">Stop</system:String>
     <system:String x:Key="resetjob">Reset</system:String>
     <system:String x:Key="deletejob">Delete</system:String>
-    <system:String x:Key="smartdemux">SmartDemux</system:String>
     <system:String x:Key="fileinput">FileInput</system:String>
     <system:String x:Key="openmkvtoolnix">Open MKV-tool-nix GUI</system:String>
     <system:String x:Key="openmkvtoolnixdesc">Start mkvtoolnix-gui, you can have full settings to mix various things for mkv</system:String>

@@ -15,86 +15,106 @@ namespace VSGUI.API
     {
         static string datarecevied = "";
 
-        public static void StartDemux(string inputpath, Action<string> DataReceivedCall, Action<string> ExitedCall)
+        public static void StartDemux(string inputpath, string clitype, Action<string> DataReceivedCall, Action<string> ExitedCall)
         {
             if (inputpath != "" && File.Exists(inputpath))
             {
                 datarecevied = "";
-                string ext = Path.GetExtension(inputpath);
-                string common = "";
-                string clipath;
-                //使用eac3to
-                if (ext == ".ts")
+                if (clitype == "ffmpeg")
                 {
-                    string stra;
-                    clipath = MainWindow.binpath + @"\tools\eac3to\";
-                    if (ext == ".thd+ac3")
+                    ffmpegDemux(inputpath, DataReceivedCall, ExitedCall);
+                }
+                else if (clitype == "eac3to")
+                {
+                    eac3toDemux(inputpath, DataReceivedCall, ExitedCall);
+                }
+                else if (clitype == "mkvextract")
+                {
+                    //还没做，看情况
+                }
+                else
+                {
+                    //auto
+                    string ext = Path.GetExtension(inputpath).ToLower();
+                    if (ext == ".mp4" || ext == ".mov" || ext == ".flv")
                     {
-                        common = @"eac3to.exe" + " " + "\"" + inputpath + "\"" + " " + "\"" + inputpath + @".thd" + "\"" + " -log=nul" + " && " + @"eac3to.exe" + " " + "\"" + inputpath + "\"" + " " + "\"" + inputpath + @".ac3" + "\"" + " -log=nul";
-                        stra = LanguageApi.FindRes("demuxThdAc3") + "...";
+                        ffmpegDemux(inputpath, DataReceivedCall, ExitedCall);
                     }
                     else
                     {
-                        common = @"eac3to.exe" + " " + "\"" + inputpath + "\"" + " " + "\"" + inputpath + @"_.*" + "\"" + " -log=nul";
-                        stra = LanguageApi.FindRes("demuxing") + "...";
+                        eac3toDemux(inputpath, DataReceivedCall, ExitedCall);
                     }
-                    ProcessApi.RunProcess(clipath, common, DataReceived, Exited, out string pid);
-                    void DataReceived(DataReceivedEventArgs e, bool processIsExited)
+                }
+            }
+            else
+            {
+                MessageBoxApi.Show(LanguageApi.FindRes("fileNotExist"), LanguageApi.FindRes("error"));
+                return;
+            }
+
+            static void eac3toDemux(string inputpath, Action<string> DataReceivedCall, Action<string> ExitedCall)
+            {
+                string common = "";
+                string stra;
+                string clipath = MainWindow.binpath + @"\tools\eac3to\";
+                string ext = Path.GetExtension(inputpath);
+                if (ext == ".thd+ac3")
+                {
+                    common = @"eac3to.exe" + " " + "\"" + inputpath + "\"" + " " + "\"" + inputpath + @".thd" + "\"" + " -log=nul" + " && " + @"eac3to.exe" + " " + "\"" + inputpath + "\"" + " " + "\"" + inputpath + @".ac3" + "\"" + " -log=nul";
+                    stra = LanguageApi.FindRes("demuxThdAc3") + "...";
+                }
+                else
+                {
+                    common = @"eac3to.exe" + " " + "\"" + inputpath + "\"" + " " + "\"" + inputpath + @"_.*" + "\"" + " -log=nul";
+                    stra = LanguageApi.FindRes("demuxing") + "...";
+                }
+                ProcessApi.RunProcess(clipath, common, DataReceived, Exited, out string pid);
+                void DataReceived(DataReceivedEventArgs e, bool processIsExited)
+                {
+                    datarecevied += e.Data + "\n";
+                    if (!string.IsNullOrEmpty(e.Data) && !processIsExited)
                     {
-                        datarecevied += e.Data;
-                        if (!string.IsNullOrEmpty(e.Data) && !processIsExited)
-                        {
-                            DataReceivedCall(stra);
-                        }
+                        DataReceivedCall(stra);
                     }
-                    void Exited()
+                }
+                void Exited()
+                {
+                    string timecount = "";
+                    var x = Regex.Match(datarecevied, @"eac3to processing took (\d+) second");
+                    if (x.Success)
                     {
-                        string timecount = "";
-                        var x = Regex.Match(datarecevied, @"eac3to processing took (\d+) second");
-                        if (x.Success)
+                        timecount = x.Groups[1].ToString();
+                        datarecevied = datarecevied.Replace("\x08", "").Replace(@"-------------------------------------------------------------------------------", "").Replace(@"---------", "").Replace("                                                                               ", "");
+                        if (Regex.IsMatch(datarecevied, @"Applying.*delay"))
                         {
-                            timecount = x.Groups[1].ToString();
-                            if (Regex.IsMatch(datarecevied, @"Applying.*delay"))
-                            {
-                                ExitedCall(LanguageApi.FindRes("demux") + LanguageApi.FindRes("finish") + ", " + LanguageApi.FindRes("demuxAutoFixDelay") + ", " + LanguageApi.FindRes("timeConsuming") + " " + timecount + " " + LanguageApi.FindRes("second"));
-                            }
-                            else
-                            {
-                                ExitedCall(LanguageApi.FindRes("demux") + LanguageApi.FindRes("finish") + ", " + LanguageApi.FindRes("timeConsuming") + " " + timecount + " " + LanguageApi.FindRes("second"));
-                            }
+                            ExitedCall("eac3to" + LanguageApi.FindRes("demux") + LanguageApi.FindRes("finish") + ", " + LanguageApi.FindRes("demuxAutoFixDelay") + ", " + LanguageApi.FindRes("timeConsuming") + " " + timecount + " " + LanguageApi.FindRes("second"));
                         }
                         else
                         {
-                            ExitedCall(LanguageApi.FindRes("demux") + LanguageApi.FindRes("error"));
+                            ExitedCall("eac3to" + LanguageApi.FindRes("demux") + LanguageApi.FindRes("finish") + ", " + LanguageApi.FindRes("timeConsuming") + " " + timecount + " " + LanguageApi.FindRes("second"));
                         }
                     }
-                    return;
+                    else
+                    {
+                        ExitedCall("eac3to" + LanguageApi.FindRes("demux") + LanguageApi.FindRes("error"));
+                    }
                 }
+            }
 
-                //其余均使用ffmpeg
-                clipath = MainWindow.binpath + @"\tools\ffmpeg\";
+            static void ffmpegDemux(string inputpath, Action<string> DataReceivedCall, Action<string> ExitedCall)
+            {
+                string common = "";
+                //使用ffmpeg
+                string clipath = MainWindow.binpath + @"\tools\ffmpeg\";
                 string defaultcommon = @"ffmpeg.exe" + " -hide_banner -y ";
                 string info = ProcessApi.RunSyncProcess(clipath, defaultcommon + "-i " + "\"" + inputpath + "\"");
                 var x = Regex.Matches(info, @"Stream #(\d+:\d+).*?: (.*?): (.*?)\s");
                 if (x.Count > 0)
                 {
                     string commonParameter = "";
-                    bool isAttachmentDump = false;
                     for (int i = 0; i < x.Count; i++)
                     {
-                        if (x[i].Groups[2].Value == "Attachment")
-                        {
-                            if (isAttachmentDump == false)
-                            {
-                                commonParameter += " -dump_attachment:t \"\"";
-                            }
-                            isAttachmentDump = true;
-                        }
-                        else if (x[i].Groups[2].Value == "Data")
-                        {
-                            continue;
-                        }
-                        else
+                        if (x[i].Groups[2].Value == "Video" || x[i].Groups[2].Value == "Audio" || x[i].Groups[2].Value == "Subtitle")
                         {
                             commonParameter += " -map " + x[i].Groups[1].Value + " -c copy " + "\"" + Path.GetDirectoryName(inputpath) + @"\" + Path.GetFileNameWithoutExtension(inputpath) + "." + x[i].Groups[3].Value + "\"";
                         }
@@ -110,18 +130,13 @@ namespace VSGUI.API
                     }
                     void Exited()
                     {
-                        ExitedCall(LanguageApi.FindRes("demux") + LanguageApi.FindRes("finish"));
+                        ExitedCall("ffmpeg" + LanguageApi.FindRes("demux") + LanguageApi.FindRes("finish"));
                     }
                 }
                 else
                 {
-                    ExitedCall(LanguageApi.FindRes("demux") + LanguageApi.FindRes("error"));
+                    ExitedCall("ffmpeg" + LanguageApi.FindRes("demux") + LanguageApi.FindRes("error"));
                 }
-            }
-            else
-            {
-                MessageBoxApi.Show(LanguageApi.FindRes("fileNotExist"), LanguageApi.FindRes("error"));
-                return;
             }
         }
     }
