@@ -408,6 +408,7 @@
                                                 <ComboBoxItem Content="auto"/>
                                                 <ComboBoxItem Content="ffmpeg"/>
                                                 <ComboBoxItem Content="eac3to"/>
+                                                <ComboBoxItem Content="mkvextract"/>
                                             </ComboBox>
                                             <Button x:Name="demuxStartButton" Content="{DynamicResource demux}" Style="{StaticResource ButtonPrimary}" Margin="6,0,0,0" Click="DemuxStartButton_Click"/>
                                         </DockPanel>

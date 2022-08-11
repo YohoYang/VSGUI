@@ -116,7 +116,7 @@ namespace VSGUI.API
         /// </summary>
         /// <param name="common"></param>
         /// <returns></returns>
-        public static string RunSyncProcess(string clipath, string common)
+        public static string RunSyncProcess(string clipath, string common, bool outputUTF8 = false)
         {
             tempOutputStr = "";
             Process proc = new Process
@@ -132,7 +132,12 @@ namespace VSGUI.API
                 }
             };
 
+            if (outputUTF8)
+            {
+                proc.StartInfo.StandardOutputEncoding = Encoding.UTF8;
+            }
             proc.StartInfo.StandardErrorEncoding = Encoding.UTF8;
+
 
             proc.OutputDataReceived += Proc_DataReceived;
             proc.ErrorDataReceived += Proc_DataReceived;
@@ -156,7 +161,7 @@ namespace VSGUI.API
         }
 
 
-        public static void RunProcess(string clipath, string common, Action<DataReceivedEventArgs, bool> inDataReceived, Action inExited, out string processid)
+        public static void RunProcess(string clipath, string common, Action<DataReceivedEventArgs, bool> inDataReceived, Action inExited, out string processid, bool outputUTF8 = false)
         {
 
             Process proc = new Process
@@ -172,6 +177,10 @@ namespace VSGUI.API
                 }
             };
 
+            if (outputUTF8)
+            {
+                proc.StartInfo.StandardOutputEncoding = Encoding.UTF8;
+            }
             proc.StartInfo.StandardErrorEncoding = Encoding.UTF8;
 
             proc.OutputDataReceived += Proc_DataReceived;
