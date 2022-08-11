@@ -135,5 +135,10 @@
     <system:String x:Key="autoGenerateCut">输入vpy脚本时，自动读取Cuts信息</system:String>
     <system:String x:Key="autoGenerateCutDesc">在高级压制模式下，输入vpy脚本时，自动从脚本中读取剪辑脚本，并填写到音频信息区（仅支持单变量）。</system:String>
     <system:String x:Key="queueDeleteCacheTipsDesc">任务存在如下临时文件，是否删除？</system:String>
+    <system:String x:Key="notInstalled">未安装</system:String>
+    <system:String x:Key="useSystemEnvironment">使用系统环境</system:String>
+    <system:String x:Key="useSystemEnvironmentDesc">使用系统中的Python及Vapoursynth替代软件内置环境。需要在未关联软件内置VsEditor编辑器，且系统检测到已安装时才能启用。</system:String>
+    <system:String x:Key="system">系统</system:String>
+    <system:String x:Key="buildin">内置</system:String>
 
 </ResourceDictionary>

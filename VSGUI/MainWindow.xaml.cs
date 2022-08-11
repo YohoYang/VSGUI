@@ -61,6 +61,9 @@ namespace VSGUI
 
             //更新vseditor关联状态
             UpdateVseditorButtonStatus();
+
+            //获取py和vs版本的情况
+            UpdateVersion();
         }
 
         /// <summary>
@@ -1177,6 +1180,36 @@ namespace VSGUI
                 installvseditorbutton.Visibility = Visibility.Visible;
                 uninstallvseditorbutton.Visibility = Visibility.Collapsed;
             }
+        }
+
+        private void UpdateVersion()
+        {
+            new Thread(
+                () =>
+                {
+                    string[] versionList = VersionApi.GetVersion();
+                    bool isSysEnvironmentReady = false;
+                    if (versionList[2] != null && versionList[3] != null)
+                    {
+                        isSysEnvironmentReady = true;
+                    }
+                    Dispatcher.Invoke(() =>
+                    {
+                        if (isSysEnvironmentReady == false)
+                        {
+                            UseSystemEnvironment.IsEnabled = false;
+                        }
+                        buildinpyvertext.Text = versionList[0];
+                        if (versionList[0] == null) buildinpyvertext.Text = LanguageApi.FindRes("notInstalled");
+                        buildinvsvertext.Text = versionList[1];
+                        if (versionList[1] == null) buildinvsvertext.Text = LanguageApi.FindRes("notInstalled");
+                        systempyvertext.Text = versionList[2];
+                        if (versionList[2] == null) systempyvertext.Text = LanguageApi.FindRes("notInstalled");
+                        systemvsvertext.Text = versionList[3];
+                        if (versionList[3] == null) systemvsvertext.Text = LanguageApi.FindRes("notInstalled");
+                    });
+                }
+                ).Start();
         }
 
         private void StartVsrepoButton_Click(object sender, RoutedEventArgs e)

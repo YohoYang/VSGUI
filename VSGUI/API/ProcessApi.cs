@@ -123,7 +123,6 @@ namespace VSGUI.API
             {
                 StartInfo = new ProcessStartInfo("cmd")
                 {
-                    WorkingDirectory = clipath,
                     CreateNoWindow = true,
                     UseShellExecute = false,
                     RedirectStandardInput = true,
@@ -131,6 +130,11 @@ namespace VSGUI.API
                     RedirectStandardOutput = true
                 }
             };
+
+            if (clipath != "")
+            {
+                proc.StartInfo.WorkingDirectory = clipath;
+            }
 
             if (outputUTF8)
             {
@@ -168,7 +172,6 @@ namespace VSGUI.API
             {
                 StartInfo = new ProcessStartInfo("cmd")
                 {
-                    WorkingDirectory = clipath,
                     CreateNoWindow = true,
                     UseShellExecute = false,
                     RedirectStandardInput = true,
@@ -176,6 +179,11 @@ namespace VSGUI.API
                     RedirectStandardOutput = true,
                 }
             };
+
+            if (clipath != "")
+            {
+                proc.StartInfo.WorkingDirectory = clipath;
+            }
 
             if (outputUTF8)
             {

@@ -551,7 +551,7 @@
                                     </WrapPanel>
                                     <hc:Divider Margin="0"/>
                                     <CheckBox x:Name="AutoUpdate" Content="{DynamicResource autoupdate}" Checked="ConfigCheckBox_Checked" Unchecked="ConfigCheckBox_Checked"></CheckBox>
-                                    <TextBlock Text="{DynamicResource autoupdatedesc}" Margin="23,0,0,0" />
+                                    <TextBlock Text="{DynamicResource autoupdatedesc}" Margin="23,0,0,0" TextWrapping="Wrap"/>
                                     <hc:Divider Margin="0"/>
                                     <Grid>
                                         <Grid.ColumnDefinitions>
@@ -571,10 +571,27 @@
                                     </Grid>
                                     <hc:Divider Margin="0"/>
                                     <CheckBox x:Name="AutoStartQueue" Content="{DynamicResource autostartqueue}" Checked="ConfigCheckBox_Checked" Unchecked="ConfigCheckBox_Checked"></CheckBox>
-                                    <TextBlock Text="{DynamicResource autostartqueuedesc}" Margin="23,0,0,0" />
+                                    <TextBlock Text="{DynamicResource autostartqueuedesc}" Margin="23,0,0,0" TextWrapping="Wrap"/>
                                     <hc:Divider Margin="0"/>
                                     <CheckBox x:Name="AutoGenerateCut" Content="{DynamicResource autoGenerateCut}" Checked="ConfigCheckBox_Checked" Unchecked="ConfigCheckBox_Checked"></CheckBox>
-                                    <TextBlock Text="{DynamicResource autoGenerateCutDesc}" Margin="23,0,0,0" />
+                                    <TextBlock Text="{DynamicResource autoGenerateCutDesc}" Margin="23,0,0,0" TextWrapping="Wrap"/>
+                                    <hc:Divider Margin="0"/>
+                                    <CheckBox x:Name="UseSystemEnvironment" Content="{DynamicResource useSystemEnvironment}" Checked="ConfigCheckBox_Checked" Unchecked="ConfigCheckBox_Checked"></CheckBox>
+                                    <TextBlock Text="{DynamicResource useSystemEnvironmentDesc}" Margin="23,0,0,0" TextWrapping="Wrap"/>
+                                    <DockPanel Margin="23,0,0,0">
+                                        <TextBlock Text="{DynamicResource buildin}" />
+                                        <TextBlock Text=":" />
+                                        <TextBlock Text="py" Margin="8,0,0,0"/>
+                                        <TextBlock x:Name="buildinpyvertext" Text="..."  Margin="4,0,0,0" TextDecorations="Underline"/>
+                                        <TextBlock Text="vs"  Margin="8,0,0,0"/>
+                                        <TextBlock x:Name="buildinvsvertext" Text="..."  Margin="4,0,0,0" TextDecorations="Underline"/>
+                                        <TextBlock Text="{DynamicResource system}" Margin="14,0,0,0"/>
+                                        <TextBlock Text=":" />
+                                        <TextBlock Text="py" Margin="8,0,0,0"/>
+                                        <TextBlock x:Name="systempyvertext" Text="..."  Margin="4,0,0,0" TextDecorations="Underline"/>
+                                        <TextBlock Text="vs"  Margin="8,0,0,0"/>
+                                        <TextBlock x:Name="systemvsvertext" Text="..."  Margin="4,0,0,0" TextDecorations="Underline"/>
+                                    </DockPanel>
                                     <hc:Divider Margin="0"/>
                                 </hc:UniformSpacingPanel>
                             </StackPanel>
