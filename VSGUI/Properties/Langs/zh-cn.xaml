@@ -49,6 +49,7 @@
     <system:String x:Key="associationvpy">关联vpy文件</system:String>
     <system:String x:Key="associationvpydesc">使vpy格式的文件关联VapourSynth编辑器，双击即可直接启动（需要管理员权限）</system:String>
     <system:String x:Key="association">关联</system:String>
+    <system:String x:Key="associated">已关联</system:String>
     <system:String x:Key="disassociation">取消关联</system:String>
     <system:String x:Key="softwarelanguage">软件语言</system:String>
     <system:String x:Key="autoupdate">自动更新软件</system:String>
@@ -137,7 +138,7 @@
     <system:String x:Key="queueDeleteCacheTipsDesc">任务存在如下临时文件，是否删除？</system:String>
     <system:String x:Key="notInstalled">未安装</system:String>
     <system:String x:Key="useSystemEnvironment">使用系统环境</system:String>
-    <system:String x:Key="useSystemEnvironmentDesc">使用系统中的Python及Vapoursynth替代软件内置环境。需要在未关联软件内置VsEditor编辑器，且系统检测到已安装时才能启用。</system:String>
+    <system:String x:Key="useSystemEnvironmentDesc">使用系统中的Python及Vapoursynth替代软件内置环境。需要在未关联软件内置VsEditor编辑器，且系统检测到已安装时才能启用。仅对重新添加队列的任务生效。</system:String>
     <system:String x:Key="system">系统</system:String>
     <system:String x:Key="buildin">内置</system:String>
 

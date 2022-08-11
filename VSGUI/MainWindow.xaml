@@ -521,7 +521,14 @@
                                                     <RowDefinition Height="*"/>
                                                 </Grid.RowDefinitions>
                                                 <hc:UniformSpacingPanel Grid.Row="0" Spacing="6" Orientation="Vertical" VerticalAlignment="Bottom" Margin="0,0,0,5">
-                                                    <TextBlock Text="{DynamicResource associationvpy}"/>
+                                                    <DockPanel>
+                                                        <TextBlock Text="{DynamicResource associationvpy}"/>
+                                                        <DockPanel x:Name="associatedVpyPanel" Visibility="Collapsed">
+                                                            <TextBlock Text="(" Margin="8,0,0,0" Foreground="Green"/>
+                                                            <TextBlock Text="{DynamicResource associated}" Foreground="Green"/>
+                                                            <TextBlock Text=")" Foreground="Green"/>
+                                                        </DockPanel>
+                                                    </DockPanel>
                                                     <TextBlock VerticalAlignment="Center" Text="{DynamicResource associationvpydesc}" TextWrapping="Wrap" HorizontalAlignment="Left"/>
                                                 </hc:UniformSpacingPanel>
                                                 <Button Grid.Row="1" x:Name="installvseditorbutton" Content="{DynamicResource association}" Style="{StaticResource ButtonPrimary}" Margin="4,0,0,0" Click="InstallVseditorButton_Click" HorizontalAlignment="Stretch" VerticalAlignment="Bottom"/>
@@ -576,22 +583,29 @@
                                     <CheckBox x:Name="AutoGenerateCut" Content="{DynamicResource autoGenerateCut}" Checked="ConfigCheckBox_Checked" Unchecked="ConfigCheckBox_Checked"></CheckBox>
                                     <TextBlock Text="{DynamicResource autoGenerateCutDesc}" Margin="23,0,0,0" TextWrapping="Wrap"/>
                                     <hc:Divider Margin="0"/>
-                                    <CheckBox x:Name="UseSystemEnvironment" Content="{DynamicResource useSystemEnvironment}" Checked="ConfigCheckBox_Checked" Unchecked="ConfigCheckBox_Checked"></CheckBox>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        <CheckBox x:Name="UseSystemEnvironment" Content="{DynamicResource useSystemEnvironment}" Checked="ConfigCheckBox_Checked" Unchecked="ConfigCheckBox_Checked"></CheckBox>
+                                        <DockPanel Grid.Column="1" Height="16" VerticalAlignment="Center">
+                                            <TextBlock Text="{DynamicResource buildin}" />
+                                            <TextBlock Text=":" />
+                                            <TextBlock Text="py" Margin="8,0,0,0"/>
+                                            <TextBlock x:Name="buildinpyvertext" Text="..."  Margin="4,0,0,0" TextDecorations="Underline"/>
+                                            <TextBlock Text="vs"  Margin="8,0,0,0"/>
+                                            <TextBlock x:Name="buildinvsvertext" Text="..."  Margin="4,0,0,0" TextDecorations="Underline"/>
+                                            <TextBlock Text="{DynamicResource system}" Margin="14,0,0,0"/>
+                                            <TextBlock Text=":" />
+                                            <TextBlock Text="py" Margin="8,0,0,0"/>
+                                            <TextBlock x:Name="systempyvertext" Text="..."  Margin="4,0,0,0" TextDecorations="Underline"/>
+                                            <TextBlock Text="vs"  Margin="8,0,0,0"/>
+                                            <TextBlock x:Name="systemvsvertext" Text="..."  Margin="4,0,0,0" TextDecorations="Underline"/>
+                                        </DockPanel>
+                                    </Grid>
                                     <TextBlock Text="{DynamicResource useSystemEnvironmentDesc}" Margin="23,0,0,0" TextWrapping="Wrap"/>
-                                    <DockPanel Margin="23,0,0,0">
-                                        <TextBlock Text="{DynamicResource buildin}" />
-                                        <TextBlock Text=":" />
-                                        <TextBlock Text="py" Margin="8,0,0,0"/>
-                                        <TextBlock x:Name="buildinpyvertext" Text="..."  Margin="4,0,0,0" TextDecorations="Underline"/>
-                                        <TextBlock Text="vs"  Margin="8,0,0,0"/>
-                                        <TextBlock x:Name="buildinvsvertext" Text="..."  Margin="4,0,0,0" TextDecorations="Underline"/>
-                                        <TextBlock Text="{DynamicResource system}" Margin="14,0,0,0"/>
-                                        <TextBlock Text=":" />
-                                        <TextBlock Text="py" Margin="8,0,0,0"/>
-                                        <TextBlock x:Name="systempyvertext" Text="..."  Margin="4,0,0,0" TextDecorations="Underline"/>
-                                        <TextBlock Text="vs"  Margin="8,0,0,0"/>
-                                        <TextBlock x:Name="systemvsvertext" Text="..."  Margin="4,0,0,0" TextDecorations="Underline"/>
-                                    </DockPanel>
+
                                     <hc:Divider Margin="0"/>
                                 </hc:UniformSpacingPanel>
                             </StackPanel>

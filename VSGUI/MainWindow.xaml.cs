@@ -1174,11 +1174,13 @@ namespace VSGUI
             {
                 installvseditorbutton.Visibility = Visibility.Collapsed;
                 uninstallvseditorbutton.Visibility = Visibility.Visible;
+                associatedVpyPanel.Visibility = Visibility.Visible;
             }
             else
             {
                 installvseditorbutton.Visibility = Visibility.Visible;
                 uninstallvseditorbutton.Visibility = Visibility.Collapsed;
+                associatedVpyPanel.Visibility = Visibility.Collapsed;
             }
         }
 
@@ -1197,7 +1199,10 @@ namespace VSGUI
                     {
                         if (isSysEnvironmentReady == false)
                         {
-                            UseSystemEnvironment.IsEnabled = false;
+                            if (CommonApi.CheckVSEditorInstall() != 2)
+                            {
+                                UseSystemEnvironment.IsEnabled = false;
+                            }
                         }
                         buildinpyvertext.Text = versionList[0];
                         if (versionList[0] == null) buildinpyvertext.Text = LanguageApi.FindRes("notInstalled");
