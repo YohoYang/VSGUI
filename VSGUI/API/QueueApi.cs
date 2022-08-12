@@ -259,18 +259,32 @@ namespace VSGUI.API
             bool isError = false;
             if (QueueApi.GetQueueListitem(queueid, "status") == "running")
             {
+                string tempOutput = QueueApi.GetQueueListitem(queueid, "outputtemp");
                 //改名
-                if (QueueApi.GetQueueListitem(queueid, "outputtemp") != "")
+                if (tempOutput != "")
                 {
-                    try
+                    isError = true;
+                    if (File.Exists(tempOutput))
                     {
-                        File.Move(QueueApi.GetQueueListitem(queueid, "outputtemp").Replace("\"", ""), QueueApi.GetQueueListitem(queueid, "output").Replace("\"", ""), true);
+                        FileInfo file = new FileInfo(tempOutput);
+                        if (file.Length != 0)
+                        {
+                            try
+                            {
+                                File.Move(QueueApi.GetQueueListitem(queueid, "outputtemp").Replace("\"", ""), QueueApi.GetQueueListitem(queueid, "output").Replace("\"", ""), true);
+                                isError = false;
+                            }
+                            catch (Exception)
+                            {
+
+                            }
+                        }
                     }
-                    catch (Exception)
+
+                    if (isError)
                     {
                         QueueApi.SetQueueListitem(queueid, "status", "error");
                         QueueApi.SetQueueListitem(queueid, "statustext", LanguageApi.FindRes("error"));
-                        isError = true;
                     }
                 }
                 //
