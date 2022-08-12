@@ -717,7 +717,12 @@ namespace VSGUI
                     //写入totalframes
                     QueueApi.UpdateTotalframes(queueid);
 
-                    ProcessApi.RunProcess(QueueApi.GetQueueListitem(queueid, "clipath"), QueueApi.GetQueueListitem(queueid, "command"), DataReceived, Exited, out string pid);
+                    string clipath = QueueApi.GetQueueListitem(queueid, "clipath");
+                    if (QueueApi.GetQueueListitem(queueid, "type") == "video" && IniApi.IniReadValue("UseSystemEnvironment") == "true")
+                    {
+                        clipath = "";
+                    }
+                    ProcessApi.RunProcess(clipath, QueueApi.GetQueueListitem(queueid, "command"), DataReceived, Exited, out string pid);
 
                     QueueApi.SetQueueListitem(queueid, "processTheadId", pid);
 
@@ -1199,10 +1204,12 @@ namespace VSGUI
                     {
                         if (isSysEnvironmentReady == false)
                         {
-                            if (CommonApi.CheckVSEditorInstall() != 2)
-                            {
-                                //UseSystemEnvironment.IsEnabled = false;
-                            }
+                            UseSystemEnvironment.IsEnabled = false;
+                            UseSystemEnvironment.IsChecked = false;
+                        }
+                        if (CommonApi.CheckVSEditorInstall() == 2 && IniApi.IniReadValue("UseSystemEnvironment") == "true")
+                        {
+                            MessageBoxApi.Show(LanguageApi.FindRes("useSystemEnvironmentWarningVsEditor"), LanguageApi.FindRes("tips"));
                         }
                         buildinpyvertext.Text = versionList[0];
                         if (versionList[0] == null) buildinpyvertext.Text = LanguageApi.FindRes("notInstalled");

@@ -138,10 +138,11 @@
     <system:String x:Key="queueDeleteCacheTipsDesc">The following temporary files exist in the task. Do you want to delete them?</system:String>
     <system:String x:Key="notInstalled">Not Installed</system:String>
     <system:String x:Key="useSystemEnvironment">Use system environment</system:String>
-    <system:String x:Key="useSystemEnvironmentDesc">Use the system's Python and Vapoursynth to replace the software built-in environment. It needs to be enabled when the VsEditor editor is built into the unassociated software and the system detects that it is installed.Only takes effect for tasks that are re-queued.</system:String>
+    <system:String x:Key="useSystemEnvironmentDesc">Use the system's Python and Vapoursynth to replace the software built-in environment. It needs to be the system detects that it is installed.</system:String>
     <system:String x:Key="system">system</system:String>
     <system:String x:Key="buildin">build-in</system:String>
     <system:String x:Key="enableLog">Enable Log</system:String>
     <system:String x:Key="enableLogDesc">After it is enabled, a log directory will be created in the software directory, and the output of task execution will be saved for troubleshooting and feedback.</system:String>
+    <system:String x:Key="useSystemEnvironmentWarningVsEditor">You have enabled the system environment feature, but you are still associated with the built-in VsEditor editor. The built-in editors always use the built-in Python and Vapoursynth, it is recommended that you disassociate and install additional editors yourself.</system:String>
 
 </ResourceDictionary>

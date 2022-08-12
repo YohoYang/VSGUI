@@ -586,7 +586,7 @@
                                     <CheckBox x:Name="EnableLog" Content="{DynamicResource enableLog}" Checked="ConfigCheckBox_Checked" Unchecked="ConfigCheckBox_Checked"></CheckBox>
                                     <TextBlock Text="{DynamicResource enableLogDesc}" Margin="23,0,0,0" TextWrapping="Wrap"/>
                                     <hc:Divider Margin="0"/>
-                                    <Grid Visibility="Collapsed">
+                                    <Grid>
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="*"/>
                                             <ColumnDefinition Width="auto"/>
@@ -607,7 +607,7 @@
                                             <TextBlock x:Name="systemvsvertext" Text="..."  Margin="4,0,0,0" TextDecorations="Underline"/>
                                         </DockPanel>
                                     </Grid>
-                                    <TextBlock  Visibility="Collapsed" Text="{DynamicResource useSystemEnvironmentDesc}" Margin="23,0,0,0" TextWrapping="Wrap"/>
+                                    <TextBlock Text="{DynamicResource useSystemEnvironmentDesc}" Margin="23,0,0,0" TextWrapping="Wrap"/>
 
                                     <hc:Divider Margin="0"/>
                                 </hc:UniformSpacingPanel>
