@@ -100,12 +100,12 @@ namespace VSGUI.API
                 string ext = Path.GetExtension(inputpath);
                 if (ext == ".thd+ac3")
                 {
-                    common = @"eac3to.exe" + " -demux " + "\"" + inputpath + "\"" + " " + "\"" + inputpath + @".thd" + "\"" + " -log=nul" + " && " + @"eac3to.exe" + " " + "\"" + inputpath + "\"" + " " + "\"" + inputpath + @".ac3" + "\"" + " -log=nul";
+                    common = @"eac3to.exe" + " " + "\"" + inputpath + "\"" + " " + "\"" + inputpath + @".thd" + "\"" + " -log=nul" + " && " + @"eac3to.exe" + " " + "\"" + inputpath + "\"" + " " + "\"" + inputpath + @".ac3" + "\"" + " -log=nul";
                     stra = LanguageApi.FindRes("demuxThdAc3") + "...";
                 }
                 else
                 {
-                    common = @"eac3to.exe" + " -demux " + "\"" + inputpath + "\"" + " " + "\"" + inputpath + @".*" + "\"" + " -log=nul";
+                    common = @"eac3to.exe" + " " + "\"" + inputpath + "\"" + " " + "\"" + inputpath + @".*" + "\"" + " -log=nul";
                     stra = LanguageApi.FindRes("demuxing") + "...";
                 }
                 ProcessApi.RunProcess(clipath, common, DataReceived, Exited, out string pid);
@@ -119,19 +119,19 @@ namespace VSGUI.API
                 }
                 void Exited()
                 {
-                    string timecount = "";
-                    var x = Regex.Match(datarecevied, @"eac3to processing took (\d+) second");
-                    if (x.Success)
+                    //string timecount = "";
+                    //var x = Regex.Match(datarecevied, @"eac3to processing took (\d+) second");
+                    if (datarecevied.Contains("eac3to processing took"))
                     {
-                        timecount = x.Groups[1].ToString();
+                        //timecount = x.Groups[1].ToString();
                         datarecevied = datarecevied.Replace("\x08", "").Replace(@"-------------------------------------------------------------------------------", "").Replace(@"---------", "").Replace("                                                                               ", "");
                         if (Regex.IsMatch(datarecevied, @"Applying.*delay"))
                         {
-                            ExitedCall("eac3to" + LanguageApi.FindRes("demux") + LanguageApi.FindRes("finish") + ", " + LanguageApi.FindRes("demuxAutoFixDelay") + ", " + LanguageApi.FindRes("timeConsuming") + " " + timecount + " " + LanguageApi.FindRes("second"));
+                            ExitedCall("eac3to" + LanguageApi.FindRes("demux") + LanguageApi.FindRes("finish") + ", " + LanguageApi.FindRes("demuxAutoFixDelay") /*+ ", " + LanguageApi.FindRes("timeConsuming") + " " + timecount + " " + LanguageApi.FindRes("second")*/);
                         }
                         else
                         {
-                            ExitedCall("eac3to" + LanguageApi.FindRes("demux") + LanguageApi.FindRes("finish") + ", " + LanguageApi.FindRes("timeConsuming") + " " + timecount + " " + LanguageApi.FindRes("second"));
+                            ExitedCall("eac3to" + LanguageApi.FindRes("demux") + LanguageApi.FindRes("finish") /*+ ", " + LanguageApi.FindRes("timeConsuming") + " " + timecount + " " + LanguageApi.FindRes("second")*/);
                         }
                     }
                     else

@@ -148,7 +148,7 @@ namespace VSGUI.API
 
             proc.EnableRaisingEvents = true;
             proc.Start();
-            proc.StandardInput.WriteLine(common + "&exit");
+            proc.StandardInput.WriteLine(common + @"&echo %date%&exit");
 
             proc.BeginOutputReadLine();
             proc.BeginErrorReadLine();
@@ -202,7 +202,7 @@ namespace VSGUI.API
             QueueApi.runningQueueCount += 1;
             processid = proc.Id.ToString();
 
-            proc.StandardInput.WriteLine(common + "&exit");
+            proc.StandardInput.WriteLine(common + @"&echo %date%&exit");
 
             proc.BeginOutputReadLine();
             proc.BeginErrorReadLine();
