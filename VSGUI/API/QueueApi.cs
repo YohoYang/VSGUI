@@ -817,7 +817,7 @@ namespace VSGUI.API
                 string inputsuffix = Path.GetExtension(inputpath);
                 if (inputsuffix == ".ts" || inputsuffix == ".mkv" || inputsuffix == ".m2ts")
                 {
-                    string result = ProcessApi.RunSyncProcess(MainWindow.binpath + @"\tools\eac3to\", @"eac3to.exe" + "\"" + " " + "\"" + inputpath + "\"");
+                    string result = ProcessApi.RunSyncProcess(MainWindow.binpath + @"\tools\eac3to\", @"eac3to.exe" + " " + "\"" + inputpath + "\"");
                     if (result != null)
                     {
                         var x = Regex.Matches(result, @"\d+: (AAC|AC3|WAV|AC3|DTS|THD|FLAC).*");

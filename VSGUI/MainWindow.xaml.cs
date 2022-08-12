@@ -24,7 +24,7 @@ namespace VSGUI
     {
         public static string binpath = Directory.GetCurrentDirectory() + @"\bin";
         private bool forcedStop = false;
-        private string coreversion = "v0.2.7";
+        private string coreversion = "v0.2.8";
 
         public MainWindow()
         {
@@ -1201,7 +1201,7 @@ namespace VSGUI
                         {
                             if (CommonApi.CheckVSEditorInstall() != 2)
                             {
-                                UseSystemEnvironment.IsEnabled = false;
+                                //UseSystemEnvironment.IsEnabled = false;
                             }
                         }
                         buildinpyvertext.Text = versionList[0];

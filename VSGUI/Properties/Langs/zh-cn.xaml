@@ -141,5 +141,7 @@
     <system:String x:Key="useSystemEnvironmentDesc">使用系统中的Python及Vapoursynth替代软件内置环境。需要在未关联软件内置VsEditor编辑器，且系统检测到已安装时才能启用。仅对重新添加队列的任务生效。</system:String>
     <system:String x:Key="system">系统</system:String>
     <system:String x:Key="buildin">内置</system:String>
+    <system:String x:Key="enableLog">启用日志</system:String>
+    <system:String x:Key="enableLogDesc">启用后将在软件目录新建log目录，并保存任务执行的输出，便于排查错误和反馈。</system:String>
 
 </ResourceDictionary>

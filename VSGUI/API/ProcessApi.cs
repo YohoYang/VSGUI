@@ -157,16 +157,19 @@ namespace VSGUI.API
             void Proc_DataReceived(object sender, DataReceivedEventArgs e)
             {
                 Debug.WriteLine(e.Data);
-                tempOutputStr += e.Data + "\r\n";
+                tempOutputStr += e.Data + "\n";
             }
 
             proc.WaitForExit();
+
+            LogApi.WriteLog(tempOutputStr);
             return tempOutputStr;
         }
 
 
         public static void RunProcess(string clipath, string common, Action<DataReceivedEventArgs, bool> inDataReceived, Action inExited, out string processid, bool outputUTF8 = false)
         {
+            string tempLogStr = "";
 
             Process proc = new Process
             {
@@ -207,12 +210,14 @@ namespace VSGUI.API
             void Proc_Exited(object? sender, EventArgs e)
             {
                 QueueApi.runningQueueCount -= 1;
+                LogApi.WriteLog(tempLogStr);
                 inExited();
             }
 
             void Proc_DataReceived(object sender, DataReceivedEventArgs e)
             {
                 Debug.WriteLine(e.Data);
+                tempLogStr += e.Data + "\n";
                 inDataReceived(e, proc.HasExited);
             }
         }

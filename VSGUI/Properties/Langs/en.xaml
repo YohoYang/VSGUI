@@ -141,6 +141,7 @@
     <system:String x:Key="useSystemEnvironmentDesc">Use the system's Python and Vapoursynth to replace the software built-in environment. It needs to be enabled when the VsEditor editor is built into the unassociated software and the system detects that it is installed.Only takes effect for tasks that are re-queued.</system:String>
     <system:String x:Key="system">system</system:String>
     <system:String x:Key="buildin">build-in</system:String>
-
+    <system:String x:Key="enableLog">Enable Log</system:String>
+    <system:String x:Key="enableLogDesc">After it is enabled, a log directory will be created in the software directory, and the output of task execution will be saved for troubleshooting and feedback.</system:String>
 
 </ResourceDictionary>
