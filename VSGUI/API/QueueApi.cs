@@ -583,7 +583,7 @@ namespace VSGUI.API
                     string command = ProcessCommandStr(int.Parse(queueid), "video", int.Parse(GetQueueListitem(queueid, "encoderid")), new string[] { GetQueueListitem(queueid, "input") }, GetQueueListitem(queueid, "output"), scriptpath, out string temp1, out string temp2);
                     SetQueueListitem(queueid, "script", script);
                     SetQueueListitem(queueid, "scriptfilepath", scriptpath);
-                    SetQueueListitem(queueid, "deletefile", GetQueueListitem(queueid, "deletefile") + "|" + scriptpath);
+                    if (!GetQueueListitem(queueid, "deletefile").Contains(scriptpath)) SetQueueListitem(queueid, "deletefile", GetQueueListitem(queueid, "deletefile") + "|" + scriptpath);
                     SetQueueListitem(queueid, "command", command);
                 }
             }
@@ -596,7 +596,7 @@ namespace VSGUI.API
                     string command = ProcessCommandStr(int.Parse(queueid), "audio", int.Parse(GetQueueListitem(queueid, "encoderid")), new string[] { GetQueueListitem(queueid, "input") }, GetQueueListitem(queueid, "output"), scriptpath, out string temp1, out string temp2);
                     SetQueueListitem(queueid, "script", script);
                     SetQueueListitem(queueid, "scriptfilepath", scriptpath);
-                    SetQueueListitem(queueid, "deletefile", GetQueueListitem(queueid, "deletefile") + "|" + scriptpath);
+                    if (!GetQueueListitem(queueid, "deletefile").Contains(scriptpath)) SetQueueListitem(queueid, "deletefile", GetQueueListitem(queueid, "deletefile") + "|" + scriptpath);
                     SetQueueListitem(queueid, "command", command);
                 }
             }
