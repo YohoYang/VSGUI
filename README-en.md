@@ -9,7 +9,7 @@ A video encode GUI like MeGUI for VapourSynth.
 
 ### Download
 
-[Software](https://github.com/YohoYang/VSGUI/releases/download/v0.2.0/VSGUI-v0.2.0.zip)
+[Software](https://github.com/YohoYang/VSGUI/releases/download/v0.3.0/VSGUI-v0.3.0.zip)
 
 [.NET 6 Runtime](https://aka.ms/dotnet/6.0/windowsdesktop-runtime-win-x64.exe)
 
