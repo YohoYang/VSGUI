@@ -716,7 +716,7 @@ namespace VSGUI.API
                                             }
                                         }
                                         //获取裁剪参数
-                                        var x1 = Regex.Matches(listitem, @".*?\.std\.Trim\((.*?),(.*?)\)|([0-9a-zA-Z]*?)\[(.*?)\]");
+                                        var x1 = Regex.Matches(listitem, @".*?\.std\.Trim\((.*?),(.*?)\)|([0-9a-zA-Z]*?)\[(\d+(?:\:|\,|\s)*\d+)\]");
                                         string linecutstr = "";
                                         if (x1.Count > 0)
                                         {
