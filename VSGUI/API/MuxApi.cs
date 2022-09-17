@@ -26,6 +26,7 @@ namespace VSGUI.API
                         {
                             string ffmeta = ChapterApi.MakeFFmpegMetaData(item);
                             string chapterpath = Path.GetTempPath() + @"vsgui\" + "Job_" + queueid.ToString() + ".txt";
+                            Directory.CreateDirectory(Path.GetTempPath() + @"vsgui\");
                             File.WriteAllText(chapterpath, ffmeta);
                             tempitempath = chapterpath;
                         }
