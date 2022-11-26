@@ -176,37 +176,46 @@ namespace VSGUI
         {
             Dispatcher.Invoke(() =>
             {
-                int lastSelected = QueueListView.SelectedIndex;
-                var queueItemData = QueueApi.GetQueueMember();
-                //更新左侧按钮状态
-                if (QueueApi.runningQueueCount > 0)
+                try
                 {
-                    StartQueueAll.IsEnabled = false;
-                    StopQueueAll.IsEnabled = true;
+                    int lastSelected = QueueListView.SelectedIndex;
+                    var queueItemData = QueueApi.GetQueueMember();
+                    //更新左侧按钮状态
+                    if (QueueApi.runningQueueCount > 0)
+                    {
+                        StartQueueAll.IsEnabled = false;
+                        StopQueueAll.IsEnabled = true;
+                    }
+                    else
+                    {
+                        StartQueueAll.IsEnabled = true;
+                        StopQueueAll.IsEnabled = false;
+                    }
+                    //如果列表空，显示一个东西
+                    if (queueItemData.Count > 0)
+                    {
+                        QueueListEmptyTips.Visibility = Visibility.Collapsed;
+                    }
+                    else
+                    {
+                        QueueListEmptyTips.Visibility = Visibility.Visible;
+                    }
+                    //计算要恢复的选择会不会超出
+                    if (lastSelected >= queueItemData.Count)
+                    {
+                        lastSelected = queueItemData.Count - 1;
+                    }
+                    QueueListView.ItemsSource = queueItemData;
+                    QueueListView.SelectedIndex = lastSelected;
+                    QueueTabHeaderNum.Text = "(" + queueItemData.Count + ")";
+                    queueinfotext.Text = QueueApi.GetQueueInfoText();
                 }
-                else
+                catch (Exception)
                 {
-                    StartQueueAll.IsEnabled = true;
-                    StopQueueAll.IsEnabled = false;
+                    CommonApi.TryDeleteFile(MainWindow.binpath + @"\json\queueList.json");
+                    UpdateQueueList();
+                    return;
                 }
-                //如果列表空，显示一个东西
-                if (queueItemData.Count > 0)
-                {
-                    QueueListEmptyTips.Visibility = Visibility.Collapsed;
-                }
-                else
-                {
-                    QueueListEmptyTips.Visibility = Visibility.Visible;
-                }
-                //计算要恢复的选择会不会超出
-                if (lastSelected >= queueItemData.Count)
-                {
-                    lastSelected = queueItemData.Count - 1;
-                }
-                QueueListView.ItemsSource = queueItemData;
-                QueueListView.SelectedIndex = lastSelected;
-                QueueTabHeaderNum.Text = "(" + queueItemData.Count + ")";
-                queueinfotext.Text = QueueApi.GetQueueInfoText();
             });
         }
 
@@ -514,6 +523,16 @@ namespace VSGUI
             if (!Regex.IsMatch(audiodelaybox.Text, @"^-?\d+") || audiodelaybox.Text == "")
             {
                 MessageBoxApi.Show(LanguageApi.FindRes("delayFormatError"), LanguageApi.FindRes("error"));
+                return;
+            }
+            if (cutischecked.IsChecked == true && AudioApi.CheckCutStrIsError(cuttextbox.Text))
+            {
+                MessageBoxApi.Show(LanguageApi.FindRes("cutstrFormatError"), LanguageApi.FindRes("error"));
+                return;
+            }
+            if (cutischecked.IsChecked == true && fpstextbox.Text == "")
+            {
+                MessageBoxApi.Show(LanguageApi.FindRes("fpsstrFormatError"), LanguageApi.FindRes("error"));
                 return;
             }
 

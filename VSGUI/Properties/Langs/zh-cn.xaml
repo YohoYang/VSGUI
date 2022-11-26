@@ -143,5 +143,7 @@
     <system:String x:Key="enableLog">启用日志</system:String>
     <system:String x:Key="enableLogDesc">启用后将在软件目录新建log目录，并保存任务执行的输出，便于排查错误和反馈。</system:String>
     <system:String x:Key="useSystemEnvironmentWarningVsEditor">您启用了系统环境功能，但您依然关联了内置VsEditor编辑器。内置的编辑器始终使用内置的Python和Vapoursynth，建议您取消关联并自行另外安装编辑器。</system:String>
+    <system:String x:Key="cutstrFormatError">音频切割格式异常</system:String>
+    <system:String x:Key="fpsstrFormatError">fps为空</system:String>
 
 </ResourceDictionary>

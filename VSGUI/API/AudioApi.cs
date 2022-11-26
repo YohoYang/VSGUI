@@ -103,5 +103,47 @@ namespace VSGUI.API
 
             return script;
         }
+
+        public static bool CheckCutStrIsError(string cutstr)
+        {
+            string script = "";
+            try
+            {
+                string[] cutblock = cutstr.Split("&");
+                foreach (var block in cutblock)
+                {
+                    string[] cutliststr = block.Split("+");
+                    for (int i = 0; i < cutliststr.Length; i++)
+                    {
+                        cutliststr[i] = cutliststr[i].Replace(",", ":").Replace("[", "").Replace("]", "");
+                    }
+                    script += int.Parse(cutliststr[cutliststr.Length - 1].Split(":")[1].ToString()) + "\r\n";
+                    for (int i = 0; i < cutliststr.Length; i++)
+                    {
+                        int startf = int.Parse(cutliststr[i].Split(":")[0].ToString());
+                        int endf = int.Parse(cutliststr[i].Split(":")[1].ToString());
+                        script += @"__t" + i + @" = __film.trim(" + startf + ", " + endf + ")" + "\r\n";
+                    }
+                    for (int i = 0; i < cutliststr.Length; i++)
+                    {
+                        script += @"__t" + i;
+                        if (i != cutliststr.Length - 1)
+                        {
+                            script += " ++ ";
+                        }
+                        else
+                        {
+                            script += " \r\n";
+                        }
+                    }
+                    script += @"AudioDubEx(__just_audio, last)" + "\r\n";
+                }
+            }
+            catch (Exception)
+            {
+                return true;
+            }
+            return false;
+        }
     }
 }

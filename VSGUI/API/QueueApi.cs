@@ -50,7 +50,6 @@ namespace VSGUI.API
                     ProgressVisibility = pVisibility,
                     StatusText = jsona[i]["statustext"].ToString(),
                 });
-
             }
             return queueItemData;
         }
