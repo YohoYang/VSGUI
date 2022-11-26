@@ -15,43 +15,44 @@ namespace VSGUI.API
         {
             if (Path.GetExtension(output.Replace("\"", "")).ToLower() == ".mp4")
             {
-                clipath = MainWindow.binpath + @"\tools\ffmpeg\";
-                string addstr = "";
-                foreach (var item in input)
-                {
-                    if (item != "")
-                    {
-                        string tempitempath = item;
-                        if (Path.GetExtension(item) == ".txt" && ChapterApi.ChapterFormatCheck(item))
-                        {
-                            string ffmeta = ChapterApi.MakeFFmpegMetaData(item);
-                            string chapterpath = Path.GetTempPath() + @"vsgui\" + "Job_" + queueid.ToString() + ".txt";
-                            Directory.CreateDirectory(Path.GetTempPath() + @"vsgui\");
-                            File.WriteAllText(chapterpath, ffmeta);
-                            tempitempath = chapterpath;
-                        }
-                        addstr += " -i " + "\"" + tempitempath + "\"";
-                    }
-                }
-                string theCommandStr = "ffmpeg.exe -hide_banner -y " + addstr + " -c copy " + "\"" + output + "\"";
-                return theCommandStr;
-                //mp4box mode
-                //clipath = MainWindow.binpath + @"\tools\mp4box\";
+                //ffmpeg mode
+                //clipath = MainWindow.binpath + @"\tools\ffmpeg\";
                 //string addstr = "";
                 //foreach (var item in input)
                 //{
                 //    if (item != "")
                 //    {
-                //        string additionstr = "";
-                //        if (Path.GetExtension(item) == ".txt")
+                //        string tempitempath = item;
+                //        if (Path.GetExtension(item) == ".txt" && ChapterApi.ChapterFormatCheck(item))
                 //        {
-                //            additionstr = ":chap";
+                //            string ffmeta = ChapterApi.MakeFFmpegMetaData(item);
+                //            string chapterpath = Path.GetTempPath() + @"vsgui\" + "Job_" + queueid.ToString() + ".txt";
+                //            Directory.CreateDirectory(Path.GetTempPath() + @"vsgui\");
+                //            File.WriteAllText(chapterpath, ffmeta);
+                //            tempitempath = chapterpath;
                 //        }
-                //        addstr += " -add " + "\"" + item + additionstr + "\"";
+                //        addstr += " -i " + "\"" + tempitempath + "\"";
                 //    }
                 //}
-                //string theCommandStr = "MP4Box.exe" + addstr + " -new " + "\"" + output + "\"";
+                //string theCommandStr = "ffmpeg.exe -hide_banner -y " + addstr + " -c copy " + "\"" + output + "\"";
                 //return theCommandStr;
+                //mp4box mode
+                clipath = MainWindow.binpath + @"\tools\mp4box\";
+                string addstr = "";
+                foreach (var item in input)
+                {
+                    if (item != "")
+                    {
+                        string additionstr = "";
+                        if (Path.GetExtension(item) == ".txt")
+                        {
+                            additionstr = ":chap";
+                        }
+                        addstr += " -add " + "\"" + item + additionstr + "\"";
+                    }
+                }
+                string theCommandStr = "MP4Box.exe" + addstr + " -new " + "\"" + output + "\"";
+                return theCommandStr;
             }
             else if (Path.GetExtension(output.Replace("\"", "")).ToLower() == ".mkv")
             {

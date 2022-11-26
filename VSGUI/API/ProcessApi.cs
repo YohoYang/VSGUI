@@ -202,7 +202,7 @@ namespace VSGUI.API
             QueueApi.runningQueueCount += 1;
             processid = proc.Id.ToString();
 
-            proc.StandardInput.WriteLine(common + @"&timeout /nobreak /t 1&exit");
+            proc.StandardInput.WriteLine(common + @"&exit");
 
             proc.BeginOutputReadLine();
             proc.BeginErrorReadLine();
