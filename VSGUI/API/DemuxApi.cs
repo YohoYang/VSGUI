@@ -54,6 +54,7 @@ namespace VSGUI.API
             else
             {
                 MessageBoxApi.Show(LanguageApi.FindRes("fileNotExist"), LanguageApi.FindRes("error"));
+                ExitedCall("");
                 return;
             }
 
