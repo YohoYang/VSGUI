@@ -97,21 +97,84 @@ namespace VSGUI.API
                 string common = "";
                 string stra;
                 string clipath = MainWindow.binpath + @"\tools\eac3to\";
-                string ext = Path.GetExtension(inputpath);
-                if (ext == ".thd+ac3")
+                //string ext = Path.GetExtension(inputpath);
+                string info = ProcessApi.RunSyncProcess(clipath, @"eac3to.exe" + " " + "\"" + inputpath + "\"" + " -log=nul");
+                var x = Regex.Matches(info, @"(\d+): (.*?)[, ] (.*)\s");
+                if (x.Count > 0)
                 {
-                    common = @"eac3to.exe" + " " + "\"" + inputpath + "\"" + " " + "\"" + inputpath + @".thd" + "\"" + " -log=nul" + " && " + @"eac3to.exe" + " " + "\"" + inputpath + "\"" + " " + "\"" + inputpath + @".ac3" + "\"" + " -log=nul";
-                    stra = LanguageApi.FindRes("demuxThdAc3") + "...";
-                }
-                else
-                {
-                    common = @"eac3to.exe" + " " + "\"" + inputpath + "\"" + " " + "\"" + inputpath + @".*" + "\"" + " -log=nul";
-                    stra = LanguageApi.FindRes("demuxing") + "...";
+                    string commonParameter = "";
+                    for (int i = 0; i < x.Count; i++)
+                    {
+                        string ext = x[i].Groups[2].Value.ToLower();
+                        string spext = "";
+                        //进行格式的设置
+                        if (x[i].Groups[1].Value == "1")
+                        {
+                            //视频流
+                            if (ext.Contains(@"/"))
+                            {
+                                spext = ext.Substring(0, ext.IndexOf(@"/"));
+                            }
+                            else
+                            {
+                                spext = ext;
+                            }
+                        }
+                        else
+                        {
+                            if (ext.Contains(@"pcm"))
+                            {
+                                spext = "wav";
+                            }
+                            else if (ext.Contains(@"(pgs)"))
+                            {
+                                spext = "sup";
+                            }
+                            else if (ext.Contains(@"(ass)"))
+                            {
+                                spext = "ass";
+                            }
+                            else if (ext.Contains(@"(srt)"))
+                            {
+                                spext = "srt";
+                            }
+                            else
+                            {
+                                if (ext.Contains(@"/"))
+                                {
+                                    spext = ext.Substring(ext.IndexOf(@"/") + 1);
+                                }
+                                else
+                                {
+                                    spext = ext;
+                                }
+                            }
+                        }
+
+                        //处理结束
+                        //特殊thd+ac3处理
+                        if (x[i].Groups[2].Value == "TrueHD/AC3")
+                        {
+                            commonParameter += " " + x[i].Groups[1].Value + ":" + "\"" + Path.GetDirectoryName(inputpath) + @"\" + Path.GetFileName(inputpath) + "_" + x[i].Groups[1].Value + "_" + x[i].Groups[3].Value.Trim().Replace(@"/", "").Replace(@" ", "") + "." + "thd" + "\"";
+                            spext = "ac3";
+                        }
+                        //正常添加字符串
+                        commonParameter += " " + x[i].Groups[1].Value + ":" + "\"" + Path.GetDirectoryName(inputpath) + @"\" + Path.GetFileName(inputpath) + "_" + x[i].Groups[1].Value + "_" + x[i].Groups[3].Value.Trim().Replace(@"/", "").Replace(@" ", "") + "." + spext + "\"";
+                    }
+                    common = @"eac3to.exe" + " " + "\"" + inputpath + "\"" + commonParameter + " -progressnumbers -log=nul";
                 }
                 ProcessApi.RunProcess(clipath, common, DataReceived, Exited, out string pid);
                 void DataReceived(DataReceivedEventArgs e, bool processIsExited)
                 {
                     datarecevied += e.Data + "\n";
+                    if (e.Data != null && e.Data.StartsWith("process:"))
+                    {
+                        stra = LanguageApi.FindRes("demuxing") + " " + e.Data.Replace("process: ", "");
+                    }
+                    else
+                    {
+                        stra = LanguageApi.FindRes("demuxing") + "...";
+                    }
                     if (!string.IsNullOrEmpty(e.Data) && !processIsExited)
                     {
                         DataReceivedCall(stra);
@@ -119,19 +182,19 @@ namespace VSGUI.API
                 }
                 void Exited()
                 {
-                    //string timecount = "";
-                    //var x = Regex.Match(datarecevied, @"eac3to processing took (\d+) second");
+                    string timecount = "";
+                    var x = Regex.Match(datarecevied, @"eac3to processing tooks? (.*)");
                     if (datarecevied.Contains("eac3to processing took"))
                     {
-                        //timecount = x.Groups[1].ToString();
+                        timecount = x.Groups[1].ToString().Trim();
                         datarecevied = datarecevied.Replace("\x08", "").Replace(@"-------------------------------------------------------------------------------", "").Replace(@"---------", "").Replace("                                                                               ", "");
                         if (Regex.IsMatch(datarecevied, @"Applying.*delay"))
                         {
-                            ExitedCall("eac3to" + LanguageApi.FindRes("demux") + LanguageApi.FindRes("finish") + ", " + LanguageApi.FindRes("demuxAutoFixDelay") /*+ ", " + LanguageApi.FindRes("timeConsuming") + " " + timecount + " " + LanguageApi.FindRes("second")*/);
+                            ExitedCall("eac3to" + LanguageApi.FindRes("demux") + LanguageApi.FindRes("finish") + ", " + LanguageApi.FindRes("demuxAutoFixDelay") + ", " + LanguageApi.FindRes("timeConsuming") + " " + timecount);
                         }
                         else
                         {
-                            ExitedCall("eac3to" + LanguageApi.FindRes("demux") + LanguageApi.FindRes("finish") /*+ ", " + LanguageApi.FindRes("timeConsuming") + " " + timecount + " " + LanguageApi.FindRes("second")*/);
+                            ExitedCall("eac3to" + LanguageApi.FindRes("demux") + LanguageApi.FindRes("finish") + ", " + LanguageApi.FindRes("timeConsuming") + " " + timecount);
                         }
                     }
                     else

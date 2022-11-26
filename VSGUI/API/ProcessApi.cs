@@ -148,7 +148,7 @@ namespace VSGUI.API
 
             proc.EnableRaisingEvents = true;
             proc.Start();
-            proc.StandardInput.WriteLine(common + @"&echo %date%&exit");
+            proc.StandardInput.WriteLine(common + @"&exit");
 
             proc.BeginOutputReadLine();
             proc.BeginErrorReadLine();
@@ -202,7 +202,7 @@ namespace VSGUI.API
             QueueApi.runningQueueCount += 1;
             processid = proc.Id.ToString();
 
-            proc.StandardInput.WriteLine(common + @"&echo %date%&exit");
+            proc.StandardInput.WriteLine(common + @"&timeout /nobreak /t 1&exit");
 
             proc.BeginOutputReadLine();
             proc.BeginErrorReadLine();
@@ -217,7 +217,7 @@ namespace VSGUI.API
             void Proc_DataReceived(object sender, DataReceivedEventArgs e)
             {
                 Debug.WriteLine(e.Data);
-                tempLogStr += e.Data + "\n";
+                tempLogStr += "[" + DateTime.Now.ToString("yyyy-MM-dd hh:mm:ss") + "] " + e.Data + "\n";
                 inDataReceived(e, proc.HasExited);
             }
         }
