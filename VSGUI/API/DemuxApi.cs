@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -97,7 +98,7 @@ namespace VSGUI.API
                 string common = "";
                 string stra;
                 string clipath = MainWindow.binpath + @"\tools\eac3to\";
-                //string ext = Path.GetExtension(inputpath);
+                ArrayList outFileList = new ArrayList();
                 string info = ProcessApi.RunSyncProcess(clipath, @"eac3to.exe" + " " + "\"" + inputpath + "\"" + " -log=nul");
                 var x = Regex.Matches(info, @"(\d+): (.*?)[, ] (.*)\s");
                 if (x.Count > 0)
@@ -152,14 +153,18 @@ namespace VSGUI.API
                         }
 
                         //处理结束
+                        string outFileinfoText = x[i].Groups[3].Value.Trim().Replace(@"/", "_").Replace(@"\", "_").Replace(@":", "_").Replace(@"*", "_").Replace(@"?", "_").Replace(@"""", "_").Replace(@"<", "_").Replace(@">", "_").Replace(@"|", "_").Replace(@" ", "");
+                        string outFileName = Path.GetDirectoryName(inputpath) + @"\" + Path.GetFileName(inputpath) + "-T" + x[i].Groups[1].Value + "-" + outFileinfoText + "." + spext;
                         //特殊thd+ac3处理
                         if (x[i].Groups[2].Value == "TrueHD/AC3")
                         {
-                            commonParameter += " " + x[i].Groups[1].Value + ":" + "\"" + Path.GetDirectoryName(inputpath) + @"\" + Path.GetFileName(inputpath) + "_" + x[i].Groups[1].Value + "_" + x[i].Groups[3].Value.Trim().Replace(@"/", "").Replace(@" ", "") + "." + "thd" + "\"";
-                            spext = "ac3";
+                            string thdOutFileName = outFileName.Replace(spext, "thd");
+                            outFileList.Add(thdOutFileName);
+                            commonParameter += " " + x[i].Groups[1].Value + ":" + "\"" + thdOutFileName + "\"";
                         }
                         //正常添加字符串
-                        commonParameter += " " + x[i].Groups[1].Value + ":" + "\"" + Path.GetDirectoryName(inputpath) + @"\" + Path.GetFileName(inputpath) + "_" + x[i].Groups[1].Value + "_" + x[i].Groups[3].Value.Trim().Replace(@"/", "").Replace(@" ", "") + "." + spext + "\"";
+                        outFileList.Add(outFileName);
+                        commonParameter += " " + x[i].Groups[1].Value + ":" + "\"" + outFileName + "\"";
                     }
                     common = @"eac3to.exe" + " " + "\"" + inputpath + "\"" + commonParameter + " -progressnumbers -log=nul";
                 }
@@ -184,7 +189,15 @@ namespace VSGUI.API
                 {
                     string timecount = "";
                     var x = Regex.Match(datarecevied, @"eac3to processing tooks? (.*)");
-                    if (datarecevied.Contains("eac3to processing took"))
+                    int succCount = 0;
+                    foreach (string item in outFileList)
+                    {
+                        if (File.Exists(item))
+                        {
+                            succCount++;
+                        }
+                    }
+                    if (succCount == outFileList.Count)
                     {
                         timecount = x.Groups[1].ToString().Trim();
                         datarecevied = datarecevied.Replace("\x08", "").Replace(@"-------------------------------------------------------------------------------", "").Replace(@"---------", "").Replace("                                                                               ", "");
