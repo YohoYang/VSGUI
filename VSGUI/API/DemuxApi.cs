@@ -154,8 +154,8 @@ namespace VSGUI.API
                         }
 
                         //处理结束
-                        string outFileinfoText = x[i].Groups[3].Value.Trim().Replace(@"/", "_").Replace(@"\", "_").Replace(@":", "_").Replace(@"*", "_").Replace(@"?", "_").Replace(@"""", "_").Replace(@"<", "_").Replace(@">", "_").Replace(@"|", "_").Replace(@" ", "");
-                        string outFileName = Path.GetDirectoryName(inputpath) + @"\" + Path.GetFileName(inputpath) + "-T" + x[i].Groups[1].Value + "-" + outFileinfoText + "." + spext;
+                        string outFileinfoText = x[i].Groups[3].Value.Trim().Replace(@"/", "_").Replace(@"\", "_").Replace(@":", "_").Replace(@"*", "_").Replace(@"?", "_").Replace(@"""", "_").Replace(@"<", "_").Replace(@">", "_").Replace(@"|", "_").Replace(@" ", "").Replace(@",", "_");
+                        string outFileName = Path.GetDirectoryName(inputpath) + @"\" + Path.GetFileName(inputpath) + "_[T" + x[i].Groups[1].Value + "]_" + outFileinfoText + "." + spext;
                         //删除文件名中的延迟信息
                         outFileName = Regex.Replace(outFileName, @"-?\d+ms", string.Empty);
                         //Unknown audio track跳过处理
