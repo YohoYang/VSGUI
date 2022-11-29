@@ -862,7 +862,7 @@ namespace VSGUI.API
                 else
                 {
                     //尝试从文件名获取延迟
-                    var x = Regex.Matches(inputpath, @"(-?\d +)ms");
+                    var x = Regex.Matches(inputpath, @"(-?\d+)ms");
                     if (x.Count >= 1)
                     {
                         //就取第一个
