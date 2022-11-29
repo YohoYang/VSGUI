@@ -108,7 +108,7 @@
     <system:String x:Key="timeConsuming">Time-consuming</system:String>
     <system:String x:Key="muxMuxing">Muxing</system:String>
     <system:String x:Key="demux">Demux</system:String>
-    <system:String x:Key="demuxAutoFixDelay">AutoFixed Audio Delay</system:String>
+    <system:String x:Key="demuxAutoFixDelay">Audio delay fixed (but not necessarily accurate)</system:String>
     <system:String x:Key="second">s</system:String>
     <system:String x:Key="exitQueueIsRuning">There are queue tasks in progress, please wait for all tasks to complete and exit.</system:String>
     <system:String x:Key="simpleEncode">Simple Encode</system:String>

@@ -108,7 +108,7 @@
     <system:String x:Key="timeConsuming">耗时</system:String>
     <system:String x:Key="muxMuxing">封装中</system:String>
     <system:String x:Key="demux">解流</system:String>
-    <system:String x:Key="demuxAutoFixDelay">已自动修正音频延迟</system:String>
+    <system:String x:Key="demuxAutoFixDelay">已修正音频延迟(但不一定准确)</system:String>
     <system:String x:Key="second">秒</system:String>
     <system:String x:Key="exitQueueIsRuning">有队列任务正在进行中，请等待所有任务完成后退出。</system:String>
     <system:String x:Key="simpleEncode">简易压制</system:String>

@@ -6,6 +6,7 @@ using System.Linq;
 using System.Management;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace VSGUI.API
@@ -210,8 +211,15 @@ namespace VSGUI.API
             void Proc_Exited(object? sender, EventArgs e)
             {
                 QueueApi.runningQueueCount -= 1;
-                LogApi.WriteLog(tempLogStr);
-                inExited();
+                new Thread(
+                () =>
+                {
+                    Thread.Sleep(100);
+                    LogApi.WriteLog(tempLogStr);
+                    inExited();
+                }
+            ).Start();
+
             }
 
             void Proc_DataReceived(object sender, DataReceivedEventArgs e)

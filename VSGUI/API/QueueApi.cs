@@ -827,23 +827,47 @@ namespace VSGUI.API
             string inputpath = audioinputboxText;
             if (!string.IsNullOrEmpty(inputpath))
             {
-                string inputsuffix = Path.GetExtension(inputpath);
-                if (inputsuffix == ".ts" || inputsuffix == ".mkv" || inputsuffix == ".m2ts")
+                string inputsuffix = Path.GetExtension(inputpath).ToLower();
+                if (inputsuffix == ".ts" || inputsuffix == ".m2ts" || inputsuffix == ".mkv" || inputsuffix == ".mp4")
                 {
-                    string result = ProcessApi.RunSyncProcess(MainWindow.binpath + @"\tools\eac3to\", @"eac3to.exe" + " " + "\"" + inputpath + "\"");
+                    string result = ProcessApi.RunSyncProcess(MainWindow.binpath + @"\tools\mediainfo\", @"MediaInfo.exe" + " " + "\"" + inputpath + "\"");
                     if (result != null)
                     {
-                        var x = Regex.Matches(result, @"\d+: (AAC|AC3|WAV|AC3|DTS|THD|FLAC).*");
+                        var x = Regex.Matches(result, @"Audio(?: #)?(\d*)(?s:.)*?Delay relative to video.*?: (.*?)ms");
                         if (x.Count >= 1)
                         {
                             //就取第一个
-                            string message = x[0].ToString();
-                            var x2 = Regex.Matches(message, @", (-?\d+)ms");
-                            if (x2.Count > 0)
-                            {
-                                audiodelayboxText = x2[0].Groups[1].Value;
-                            }
+                            string message = x[0].Groups[2].Value.Trim();
+                            audiodelayboxText = message;
                         }
+                    }
+
+                    ////eac3to检测延迟
+                    //string result = ProcessApi.RunSyncProcess(MainWindow.binpath + @"\tools\eac3to\", @"eac3to.exe" + " " + "\"" + inputpath + "\"");
+                    //if (result != null)
+                    //{
+                    //    var x = Regex.Matches(result, @"\d+: (AAC|AC3|WAV|AC3|DTS|THD|FLAC).*");
+                    //    if (x.Count >= 1)
+                    //    {
+                    //        //就取第一个
+                    //        string message = x[0].ToString();
+                    //        var x2 = Regex.Matches(message, @", (-?\d+)ms");
+                    //        if (x2.Count > 0)
+                    //        {
+                    //            audiodelayboxText = x2[0].Groups[1].Value;
+                    //        }
+                    //    }
+                    //}
+                }
+                else
+                {
+                    //尝试从文件名获取延迟
+                    var x = Regex.Matches(inputpath, @"(-?\d +)ms");
+                    if (x.Count >= 1)
+                    {
+                        //就取第一个
+                        string message = x[0].Groups[1].Value.Trim();
+                        audiodelayboxText = message;
                     }
                 }
             }

@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using MessageBox = HandyControl.Controls.MessageBox;
@@ -99,8 +100,7 @@ namespace VSGUI.API
                 string common = "";
                 string stra;
                 string clipath = MainWindow.binpath + @"\tools\eac3to\";
-                ArrayList outFileList = new ArrayList();
-                string info = ProcessApi.RunSyncProcess(clipath, @"eac3to.exe" + " " + "\"" + inputpath + "\"" + " -log=nul");
+                string info = ProcessApi.RunSyncProcess(clipath, @"eac3to.exe" + " " + "\"" + inputpath + "\"" + " -log=nul"); // 提取正则(.*?)(?: #)?(\d*)\nID((?s:.)*?)\n\n
                 var x = Regex.Matches(info, @"(\d+): (.*?)[, ] (.*)\s");
                 if (x.Count > 0)
                 {
@@ -156,18 +156,28 @@ namespace VSGUI.API
                         //处理结束
                         string outFileinfoText = x[i].Groups[3].Value.Trim().Replace(@"/", "_").Replace(@"\", "_").Replace(@":", "_").Replace(@"*", "_").Replace(@"?", "_").Replace(@"""", "_").Replace(@"<", "_").Replace(@">", "_").Replace(@"|", "_").Replace(@" ", "");
                         string outFileName = Path.GetDirectoryName(inputpath) + @"\" + Path.GetFileName(inputpath) + "-T" + x[i].Groups[1].Value + "-" + outFileinfoText + "." + spext;
+                        //删除文件名中的延迟信息
+                        outFileName = Regex.Replace(outFileName, @"-?\d+ms", string.Empty);
+                        //Unknown audio track跳过处理
+                        if (x[i].Groups[2].Value == "Unknown audio track")
+                        {
+                            continue;
+                        }
                         //特殊thd+ac3处理
                         if (x[i].Groups[2].Value == "TrueHD/AC3")
                         {
                             string thdOutFileName = outFileName.Replace(spext, "thd");
-                            outFileList.Add(thdOutFileName);
                             commonParameter += " " + x[i].Groups[1].Value + ":" + "\"" + thdOutFileName + "\"";
                         }
                         //正常添加字符串
-                        outFileList.Add(outFileName);
                         commonParameter += " " + x[i].Groups[1].Value + ":" + "\"" + outFileName + "\"";
                     }
                     common = @"eac3to.exe" + " " + "\"" + inputpath + "\"" + commonParameter + " -progressnumbers -log=nul";
+                }
+                else
+                {
+                    ExitedCall("eac3to" + LanguageApi.FindRes("demux") + LanguageApi.FindRes("error"));
+                    return;
                 }
                 ProcessApi.RunProcess(clipath, common, DataReceived, Exited, out string pid);
                 void DataReceived(DataReceivedEventArgs e, bool processIsExited)
@@ -190,15 +200,7 @@ namespace VSGUI.API
                 {
                     string timecount = "";
                     var x = Regex.Match(datarecevied, @"eac3to processing tooks? (.*)");
-                    int succCount = 0;
-                    foreach (string item in outFileList)
-                    {
-                        if (File.Exists(item))
-                        {
-                            succCount++;
-                        }
-                    }
-                    if (succCount == outFileList.Count)
+                    if (x.Captures.Count > 0)
                     {
                         timecount = x.Groups[1].ToString().Trim();
                         datarecevied = datarecevied.Replace("\x08", "").Replace(@"-------------------------------------------------------------------------------", "").Replace(@"---------", "").Replace("                                                                               ", "");
