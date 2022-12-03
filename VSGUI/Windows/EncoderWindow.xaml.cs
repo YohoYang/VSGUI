@@ -26,9 +26,9 @@ namespace VSGUI
         string ltype;
         string[,] encoders =
         {
-            {"video","x264",".h264" },
-            {"video","x265",".h265" },
-            {"video","nvenc",".h264|.h265" },
+            {"video","x264",".h264|.m4v" },
+            {"video","x265",".h265|.m4v" },
+            {"video","nvenc",".h264|.h265|.m4v" },
             {"audio","qaac",".aac|.m4a" },
             {"audio","flac",".flac" },
         };
