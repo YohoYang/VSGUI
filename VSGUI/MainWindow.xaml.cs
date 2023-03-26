@@ -24,7 +24,7 @@ namespace VSGUI
     {
         public static string binpath = Directory.GetCurrentDirectory() + @"\bin";
         private bool forcedStop = false;
-        private string coreversion = "v0.3.3";
+        private string coreversion = "v0.3.4";
 
         public MainWindow()
         {
@@ -133,7 +133,7 @@ namespace VSGUI
             //自动更新编码器
             if (IniApi.IniReadValue("UseNetEncoderJsonBox") == "")
             {
-                UseNetEncoderJsonBox.Text = @"https://cloud.sbsub.com/vsgui/defaultencoderprofiles.json";
+                UseNetEncoderJsonBox.Text = @"https://cloud.sbsub.com/vsgui/sbsubprofiles.json";
             }
             else
             {
@@ -161,13 +161,18 @@ namespace VSGUI
                 simplevideoencoderbox.ItemsSource = EncoderApi.GetEncoderProfiles("video");
                 audioencoderbox.ItemsSource = EncoderApi.GetEncoderProfiles("audio");
                 simpleaudioencoderbox.ItemsSource = EncoderApi.GetEncoderProfiles("audio");
-                string getconfig = IniApi.IniReadValue("videoencoderboxSelectedIndex");
+                string getconfig;
+                getconfig = IniApi.IniReadValue("videoencoderboxSelectedIndex");
                 if (getconfig == "" || getconfig == "-1") getconfig = "0";
                 videoencoderbox.SelectedIndex = int.Parse(getconfig);
+                getconfig = IniApi.IniReadValue("simplevideoencoderboxSelectedIndex");
+                if (getconfig == "" || getconfig == "-1") getconfig = "0";
                 simplevideoencoderbox.SelectedIndex = int.Parse(getconfig);
                 getconfig = IniApi.IniReadValue("audioencoderboxSelectedIndex");
                 if (getconfig == "" || getconfig == "-1") getconfig = "0";
                 audioencoderbox.SelectedIndex = int.Parse(getconfig);
+                getconfig = IniApi.IniReadValue("simpleaudioencoderboxSelectedIndex");
+                if (getconfig == "" || getconfig == "-1") getconfig = "0";
                 simpleaudioencoderbox.SelectedIndex = int.Parse(getconfig);
             });
         }
@@ -427,6 +432,14 @@ namespace VSGUI
                 }
                 IniApi.IniWriteValue("videoencoderboxSelectedIndex", videoencoderbox.SelectedIndex.ToString());
             }
+            else if (((ComboBox)sender).Name == "simplevideoencoderbox")
+            {
+                if (simplevideoinputbox.Text != "")
+                {
+                    UpdateEncoderSuffix("video", EncoderApi.GetEncoderSuffix("video", simplevideoencoderbox.SelectedIndex));
+                }
+                IniApi.IniWriteValue("simplevideoencoderboxSelectedIndex", simplevideoencoderbox.SelectedIndex.ToString());
+            }
             else if (((ComboBox)sender).Name == "audioencoderbox")
             {
                 if (audioinputbox.Text != "")
@@ -434,6 +447,14 @@ namespace VSGUI
                     UpdateEncoderSuffix("audio", EncoderApi.GetEncoderSuffix("audio", audioencoderbox.SelectedIndex));
                 }
                 IniApi.IniWriteValue("audioencoderboxSelectedIndex", audioencoderbox.SelectedIndex.ToString());
+            }
+            else if (((ComboBox)sender).Name == "simpleaudioencoderbox")
+            {
+                if (simpleaudioinputbox.Text != "")
+                {
+                    UpdateEncoderSuffix("audio", EncoderApi.GetEncoderSuffix("audio", simpleaudioencoderbox.SelectedIndex));
+                }
+                IniApi.IniWriteValue("simpleaudioencoderboxSelectedIndex", simpleaudioencoderbox.SelectedIndex.ToString());
             }
         }
 
@@ -1169,6 +1190,13 @@ namespace VSGUI
             UseNetEncoderJsonDesc.Text = LanguageApi.FindRes("netEncoderUpdating");
             IniApi.IniWriteValue("UseNetEncoderJsonBox", UseNetEncoderJsonBox.Text);
             ReCheckEncoderProfiles();
+        }
+
+        private void ReScanLocalFile_Click(object sender, RoutedEventArgs e)
+        {
+            ReScanButton.IsEnabled = false;
+            CommonApi.TryDeleteFile(binpath + @"\json\version.json");
+            UpdateApi.UpdateCheck(UpdateProgressCall);
         }
 
         private void UpdateProgressCall(string message)

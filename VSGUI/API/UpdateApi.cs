@@ -194,8 +194,10 @@ namespace VSGUI.API
                     {
                         continue;
                     }
-                    JsonObject jsonsubdata = new JsonObject();
-                    jsonsubdata.Add("f", CalculateMD5(file));
+                    JsonObject jsonsubdata = new JsonObject
+                    {
+                        { "f", CalculateMD5(file) }
+                    };
                     jsondata.Add(file.Replace(Directory.GetCurrentDirectory(), ""), jsonsubdata);
                 }
                 JsonApi.SaveJsonToFile(jsondata, MainWindow.binpath + @"\json\version.json");
@@ -210,8 +212,10 @@ namespace VSGUI.API
                 }
                 else
                 {
-                    JsonObject jsonsubdata = new JsonObject();
-                    jsonsubdata.Add("f", localcoremd5);
+                    JsonObject jsonsubdata = new JsonObject
+                    {
+                        { "f", localcoremd5 }
+                    };
                     jsondata.Add(@"\VSGUI.exe", jsonsubdata);
                 }
                 JsonApi.SaveJsonToFile(jsondata, MainWindow.binpath + @"\json\version.json");

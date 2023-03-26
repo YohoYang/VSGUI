@@ -145,5 +145,6 @@
     <system:String x:Key="useSystemEnvironmentWarningVsEditor">您启用了系统环境功能，但您依然关联了内置VsEditor编辑器。内置的编辑器始终使用内置的Python和Vapoursynth，建议您取消关联并自行另外安装编辑器。</system:String>
     <system:String x:Key="cutstrFormatError">音频切割格式异常</system:String>
     <system:String x:Key="fpsstrFormatError">fps为空</system:String>
+    <system:String x:Key="rescan">联网校验软件完整性</system:String>
 
 </ResourceDictionary>

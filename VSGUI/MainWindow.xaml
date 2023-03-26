@@ -67,7 +67,7 @@
                                             <TextBlock Text="{DynamicResource video}"/>
                                             <TextBlock Text="{DynamicResource encoderprofiles}"/>
                                         </WrapPanel>
-                                        <ComboBox x:Name="simplevideoencoderbox" Grid.Column="1" HorizontalAlignment="Stretch"/>
+                                        <ComboBox x:Name="simplevideoencoderbox" Grid.Column="1" HorizontalAlignment="Stretch" SelectionChanged="encoderbox_SelectionChanged"/>
                                         <Button Grid.Column="2" Content="{DynamicResource setting}" Margin="4,0,0,0" Click="VideoEncoderButton_Click"/>
                                     </Grid>
                                     <!--音频编码参数-->
@@ -81,7 +81,7 @@
                                             <TextBlock Text="{DynamicResource audio}"/>
                                             <TextBlock Text="{DynamicResource encoderprofiles}"/>
                                         </WrapPanel>
-                                        <ComboBox x:Name="simpleaudioencoderbox" Grid.Column="1" HorizontalAlignment="Stretch"/>
+                                        <ComboBox x:Name="simpleaudioencoderbox" Grid.Column="1" HorizontalAlignment="Stretch" SelectionChanged="encoderbox_SelectionChanged"/>
                                         <Button Grid.Column="2" Content="{DynamicResource setting}" Margin="4,0,0,0" Click="AudioEncoderButton_Click"/>
                                     </Grid>
                                 </hc:UniformSpacingPanel>
@@ -557,8 +557,17 @@
                                         <ComboBox x:Name="LanguageComboBox" Width="250" Margin="23,0,0,0" SelectionChanged="LanguageComboBox_SelectionChanged"/>
                                     </WrapPanel>
                                     <hc:Divider Margin="0"/>
-                                    <CheckBox x:Name="AutoUpdate" Content="{DynamicResource autoupdate}" Checked="ConfigCheckBox_Checked" Unchecked="ConfigCheckBox_Checked"></CheckBox>
-                                    <TextBlock Text="{DynamicResource autoupdatedesc}" Margin="23,0,0,0" TextWrapping="Wrap"/>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition></ColumnDefinition>
+                                            <ColumnDefinition Width="auto"></ColumnDefinition>
+                                        </Grid.ColumnDefinitions>
+                                        <StackPanel Grid.Column="0">
+                                            <CheckBox x:Name="AutoUpdate" Content="{DynamicResource autoupdate}" Checked="ConfigCheckBox_Checked" Unchecked="ConfigCheckBox_Checked"></CheckBox>
+                                            <TextBlock Text="{DynamicResource autoupdatedesc}" Margin="23,5,0,0" TextWrapping="Wrap"/>
+                                        </StackPanel>
+                                        <Button x:Name="ReScanButton" Content="{DynamicResource rescan}" Grid.Column="1" Margin="5,0,0,0" Click="ReScanLocalFile_Click"></Button>
+                                    </Grid>
                                     <hc:Divider Margin="0"/>
                                     <Grid>
                                         <Grid.ColumnDefinitions>
