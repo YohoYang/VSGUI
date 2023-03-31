@@ -120,19 +120,23 @@ namespace VSGUI.API
         /// </summary>
         /// <param name="common"></param>
         /// <returns></returns>
-        public static string RunSyncProcess(string clipath, string common)
+        public static string RunSyncProcess(string clipath, string common, Encoding? outputEncoding = null)
         {
+            if (outputEncoding == null)
+            {
+                outputEncoding = Encoding.UTF8;
+            }
             tempOutputStr = "";
 
             var stdOutBuffer = new StringBuilder();
             var stdErrBuffer = new StringBuilder();
 
             var result = Cli.Wrap("cmd")
-                .WithArguments(new[] { "/c", common }, false)
+                .WithArguments(new[] { "/c", "chcp", "65001", ">nul", "&&", common }, false)
                 .WithWorkingDirectory(clipath)
                 .WithValidation(CommandResultValidation.None)
-                .WithStandardOutputPipe(PipeTarget.ToStringBuilder(stdOutBuffer, Encoding.UTF8))
-                .WithStandardErrorPipe(PipeTarget.ToStringBuilder(stdErrBuffer, Encoding.UTF8))
+                .WithStandardOutputPipe(PipeTarget.ToStringBuilder(stdOutBuffer, outputEncoding))
+                .WithStandardErrorPipe(PipeTarget.ToStringBuilder(stdErrBuffer, outputEncoding))
                 .ExecuteAsync().GetAwaiter().GetResult();
 
             // Access stdout & stderr buffered in-memory as strings
@@ -140,6 +144,9 @@ namespace VSGUI.API
             var stdErr = stdErrBuffer.ToString();
 
             tempOutputStr = stdOut + stdErr;
+
+            string dateStr = "[" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "]\r\n";
+            tempOutputStr = dateStr + tempOutputStr;
 
             Debug.WriteLine(tempOutputStr);
 
@@ -227,20 +234,19 @@ namespace VSGUI.API
         //}
 
 
-        public static async void RunProcess(string clipath, string common, Action<string, bool> inDataReceived, Action inExited, Action<string> processid, bool outputUTF8 = false)
+        public static async void RunProcess(string clipath, string common, Action<string, bool> inDataReceived, Action inExited, Action<string> processid, Encoding? outputEncoding = null)
         {
+            if (outputEncoding == null)
+            {
+                outputEncoding = Encoding.UTF8;
+            }
             string tempLogStr = "";
 
-            var cmd = Cli.Wrap("cmd").WithArguments(new[] { "/c", common }, false).WithWorkingDirectory(clipath).WithValidation(CommandResultValidation.None);
-
-            if (clipath != "")
-            {
-                cmd.WithWorkingDirectory(clipath);
-            }
+            var cmd = Cli.Wrap("cmd").WithArguments(new[] { "/c", "chcp", "65001", ">nul", "&&", common }, false).WithWorkingDirectory(clipath).WithValidation(CommandResultValidation.None);
 
             bool isexited = false;
 
-            await foreach (var cmdEvent in cmd.ListenAsync())
+            await foreach (var cmdEvent in cmd.ListenAsync(outputEncoding))
             {
                 switch (cmdEvent)
                 {
@@ -250,13 +256,13 @@ namespace VSGUI.API
                         break;
                     case StandardOutputCommandEvent stdOut:
                         inDataReceived(stdOut.Text, isexited);
-                        Debug.WriteLine("[" + DateTime.Now.ToString("yyyy-MM-dd hh:mm:ss") + "] " + stdOut.Text);
-                        tempLogStr += "[" + DateTime.Now.ToString("yyyy-MM-dd hh:mm:ss") + "] " + stdOut.Text + "\n";
+                        Debug.WriteLine("[" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "] " + stdOut.Text);
+                        tempLogStr += "[" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "] " + stdOut.Text + "\n";
                         break;
                     case StandardErrorCommandEvent stdErr:
                         inDataReceived(stdErr.Text, isexited);
-                        Debug.WriteLine("[" + DateTime.Now.ToString("yyyy-MM-dd hh:mm:ss") + "] " + stdErr.Text);
-                        tempLogStr += "[" + DateTime.Now.ToString("yyyy-MM-dd hh:mm:ss") + "] " + stdErr.Text + "\n";
+                        Debug.WriteLine("[" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "] " + stdErr.Text);
+                        tempLogStr += "[" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "] " + stdErr.Text + "\n";
                         break;
                     case ExitedCommandEvent exited:
                         //Debug.WriteLine($"Process exited; Code: {exited.ExitCode}");
