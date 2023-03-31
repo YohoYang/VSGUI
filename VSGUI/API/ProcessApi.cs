@@ -1,4 +1,7 @@
-﻿using System;
+﻿using CliWrap;
+using CliWrap.EventStream;
+using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -117,117 +120,216 @@ namespace VSGUI.API
         /// </summary>
         /// <param name="common"></param>
         /// <returns></returns>
-        public static string RunSyncProcess(string clipath, string common, bool outputUTF8 = false)
+        public static string RunSyncProcess(string clipath, string common)
         {
             tempOutputStr = "";
-            Process proc = new Process
-            {
-                StartInfo = new ProcessStartInfo("cmd")
-                {
-                    CreateNoWindow = true,
-                    UseShellExecute = false,
-                    RedirectStandardInput = true,
-                    RedirectStandardError = true,
-                    RedirectStandardOutput = true
-                }
-            };
 
-            if (clipath != "")
-            {
-                proc.StartInfo.WorkingDirectory = clipath;
-            }
+            var stdOutBuffer = new StringBuilder();
+            var stdErrBuffer = new StringBuilder();
 
-            if (outputUTF8)
-            {
-                proc.StartInfo.StandardOutputEncoding = Encoding.UTF8;
-            }
-            proc.StartInfo.StandardErrorEncoding = Encoding.UTF8;
+            var result = Cli.Wrap("cmd")
+                .WithArguments(new[] { "/c", common }, false)
+                .WithWorkingDirectory(clipath)
+                .WithValidation(CommandResultValidation.None)
+                .WithStandardOutputPipe(PipeTarget.ToStringBuilder(stdOutBuffer, Encoding.UTF8))
+                .WithStandardErrorPipe(PipeTarget.ToStringBuilder(stdErrBuffer, Encoding.UTF8))
+                .ExecuteAsync().GetAwaiter().GetResult();
+
+            // Access stdout & stderr buffered in-memory as strings
+            var stdOut = stdOutBuffer.ToString();
+            var stdErr = stdErrBuffer.ToString();
+
+            tempOutputStr = stdOut + stdErr;
+
+            Debug.WriteLine(tempOutputStr);
+
+            //Process proc = new Process
+            //{
+            //    StartInfo = new ProcessStartInfo("cmd")
+            //    {
+            //        CreateNoWindow = true,
+            //        UseShellExecute = false,
+            //        RedirectStandardInput = true,
+            //        RedirectStandardError = true,
+            //        RedirectStandardOutput = true
+            //    }
+            //};
+
+            //if (clipath != "")
+            //{
+            //    proc.StartInfo.WorkingDirectory = clipath;
+            //}
 
 
-            proc.OutputDataReceived += Proc_DataReceived;
-            proc.ErrorDataReceived += Proc_DataReceived;
+            //proc.StartInfo.StandardOutputEncoding = Encoding.UTF8;
 
-            proc.EnableRaisingEvents = true;
-            proc.Start();
-            proc.StandardInput.WriteLine(common + @"&exit");
-
-            proc.BeginOutputReadLine();
-            proc.BeginErrorReadLine();
+            //proc.StartInfo.StandardErrorEncoding = Encoding.UTF8;
 
 
-            void Proc_DataReceived(object sender, DataReceivedEventArgs e)
-            {
-                Debug.WriteLine(e.Data);
-                tempOutputStr += e.Data + "\n";
-            }
+            //proc.OutputDataReceived += Proc_DataReceived;
+            //proc.ErrorDataReceived += Proc_DataReceived;
 
-            proc.WaitForExit();
+            //proc.EnableRaisingEvents = true;
+            //proc.Start();
+            //proc.StandardInput.WriteLine(common + @"&exit");
+
+            //proc.BeginOutputReadLine();
+            //proc.BeginErrorReadLine();
+
+
+            //void Proc_DataReceived(object sender, DataReceivedEventArgs e)
+            //{
+            //    Debug.WriteLine(e.Data);
+            //    tempOutputStr += e.Data + "\n";
+            //}
+
+            //proc.WaitForExit();
 
             LogApi.WriteLog(tempOutputStr);
             return tempOutputStr;
         }
 
+        //private static async void CliWrapRun(string clipath, string common, Action<string, bool> dataReceived, Action isExitedFunc, Action<string> processided)
+        //{
+        //    string tempLogStr = "";
+        //    var cmd = Cli.Wrap("cmd").WithArguments(new[] { "/c", common }, false).WithValidation(CommandResultValidation.None);
 
-        public static void RunProcess(string clipath, string common, Action<DataReceivedEventArgs, bool> inDataReceived, Action inExited, out string processid, bool outputUTF8 = false)
+        //    if (clipath != "")
+        //    {
+        //        cmd.WithWorkingDirectory(clipath);
+        //    }
+
+        //    bool isExited = false;
+
+        //    await foreach (var cmdEvent in cmd.ListenAsync(Encoding.UTF8))
+        //    {
+        //        switch (cmdEvent)
+        //        {
+        //            case StartedCommandEvent started:
+        //                Debug.WriteLine($"Process started; ID: {started.ProcessId}");
+        //                processided(started.ProcessId.ToString());
+        //                break;
+        //            case StandardOutputCommandEvent stdOut:
+        //                Debug.WriteLine($"Out> {stdOut.Text}");
+        //                dataReceived(stdOut.Text, isExited);
+        //                break;
+        //            case StandardErrorCommandEvent stdErr:
+        //                Debug.WriteLine($"Err> {stdErr.Text}");
+        //                dataReceived(stdErr.Text, isExited);
+        //                break;
+        //            case ExitedCommandEvent exited:
+        //                Debug.WriteLine($"Process exited; Code: {exited.ExitCode}");
+        //                isExited = true;
+        //                isExitedFunc();
+        //                break;
+        //        }
+        //    }
+        //}
+
+
+        public static async void RunProcess(string clipath, string common, Action<string, bool> inDataReceived, Action inExited, Action<string> processid, bool outputUTF8 = false)
         {
             string tempLogStr = "";
 
-            Process proc = new Process
-            {
-                StartInfo = new ProcessStartInfo("cmd")
-                {
-                    CreateNoWindow = true,
-                    UseShellExecute = false,
-                    RedirectStandardInput = true,
-                    RedirectStandardError = true,
-                    RedirectStandardOutput = true,
-                }
-            };
+            var cmd = Cli.Wrap("cmd").WithArguments(new[] { "/c", common }, false).WithWorkingDirectory(clipath).WithValidation(CommandResultValidation.None);
 
             if (clipath != "")
             {
-                proc.StartInfo.WorkingDirectory = clipath;
+                cmd.WithWorkingDirectory(clipath);
             }
 
-            if (outputUTF8)
+            bool isexited = false;
+
+            await foreach (var cmdEvent in cmd.ListenAsync())
             {
-                proc.StartInfo.StandardOutputEncoding = Encoding.UTF8;
-            }
-            proc.StartInfo.StandardErrorEncoding = Encoding.UTF8;
-
-            proc.OutputDataReceived += Proc_DataReceived;
-            proc.ErrorDataReceived += Proc_DataReceived;
-            proc.EnableRaisingEvents = true;
-            proc.Exited += Proc_Exited;
-            proc.Start();
-            QueueApi.runningQueueCount += 1;
-            processid = proc.Id.ToString();
-
-            proc.StandardInput.WriteLine(common + @"&exit");
-
-            proc.BeginOutputReadLine();
-            proc.BeginErrorReadLine();
-
-            void Proc_Exited(object? sender, EventArgs e)
-            {
-                QueueApi.runningQueueCount -= 1;
-                new Thread(
-                () =>
+                switch (cmdEvent)
                 {
-                    Thread.Sleep(100);
-                    LogApi.WriteLog(tempLogStr);
-                    inExited();
+                    case StartedCommandEvent started:
+                        //Debug.WriteLine($"Process started; ID: {started.ProcessId}");
+                        processid(started.ProcessId.ToString());
+                        break;
+                    case StandardOutputCommandEvent stdOut:
+                        inDataReceived(stdOut.Text, isexited);
+                        Debug.WriteLine("[" + DateTime.Now.ToString("yyyy-MM-dd hh:mm:ss") + "] " + stdOut.Text);
+                        tempLogStr += "[" + DateTime.Now.ToString("yyyy-MM-dd hh:mm:ss") + "] " + stdOut.Text + "\n";
+                        break;
+                    case StandardErrorCommandEvent stdErr:
+                        inDataReceived(stdErr.Text, isexited);
+                        Debug.WriteLine("[" + DateTime.Now.ToString("yyyy-MM-dd hh:mm:ss") + "] " + stdErr.Text);
+                        tempLogStr += "[" + DateTime.Now.ToString("yyyy-MM-dd hh:mm:ss") + "] " + stdErr.Text + "\n";
+                        break;
+                    case ExitedCommandEvent exited:
+                        //Debug.WriteLine($"Process exited; Code: {exited.ExitCode}");
+                        isexited = true;
+                        QueueApi.runningQueueCount -= 1;
+                        new Thread(
+                        () =>
+                        {
+                            Thread.Sleep(100);
+                            LogApi.WriteLog(tempLogStr);
+                            inExited();
+                        }).Start();
+                        break;
                 }
-            ).Start();
-
             }
 
-            void Proc_DataReceived(object sender, DataReceivedEventArgs e)
-            {
-                Debug.WriteLine(e.Data);
-                tempLogStr += "[" + DateTime.Now.ToString("yyyy-MM-dd hh:mm:ss") + "] " + e.Data + "\n";
-                inDataReceived(e, proc.HasExited);
-            }
+
+            //Process proc = new Process
+            //{
+            //    StartInfo = new ProcessStartInfo("cmd")
+            //    {
+            //        CreateNoWindow = true,
+            //        UseShellExecute = false,
+            //        RedirectStandardInput = true,
+            //        RedirectStandardError = true,
+            //        RedirectStandardOutput = true,
+            //    }
+            //};
+
+            //if (clipath != "")
+            //{
+            //    proc.StartInfo.WorkingDirectory = clipath;
+            //}
+
+            //if (outputUTF8)
+            //{
+            //    proc.StartInfo.StandardOutputEncoding = Encoding.UTF8;
+            //}
+            //proc.StartInfo.StandardErrorEncoding = Encoding.UTF8;
+
+            //proc.OutputDataReceived += Proc_DataReceived;
+            //proc.ErrorDataReceived += Proc_DataReceived;
+            //proc.EnableRaisingEvents = true;
+            //proc.Exited += Proc_Exited;
+            //proc.Start();
+            //QueueApi.runningQueueCount += 1;
+            //processid = proc.Id.ToString();
+
+            //proc.StandardInput.WriteLine(common + @" &exit");
+
+            //proc.BeginOutputReadLine();
+            //proc.BeginErrorReadLine();
+
+            //void Proc_Exited(object? sender, EventArgs e)
+            //{
+            //    QueueApi.runningQueueCount -= 1;
+            //    new Thread(
+            //    () =>
+            //    {
+            //        Thread.Sleep(100);
+            //        LogApi.WriteLog(tempLogStr);
+            //        inExited();
+            //    }
+            //).Start();
+
+            //}
+
+            //void Proc_DataReceived(object sender, DataReceivedEventArgs e)
+            //{
+            //    Debug.WriteLine(e.Data);
+            //    tempLogStr += "[" + DateTime.Now.ToString("yyyy-MM-dd hh:mm:ss") + "] " + e.Data + "\n";
+            //    inDataReceived(e, proc.HasExited);
+            //}
         }
 
     }

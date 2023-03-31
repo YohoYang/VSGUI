@@ -18,6 +18,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<PackageReference Include="CliWrap" Version="3.6.0" />
 		<PackageReference Include="HandyControl" Version="3.4.0">
 		  <GeneratePathProperty></GeneratePathProperty>
 		</PackageReference>

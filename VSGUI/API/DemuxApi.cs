@@ -76,10 +76,10 @@ namespace VSGUI.API
                         }
                     }
                     string fullcommon = defaultcommon + "-i " + "\"" + inputpath + "\"" + commonParameter;
-                    ProcessApi.RunProcess(clipath, fullcommon, DataReceived, Exited, out string pid);
-                    void DataReceived(DataReceivedEventArgs e, bool processIsExited)
+                    ProcessApi.RunProcess(clipath, fullcommon, DataReceived, Exited, Pided);
+                    void DataReceived(string data, bool processIsExited)
                     {
-                        if (!string.IsNullOrEmpty(e.Data) && !processIsExited)
+                        if (!string.IsNullOrEmpty(data) && !processIsExited)
                         {
                             DataReceivedCall(LanguageApi.FindRes("demuxing"));
                         }
@@ -87,6 +87,10 @@ namespace VSGUI.API
                     void Exited()
                     {
                         ExitedCall("ffmpeg" + LanguageApi.FindRes("demux") + LanguageApi.FindRes("finish"));
+                    }
+                    void Pided(string pid)
+                    {
+                        //QueueApi.SetQueueListitem(queueid, "processTheadId", pid);
                     }
                 }
                 else
@@ -179,19 +183,19 @@ namespace VSGUI.API
                     ExitedCall("eac3to" + LanguageApi.FindRes("demux") + LanguageApi.FindRes("error"));
                     return;
                 }
-                ProcessApi.RunProcess(clipath, common, DataReceived, Exited, out string pid);
-                void DataReceived(DataReceivedEventArgs e, bool processIsExited)
+                ProcessApi.RunProcess(clipath, common, DataReceived, Exited, Pided);
+                void DataReceived(string data, bool processIsExited)
                 {
-                    datarecevied += e.Data + "\n";
-                    if (e.Data != null && e.Data.StartsWith("process:"))
+                    datarecevied += data + "\n";
+                    if (data != null && data.StartsWith("process:"))
                     {
-                        stra = LanguageApi.FindRes("demuxing") + " " + e.Data.Replace("process: ", "");
+                        stra = LanguageApi.FindRes("demuxing") + " " + data.Replace("process: ", "");
                     }
                     else
                     {
                         stra = LanguageApi.FindRes("demuxing") + "...";
                     }
-                    if (!string.IsNullOrEmpty(e.Data) && !processIsExited)
+                    if (!string.IsNullOrEmpty(data) && !processIsExited)
                     {
                         DataReceivedCall(stra);
                     }
@@ -218,12 +222,16 @@ namespace VSGUI.API
                         ExitedCall("eac3to" + LanguageApi.FindRes("demux") + LanguageApi.FindRes("error"));
                     }
                 }
+                void Pided(string pid)
+                {
+                    //QueueApi.SetQueueListitem(queueid, "processTheadId", pid);
+                }
             }
 
             static void mkvextractDemux(string inputpath, Action<string> DataReceivedCall, Action<string> ExitedCall)
             {
                 string clipath = MainWindow.binpath + @"\tools\mkvtoolnix\";
-                string info = ProcessApi.RunSyncProcess(clipath, @"mkvinfo.exe" + " --ui-language en " + "\"" + inputpath + "\"", outputUTF8: true);
+                string info = ProcessApi.RunSyncProcess(clipath, @"mkvinfo.exe" + " --ui-language en " + "\"" + inputpath + "\"");
                 var x = Regex.Matches(info, @"mkvextract: (\d*)(?:.|\s)*?Track type: (.*)(?:.|\s)*?Codec ID: (.*)");
                 var xa = Regex.Matches(info, @"Attached(?:.|\s)*?File name: (.*)\s");
 
@@ -244,10 +252,10 @@ namespace VSGUI.API
                         }
                     }
                     string fullcommon = @"mkvextract.exe --ui-language en " + "\"" + inputpath + "\"" + @" tracks " + commonParameter;
-                    ProcessApi.RunProcess(clipath, fullcommon, DataReceived, Exited, out string pid, outputUTF8: true);
-                    void DataReceived(DataReceivedEventArgs e, bool processIsExited)
+                    ProcessApi.RunProcess(clipath, fullcommon, DataReceived, Exited, Pided);
+                    void DataReceived(string data, bool processIsExited)
                     {
-                        if (!string.IsNullOrEmpty(e.Data) && !processIsExited)
+                        if (!string.IsNullOrEmpty(data) && !processIsExited)
                         {
                             DataReceivedCall(LanguageApi.FindRes("demuxing"));
                         }
@@ -255,6 +263,10 @@ namespace VSGUI.API
                     void Exited()
                     {
                         ExitedCall("mkvextract" + LanguageApi.FindRes("demux") + LanguageApi.FindRes("finish"));
+                    }
+                    void Pided(string pid)
+                    {
+                        //QueueApi.SetQueueListitem(queueid, "processTheadId", pid);
                     }
                 }
                 else

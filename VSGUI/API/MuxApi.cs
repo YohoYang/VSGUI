@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -85,11 +86,11 @@ namespace VSGUI.API
 
             string common = ProcessMuxCommandStr(input, output, -1, out string clipath);
 
-            ProcessApi.RunProcess(clipath, common, DataReceived, Exited, out string pid);
-            void DataReceived(DataReceivedEventArgs e, bool processIsExited)
+            ProcessApi.RunProcess(clipath, common, DataReceived, Exited, Pided);
+            void DataReceived(string data, bool processIsExited)
             {
-                datarecevied += e.Data;
-                if (!string.IsNullOrEmpty(e.Data) && !processIsExited)
+                datarecevied += data;
+                if (!string.IsNullOrEmpty(data) && !processIsExited)
                 {
                     DataReceivedCall(LanguageApi.FindRes("muxMuxing"));
                 }
@@ -106,7 +107,10 @@ namespace VSGUI.API
                 }
                 CommonApi.TryDeleteFile(Path.GetTempPath() + @"vsgui\" + "Job_-1" + ".txt");
             }
-
+            void Pided(string pid)
+            {
+                //QueueApi.SetQueueListitem(queueid, "processTheadId", pid);
+            }
         }
     }
 }

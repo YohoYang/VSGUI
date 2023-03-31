@@ -762,20 +762,20 @@ namespace VSGUI
                     {
                         clipath = "";
                     }
-                    ProcessApi.RunProcess(clipath, QueueApi.GetQueueListitem(queueid, "command"), DataReceived, Exited, out string pid);
+                    ProcessApi.RunProcess(clipath, QueueApi.GetQueueListitem(queueid, "command"), DataReceived, Exited, Pided);
 
-                    QueueApi.SetQueueListitem(queueid, "processTheadId", pid);
 
-                    void DataReceived(DataReceivedEventArgs e, bool processIsExited)
+
+                    void DataReceived(string data, bool processIsExited)
                     {
-                        if (!string.IsNullOrEmpty(e.Data) && !processIsExited)
+                        if (!string.IsNullOrEmpty(data) && !processIsExited)
                         {
                             if ((new DateTimeOffset(DateTime.UtcNow).ToUnixTimeMilliseconds() - QueueApi.lastUpdateTime) < 500)
                             {
                                 return;
                             }
                             QueueApi.lastUpdateTime = new DateTimeOffset(DateTime.UtcNow).ToUnixTimeMilliseconds();
-                            QueueApi.UpdateProgressStatus(queueid, e.Data);
+                            QueueApi.UpdateProgressStatus(queueid, data);
                             UpdateQueueList();
                         }
                     }
@@ -787,6 +787,10 @@ namespace VSGUI
                             NextQueue(QueueApi.FindQueueListitemIndexFromQueueid(queueid));
                         }
                         UpdateQueueList();
+                    }
+                    void Pided(string pid)
+                    {
+                        QueueApi.SetQueueListitem(queueid, "processTheadId", pid);
                     }
                 }
             ).Start();
