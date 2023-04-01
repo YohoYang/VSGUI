@@ -140,7 +140,7 @@
     <system:String x:Key="useSystemEnvironmentDesc">Use the system's Python and Vapoursynth to replace the software built-in environment. It needs to be the system detects that it is installed.</system:String>
     <system:String x:Key="system">system</system:String>
     <system:String x:Key="buildin">build-in</system:String>
-    <system:String x:Key="enableLog">Enable Log</system:String>
+    <system:String x:Key="enableLog">Enable FileLog</system:String>
     <system:String x:Key="enableLogDesc">After it is enabled, a log directory will be created in the software directory, and the output of task execution will be saved for troubleshooting and feedback.</system:String>
     <system:String x:Key="useSystemEnvironmentWarningVsEditor">You have enabled the system environment feature, but you are still associated with the built-in VsEditor editor. The built-in editors always use the built-in Python and Vapoursynth, it is recommended that you disassociate and install additional editors yourself.</system:String>
     <system:String x:Key="cutstrFormatError">Audio Cut Format Error</system:String>

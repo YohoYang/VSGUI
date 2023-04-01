@@ -147,8 +147,9 @@ namespace VSGUI.API
 
             string dateStr = "[" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "]\r\n";
             tempOutputStr = dateStr + tempOutputStr;
+            //MainWindow.logBoxStr += tempOutputStr;
 
-            Debug.WriteLine(tempOutputStr);
+            //Debug.WriteLine(tempOutputStr);
 
             //Process proc = new Process
             //{
@@ -256,13 +257,15 @@ namespace VSGUI.API
                         break;
                     case StandardOutputCommandEvent stdOut:
                         inDataReceived(stdOut.Text, isexited);
-                        Debug.WriteLine("[" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "] " + stdOut.Text);
+                        //Debug.WriteLine("[" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "] " + stdOut.Text);
                         tempLogStr += "[" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "] " + stdOut.Text + "\n";
+                        MainWindow.logBoxStr += "\r\n" + "[" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "] " + stdOut.Text;
                         break;
                     case StandardErrorCommandEvent stdErr:
                         inDataReceived(stdErr.Text, isexited);
-                        Debug.WriteLine("[" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "] " + stdErr.Text);
+                        //Debug.WriteLine("[" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "] " + stdErr.Text);
                         tempLogStr += "[" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "] " + stdErr.Text + "\n";
+                        MainWindow.logBoxStr += "\r\n" + "[" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "] " + stdErr.Text;
                         break;
                     case ExitedCommandEvent exited:
                         //Debug.WriteLine($"Process exited; Code: {exited.ExitCode}");

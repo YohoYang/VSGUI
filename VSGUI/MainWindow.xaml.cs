@@ -24,7 +24,8 @@ namespace VSGUI
     {
         public static string binpath = Directory.GetCurrentDirectory() + @"\bin";
         private bool forcedStop = false;
-        private string coreversion = "v0.3.4";
+        private string coreversion = "v0.3.5";
+        public static string logBoxStr = "";
 
         public MainWindow()
         {
@@ -120,6 +121,7 @@ namespace VSGUI
             if (IniApi.IniReadValue("AutoUpdate") == "") AutoUpdate.IsChecked = true;
             if (IniApi.IniReadValue("AutoGenerateCut") == "") AutoGenerateCut.IsChecked = true;
             if (IniApi.IniReadValue("UseNetEncoderJson") == "") UseNetEncoderJson.IsChecked = true;
+            if (IniApi.IniReadValue("EnableQueueLog") == "") EnableQueueLog.IsChecked = true;
             //封装格式记忆
             if (IniApi.IniReadValue("muxsuffixbox") != "")
             {
@@ -777,6 +779,7 @@ namespace VSGUI
                             QueueApi.lastUpdateTime = new DateTimeOffset(DateTime.UtcNow).ToUnixTimeMilliseconds();
                             QueueApi.UpdateProgressStatus(queueid, data);
                             UpdateQueueList();
+                            UpdateLogBox();
                         }
                     }
                     void Exited()
@@ -1100,10 +1103,20 @@ namespace VSGUI
             if (((CheckBox)sender).IsChecked == true)
             {
                 IniApi.IniWriteValue(((CheckBox)sender).Name.ToString(), "true");
+                //EnableQueueLog特殊处理
+                if (((CheckBox)sender).Name.ToString() == "EnableQueueLog")
+                {
+                    logTextbox.Visibility = Visibility.Visible;
+                }
             }
             else
             {
                 IniApi.IniWriteValue(((CheckBox)sender).Name.ToString(), "false");
+                //EnableQueueLog特殊处理
+                if (((CheckBox)sender).Name.ToString() == "EnableQueueLog")
+                {
+                    logTextbox.Visibility = Visibility.Collapsed;
+                }
             }
         }
 
@@ -1330,6 +1343,28 @@ namespace VSGUI
             }
             LanguageApi.SwitchLanguage(selectLanguage);
 
+        }
+
+        private void UpdateLogBox()
+        {
+            Dispatcher.Invoke(() =>
+            {
+                var loglist = logBoxStr.Split("\r\n");
+                Console.WriteLine(loglist.Length);
+                if (loglist.Length > 50)
+                {
+                    string newlogBoxStr = "";
+                    for (int i = loglist.Length - 50; i < loglist.Length; i++)
+                    {
+                        newlogBoxStr += "\r\n" + loglist[i];
+                    }
+                    logBoxStr = newlogBoxStr;
+                }
+                logTextbox.Text = logBoxStr;
+                //logTextbox.ScrollToLine(50);
+                logTextbox.ScrollToVerticalOffset(99999);
+                //logTextbox.ScrollToEnd();
+            });
         }
 
         /// <summary>

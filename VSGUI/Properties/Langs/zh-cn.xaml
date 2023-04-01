@@ -140,11 +140,14 @@
     <system:String x:Key="useSystemEnvironmentDesc">使用系统中的Python及Vapoursynth替代软件内置环境。需要在检测到已安装时才能启用。</system:String>
     <system:String x:Key="system">系统</system:String>
     <system:String x:Key="buildin">内置</system:String>
-    <system:String x:Key="enableLog">启用日志</system:String>
+    <system:String x:Key="enableLog">启用文件日志</system:String>
     <system:String x:Key="enableLogDesc">启用后将在软件目录新建log目录，并保存任务执行的输出，便于排查错误和反馈。</system:String>
     <system:String x:Key="useSystemEnvironmentWarningVsEditor">您启用了系统环境功能，但您依然关联了内置VsEditor编辑器。内置的编辑器始终使用内置的Python和Vapoursynth，建议您取消关联并自行另外安装编辑器。</system:String>
     <system:String x:Key="cutstrFormatError">音频切割格式异常</system:String>
     <system:String x:Key="fpsstrFormatError">fps为空</system:String>
     <system:String x:Key="rescan">联网校验软件完整性</system:String>
+
+    <system:String x:Key="enableQueueLog">启用队列简要日志</system:String>
+    <system:String x:Key="enableQueueLogDesc">启用后将在队列界面中显示一个队列日志框，显示最近一定数量的日志内容。</system:String>
 
 </ResourceDictionary>
