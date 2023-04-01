@@ -772,14 +772,14 @@ namespace VSGUI
                     {
                         if (!string.IsNullOrEmpty(data) && !processIsExited)
                         {
-                            if ((new DateTimeOffset(DateTime.UtcNow).ToUnixTimeMilliseconds() - QueueApi.lastUpdateTime) < 500)
+                            UpdateLogBox();
+                            if ((new DateTimeOffset(DateTime.UtcNow).ToUnixTimeMilliseconds() - QueueApi.lastUpdateTime) < 1000)
                             {
                                 return;
                             }
                             QueueApi.lastUpdateTime = new DateTimeOffset(DateTime.UtcNow).ToUnixTimeMilliseconds();
                             QueueApi.UpdateProgressStatus(queueid, data);
                             UpdateQueueList();
-                            UpdateLogBox();
                         }
                     }
                     void Exited()
