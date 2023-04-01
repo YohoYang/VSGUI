@@ -11,7 +11,7 @@ namespace VSGUI.API
 {
     internal class VideoApi
     {
-        public static string MakeVideoScript(string videoinputpath, string resolution, string asspath)
+        public static string MakeVideoScript(string videoinputpath, string resolution, string subpath)
         {
             //输入视频信息检测
             int sourceWidth = 0;
@@ -70,11 +70,20 @@ namespace VSGUI.API
             }
             scriptstr += @"video = core.resize.Lanczos(video, width=" + sourceWidth + ", height=" + sourceHeight + ")" + "\r\n";
             //字幕
-            if (asspath != "")
+            if (subpath != "")
             {
-                if (File.Exists(asspath))
+                if (File.Exists(subpath))
                 {
-                    scriptstr += @"video = core.assrender.TextSub(video, file=r" + "\"" + asspath + "\"" + ")" + "\r\n";
+
+                    if (Path.GetExtension(subpath) == ".sup")
+                    {
+                        //scriptstr += @"def rgba(r, g, b, a=255):" + "\r\n" + @"    if r < 0 or r > 255 or g < 0 or g > 255 or b < 0 or b > 255 or a < 0 or a > 255:" + "\r\n" + @"        raise vs.Error(""Colours must be in the range [0, 255]."")" + "\r\n" + @"    return (a << 24) + (r << 16) + (g << 8) + b" + "\r\n" + "\r\n" + @"unused = 1 << 42" + "\r\n";
+                        scriptstr += @"video = core.sub.ImageFile(video, r" + "\"" + subpath + "\"" + ")" + "\r\n";
+                    }
+                    else
+                    {
+                        scriptstr += @"video = core.assrender.TextSub(video, file=r" + "\"" + subpath + "\"" + ")" + "\r\n";
+                    }
                 }
             }
             //输出
