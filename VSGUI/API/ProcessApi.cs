@@ -254,6 +254,7 @@ namespace VSGUI.API
                     case StartedCommandEvent started:
                         //Debug.WriteLine($"Process started; ID: {started.ProcessId}");
                         processid(started.ProcessId.ToString());
+                        QueueApi.runningQueueCount += 1;
                         break;
                     case StandardOutputCommandEvent stdOut:
                         inDataReceived(stdOut.Text, isexited);
