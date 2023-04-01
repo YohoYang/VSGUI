@@ -548,6 +548,24 @@
                                                 <Button Grid.Row="1" x:Name="uninstallvseditorbutton" Content="{DynamicResource disassociation}" Margin="4,0,0,0" Visibility="Collapsed" Click="UnInstallVseditorButton_Click" HorizontalAlignment="Stretch" VerticalAlignment="Bottom"/>
                                             </Grid>
                                         </Border>
+                                        <Border Grid.Column="1" Style="{StaticResource BorderRegion}" Margin="5,0,0,0">
+                                            <Grid>
+                                                <Grid.RowDefinitions>
+                                                    <RowDefinition Height="auto"/>
+                                                    <RowDefinition Height="*"/>
+                                                </Grid.RowDefinitions>
+                                                <hc:UniformSpacingPanel Grid.Row="0" Spacing="6" Orientation="Vertical" VerticalAlignment="Bottom" Margin="0,0,0,5">
+                                                    <DockPanel>
+                                                        <TextBlock Text="{DynamicResource openfiltersscriptsdirectory}"/>
+                                                    </DockPanel>
+                                                </hc:UniformSpacingPanel>
+                                                <StackPanel Grid.Row="1" VerticalAlignment="Bottom">
+                                                    <Button Content="{DynamicResource openfilters}" Margin="4,0,0,0" Click="OpenFiltersButton_Click" HorizontalAlignment="Stretch" VerticalAlignment="Bottom"/>
+                                                    <Button Content="{DynamicResource openscripts}" Margin="4,4,0,0" Click="OpenScriptsButton_Click" HorizontalAlignment="Stretch" VerticalAlignment="Bottom"/>
+                                                </StackPanel>
+
+                                            </Grid>
+                                        </Border>
                                     </Grid>
                                 </StackPanel>
                             </Border>

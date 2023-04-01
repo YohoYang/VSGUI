@@ -145,6 +145,10 @@
     <system:String x:Key="useSystemEnvironmentWarningVsEditor">You have enabled the system environment feature, but you are still associated with the built-in VsEditor editor. The built-in editors always use the built-in Python and Vapoursynth, it is recommended that you disassociate and install additional editors yourself.</system:String>
     <system:String x:Key="cutstrFormatError">Audio Cut Format Error</system:String>
     <system:String x:Key="fpsstrFormatError">fps text empty</system:String>
-    <system:String x:Key="rescan">重新校验软件完整性</system:String>
-
+    <system:String x:Key="rescan">Recheck software update</system:String>
+    <system:String x:Key="enableQueueLog">Enable queue log</system:String>
+    <system:String x:Key="enableQueueLogDesc">After enabling it, a queue log box will be displayed in the queue interface, displaying a certain number of recent log contents.</system:String>
+    <system:String x:Key="openfiltersscriptsdirectory">Open the filters/scripts directory</system:String>
+    <system:String x:Key="openfilters">Filter (dll) directory</system:String>
+    <system:String x:Key="openscripts">script (py) directory</system:String>
 </ResourceDictionary>

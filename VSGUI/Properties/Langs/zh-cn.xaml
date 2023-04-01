@@ -146,8 +146,10 @@
     <system:String x:Key="cutstrFormatError">音频切割格式异常</system:String>
     <system:String x:Key="fpsstrFormatError">fps为空</system:String>
     <system:String x:Key="rescan">联网校验软件完整性</system:String>
-
     <system:String x:Key="enableQueueLog">启用队列简要日志</system:String>
     <system:String x:Key="enableQueueLogDesc">启用后将在队列界面中显示一个队列日志框，显示最近一定数量的日志内容。</system:String>
+    <system:String x:Key="openfiltersscriptsdirectory">打开滤镜/脚本目录</system:String>
+    <system:String x:Key="openfilters">滤镜(dll)目录</system:String>
+    <system:String x:Key="openscripts">脚本(py)目录</system:String>
 
 </ResourceDictionary>

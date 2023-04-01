@@ -1408,5 +1408,17 @@ namespace VSGUI
         {
             Process.Start("explorer", "https://www.sbsub.com/");
         }
+
+        private void OpenFiltersButton_Click(object sender, RoutedEventArgs e)
+        {
+            Directory.CreateDirectory(binpath + @"\vs\vapoursynth64\plugins");
+            System.Diagnostics.Process.Start("explorer.exe", binpath + @"\vs\vapoursynth64\plugins");
+        }
+        private void OpenScriptsButton_Click(object sender, RoutedEventArgs e)
+        {
+            Directory.CreateDirectory(binpath + @"\vs\python\libs");
+            System.Diagnostics.Process.Start("explorer.exe", binpath + @"\vs\python\libs");
+        }
+
     }
 }
