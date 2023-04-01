@@ -181,9 +181,9 @@ namespace VSGUI
 
         public void UpdateQueueList()
         {
-            Dispatcher.Invoke(() =>
+            try
             {
-                try
+                Dispatcher.Invoke(() =>
                 {
                     int lastSelected = QueueListView.SelectedIndex;
                     var queueItemData = QueueApi.GetQueueMember();
@@ -216,14 +216,14 @@ namespace VSGUI
                     QueueListView.SelectedIndex = lastSelected;
                     QueueTabHeaderNum.Text = "(" + queueItemData.Count + ")";
                     queueinfotext.Text = QueueApi.GetQueueInfoText();
-                }
-                catch (Exception)
-                {
-                    CommonApi.TryDeleteFile(MainWindow.binpath + @"\json\queueList.json");
-                    UpdateQueueList();
-                    return;
-                }
-            });
+                });
+            }
+            catch (Exception)
+            {
+                CommonApi.TryDeleteFile(MainWindow.binpath + @"\json\queueList.json");
+                UpdateQueueList();
+                return;
+            }
         }
 
 
