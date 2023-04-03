@@ -42,7 +42,7 @@
                                             <ColumnDefinition Width="auto"/>
                                         </Grid.ColumnDefinitions>
                                         <TextBlock Grid.Column="0" VerticalAlignment="Center" Text="{DynamicResource videoinput}"/>
-                                        <TextBox x:Name="simplevideoinputbox" Grid.Column="1" PreviewDragOver="TextBox_PreviewDragOver" PreviewDrop="TextBox_PreviewDrop"/>
+                                        <hc:TextBox x:Name="simplevideoinputbox" Grid.Column="1" PreviewDragOver="TextBox_PreviewDragOver" PreviewDrop="TextBox_PreviewDrop" hc:InfoElement.Placeholder="{DynamicResource simpleVideoInputPlaceholder}"/>
                                         <Button x:Name="simplevideoinput" Grid.Column="2" Content="..." Margin="4,0,0,0" Click="OpenFileSelect_Click"/>
                                     </Grid>
                                     <!--音频输入-->
@@ -53,7 +53,7 @@
                                             <ColumnDefinition Width="auto"/>
                                         </Grid.ColumnDefinitions>
                                         <TextBlock Grid.Column="0" VerticalAlignment="Center" Text="{DynamicResource audioinput}"/>
-                                        <TextBox x:Name="simpleaudioinputbox" Grid.Column="1" PreviewDragOver="TextBox_PreviewDragOver" PreviewDrop="TextBox_PreviewDrop"/>
+                                        <hc:TextBox x:Name="simpleaudioinputbox" Grid.Column="1" PreviewDragOver="TextBox_PreviewDragOver" PreviewDrop="TextBox_PreviewDrop" hc:InfoElement.Placeholder="{DynamicResource simpleAudioInputPlaceholder}"/>
                                         <Button x:Name="simpleaudioinput" Grid.Column="2" Content="..." Margin="4,0,0,0" Click="OpenFileSelect_Click"/>
                                     </Grid>
                                     <!--视频编码参数-->
@@ -112,7 +112,7 @@
                                             <ColumnDefinition Width="auto"/>
                                         </Grid.ColumnDefinitions>
                                         <TextBlock Grid.Column="0" VerticalAlignment="Center" Text="{DynamicResource subtitleFile}"/>
-                                        <TextBox x:Name="simpleasspathinputbox" Grid.Column="1" PreviewDragOver="TextBox_PreviewDragOver" PreviewDrop="TextBox_PreviewDrop"/>
+                                        <hc:TextBox x:Name="simpleasspathinputbox" Grid.Column="1" PreviewDragOver="TextBox_PreviewDragOver" PreviewDrop="TextBox_PreviewDrop"  hc:InfoElement.Placeholder="{DynamicResource simpleSubInputPlaceholder}"/>
                                         <Button x:Name="simpleasspathinput" Grid.Column="2" Content="..." Margin="4,0,0,0" Click="OpenFileSelect_Click"/>
                                     </Grid>
                                     <!--章节文件-->
@@ -123,7 +123,7 @@
                                             <ColumnDefinition Width="auto"/>
                                         </Grid.ColumnDefinitions>
                                         <TextBlock Grid.Column="0" VerticalAlignment="Center" Text="{DynamicResource chapterfile}"/>
-                                        <TextBox x:Name="simplecapinputbox" Grid.Column="1" PreviewDragOver="TextBox_PreviewDragOver" PreviewDrop="TextBox_PreviewDrop"/>
+                                        <hc:TextBox x:Name="simplecapinputbox" Grid.Column="1" PreviewDragOver="TextBox_PreviewDragOver" PreviewDrop="TextBox_PreviewDrop" hc:InfoElement.Placeholder="{DynamicResource simpleCapInputPlaceholder}"/>
                                         <Button x:Name="simplecapinput" Grid.Column="2" Content="..." Margin="4,0,0,0" Click="OpenFileSelect_Click"/>
                                     </Grid>
                                     <!--封装格式-->

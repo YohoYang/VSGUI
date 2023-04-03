@@ -151,5 +151,9 @@
     <system:String x:Key="openfiltersscriptsdirectory">打开滤镜/脚本目录</system:String>
     <system:String x:Key="openfilters">滤镜(dll)目录</system:String>
     <system:String x:Key="openscripts">脚本(py)目录</system:String>
+    <system:String x:Key="simpleVideoInputPlaceholder">将要压制的视频拖入此处，将自动判断并填充音频输入</system:String>
+    <system:String x:Key="simpleAudioInputPlaceholder">如果需要使用与原视频不同的音频，可以在拖入视频后将音频拖入此处</system:String>
+    <system:String x:Key="simpleSubInputPlaceholder">支持ass/srt/sup</system:String>
+    <system:String x:Key="simpleCapInputPlaceholder">当前仅支持txt章节</system:String>
 
 </ResourceDictionary>
