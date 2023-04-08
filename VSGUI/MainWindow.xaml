@@ -323,7 +323,7 @@
                         <RowDefinition Height="auto"/>
                     </Grid.RowDefinitions>
                     <TextBlock x:Name="QueueListEmptyTips" Text="{DynamicResource nojobnow}" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Column="1" Margin="99,0,0,0" />
-                    <ListView x:Name="QueueListView" Grid.Row="0" Background="{x:Null}" BorderBrush="{x:Null}" SelectionMode="Single" SelectionChanged="QueueListView_SelectionChanged" Grid.ColumnSpan="2" Margin="0,0,0,51" Grid.RowSpan="2">
+                    <ListView x:Name="QueueListView" Grid.Row="0" Background="{x:Null}" BorderBrush="{x:Null}" SelectionMode="Single" SelectionChanged="QueueListView_SelectionChanged" Grid.ColumnSpan="2">
                         <ListView.View>
                             <GridView>
                                 <GridViewColumn Header="{DynamicResource id}" Width="40" >
@@ -374,7 +374,7 @@
                                 <RowDefinition Height="auto"/>
                             </Grid.RowDefinitions>
                             <StackPanel Grid.Row="0">
-                                <TextBox x:Name="logTextbox" Grid.Row="0" IsReadOnly="True" VerticalContentAlignment="Top" VerticalScrollBarVisibility="Visible" Height="80" Visibility="Collapsed"/>
+                                <TextBox x:Name="logTextbox" Grid.Row="0" IsReadOnly="True" VerticalContentAlignment="Top" VerticalScrollBarVisibility="Visible" Height="80" Visibility="Visible"/>
                             </StackPanel>
                             <Grid Grid.Row="1">
                                 <WrapPanel HorizontalAlignment="Left">
