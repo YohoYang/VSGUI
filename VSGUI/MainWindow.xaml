@@ -340,21 +340,21 @@
                                         </DataTemplate>
                                     </GridViewColumn.CellTemplate>
                                 </GridViewColumn>
-                                <GridViewColumn Header="{DynamicResource input}" Width="100" >
+                                <GridViewColumn Header="{DynamicResource input}" Width="200" >
                                     <GridViewColumn.CellTemplate>
                                         <DataTemplate>
                                             <TextBlock Text="{Binding InputFilename}" ToolTipService.InitialShowDelay='0' ToolTip="{Binding InputFilepath}"/>
                                         </DataTemplate>
                                     </GridViewColumn.CellTemplate>
                                 </GridViewColumn>
-                                <GridViewColumn Header="{DynamicResource output}" Width="100" >
+                                <GridViewColumn Header="{DynamicResource output}" Width="200" >
                                     <GridViewColumn.CellTemplate>
                                         <DataTemplate>
                                             <TextBlock Text="{Binding OutputFilename}" ToolTipService.InitialShowDelay='0' ToolTip="{Binding OutputFilepath}"/>
                                         </DataTemplate>
                                     </GridViewColumn.CellTemplate>
                                 </GridViewColumn>
-                                <GridViewColumn Header="{DynamicResource status}" Width="320" >
+                                <GridViewColumn Header="{DynamicResource status}" Width="200" >
                                     <GridViewColumn.CellTemplate>
                                         <DataTemplate>
                                             <DockPanel>

@@ -21,7 +21,7 @@ namespace VSGUI.API
             if (isNormalize) NormalizeStr = @"Normalize()";
 
             string script = "";
-            script += @"LoadPlugin(""" + temppath + @"\vsgui\LSMASHSource.dll"")" + "\r\n";
+            script += @"LoadPlugin(""LSMASHSource.dll"")" + "\r\n";
 
             bool isVideoinput = false;
             if (inputext == ".ts" || inputext == ".mkv" || inputext == ".m2ts" || inputext == ".flv")
