@@ -18,11 +18,11 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="CliWrap" Version="3.6.0" />
+		<PackageReference Include="CliWrap" Version="3.6.4" />
 		<PackageReference Include="HandyControl" Version="3.4.0">
 		  <GeneratePathProperty></GeneratePathProperty>
 		</PackageReference>
-		<PackageReference Include="System.Management" Version="7.0.0" />
+		<PackageReference Include="System.Management" Version="8.0.0" />
 	</ItemGroup>
 
 	<ItemGroup>
