@@ -323,7 +323,7 @@
                         <RowDefinition Height="auto"/>
                     </Grid.RowDefinitions>
                     <TextBlock x:Name="QueueListEmptyTips" Text="{DynamicResource nojobnow}" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Column="1" Margin="99,0,0,0" />
-                    <ListView x:Name="QueueListView" Grid.Row="0" Background="{x:Null}" BorderBrush="{x:Null}" SelectionMode="Single" SelectionChanged="QueueListView_SelectionChanged" Grid.ColumnSpan="2">
+                    <ListView x:Name="QueueListView" Grid.Row="0" Background="{x:Null}" BorderBrush="{x:Null}" SelectionMode="Single" SelectionChanged="QueueListView_SelectionChanged" Grid.ColumnSpan="2" MouseLeftButtonDown="QueueListView_MouseLeftButtonDown">
                         <ListView.View>
                             <GridView>
                                 <GridViewColumn Header="{DynamicResource id}" Width="40" >
@@ -373,21 +373,21 @@
                                 <RowDefinition Height="auto"/>
                                 <RowDefinition Height="auto"/>
                             </Grid.RowDefinitions>
-                            <StackPanel Grid.Row="0">
+                            <StackPanel Grid.Row="0" Margin="5">
                                 <TextBox x:Name="logTextbox" Grid.Row="0" IsReadOnly="True" VerticalContentAlignment="Top" VerticalScrollBarVisibility="Visible" Height="80" Visibility="Visible"/>
                             </StackPanel>
                             <Grid Grid.Row="1">
-                                <WrapPanel HorizontalAlignment="Left">
-                                    <Button x:Name="StartQueueAll" Margin="5" Click="StartQueueAll_Click" Content="{DynamicResource startqueue}"></Button>
-                                    <Button x:Name="StopQueueAll" Margin="5" Click="StopQueueAll_Click" Content="{DynamicResource stopalljob}"></Button>
-                                </WrapPanel>
                                 <WrapPanel HorizontalAlignment="Right">
-                                    <Button x:Name="StartQueueItem" Margin="5" Style="{StaticResource ButtonPrimary}" Click="StartQueueItem_Click" Visibility="Visible" ToolTip="{DynamicResource startjobtooltip}" Content="{DynamicResource startjob}"></Button>
-                                    <Button x:Name="PauseQueueItem" Margin="5" Style="{StaticResource ButtonWarning}" Click="PauseQueueItem_Click" Visibility="Collapsed" Content="{DynamicResource pausejob}"></Button>
-                                    <Button x:Name="ResumeQueueItem" Margin="5" Style="{StaticResource ButtonSuccess}" Click="ResumeQueueItem_Click" Visibility="Collapsed" Content="{DynamicResource resumejob}"></Button>
-                                    <Button x:Name="StopQueueItem" Margin="5" Style="{StaticResource ButtonDanger}" Click="StopQueueItem_Click" Visibility="Collapsed" Content="{DynamicResource stopjob}"></Button>
-                                    <Button x:Name="ResetQueueItem" Margin="5" Style="{StaticResource ButtonSuccess}" Click="ResetQueueItem_Click" Visibility="Collapsed" Content="{DynamicResource resetjob}"></Button>
-                                    <Button x:Name="DeleteQueueItem" Margin="5" Style="{StaticResource ButtonDanger}" Click="DeleteQueueItem_Click" Visibility="Collapsed" Content="{DynamicResource deletejob}"></Button>
+                                    <Button x:Name="StartQueueAll" Margin="5" Click="StartQueueAll_Click" Style="{StaticResource ButtonPrimary}" Content="{DynamicResource startqueue}" MinWidth="140" FontWeight="Bold" FontSize="14"/>
+                                    <Button x:Name="StopQueueAll" Margin="5" Click="StopQueueAll_Click"  Style="{StaticResource ButtonDanger}" Visibility="Collapsed" Content="{DynamicResource stopalljob}" FontWeight="Bold" FontSize="14" MinWidth="140"></Button>
+                                </WrapPanel>
+                                <WrapPanel HorizontalAlignment="Left">
+                                    <Button x:Name="StartQueueItem" Margin="5" Style="{StaticResource ButtonPrimary}" Click="StartQueueItem_Click" Visibility="Collapsed" ToolTip="{DynamicResource startjobtooltip}" Content="{DynamicResource startjob}" Background="#FF688DE6"/>
+                                    <Button x:Name="PauseQueueItem" Margin="5" Style="{StaticResource ButtonWarning}" Click="PauseQueueItem_Click" Visibility="Collapsed" Content="{DynamicResource pausejob}" Background="#FFE8C87B"></Button>
+                                    <Button x:Name="ResumeQueueItem" Margin="5" Style="{StaticResource ButtonSuccess}" Click="ResumeQueueItem_Click" Visibility="Collapsed" Content="{DynamicResource resumejob}" Background="#FF56BB6D"></Button>
+                                    <Button x:Name="StopQueueItem" Margin="5" Style="{StaticResource ButtonDanger}" Click="StopQueueItem_Click" Visibility="Collapsed" Content="{DynamicResource stopjob}" Background="#FFE06770"></Button>
+                                    <Button x:Name="ResetQueueItem" Margin="5" Style="{StaticResource ButtonSuccess}" Click="ResetQueueItem_Click" Visibility="Collapsed" Content="{DynamicResource resetjob}" Background="#FF56BB6D"></Button>
+                                    <Button x:Name="DeleteQueueItem" Margin="5" Style="{StaticResource ButtonDanger}" Click="DeleteQueueItem_Click" Visibility="Collapsed" Content="{DynamicResource deletejob}" Background="#FFE06770"></Button>
                                 </WrapPanel>
                             </Grid>
                         </Grid>

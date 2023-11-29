@@ -192,11 +192,15 @@ namespace VSGUI
                     {
                         StartQueueAll.IsEnabled = false;
                         StopQueueAll.IsEnabled = true;
+                        StartQueueAll.Visibility = Visibility.Collapsed;
+                        StopQueueAll.Visibility = Visibility.Visible;
                     }
                     else
                     {
                         StartQueueAll.IsEnabled = true;
                         StopQueueAll.IsEnabled = false;
+                        StartQueueAll.Visibility = Visibility.Visible;
+                        StopQueueAll.Visibility = Visibility.Collapsed;
                     }
                     //如果列表空，显示一个东西
                     if (queueItemData.Count > 0)
@@ -744,13 +748,15 @@ namespace VSGUI
 
         internal void StartQueueJob(string queueid, bool isSingle = false)
         {
+            this.StartQueueAll.IsEnabled = false;
+
             new Thread(
                 () =>
                 {
                     QueueApi.SetQueueListitem(queueid, "status", "running");
                     QueueApi.SetQueueListitem(queueid, "statustext", LanguageApi.FindRes("preparing"));
                     QueueApi.SetQueueListitem(queueid, "starttime", new DateTimeOffset(DateTime.UtcNow).ToUnixTimeSeconds().ToString());
-                    UpdateQueueList();
+                    //UpdateQueueList();
 
                     //特殊格式文件特殊处理
                     QueueApi.SpecialFormatPreProcess(queueid);
@@ -1252,7 +1258,7 @@ namespace VSGUI
             File.WriteAllText(binpath + @"\vs\installvseditor-un.bat", cmdstr);
             Process.Start(binpath + @"\vs\installvseditor-un.bat");
             Thread.Sleep(1000);
-           // Process.Start("explorer.exe");
+            // Process.Start("explorer.exe");
             CommonApi.TryDeleteFile(binpath + @"\vs\installvseditor-un.bat");
             UpdateVseditorButtonStatus();
         }
@@ -1440,5 +1446,10 @@ namespace VSGUI
             System.Diagnostics.Process.Start("explorer.exe", binpath + @"\vs\python\libs");
         }
 
+
+        private void QueueListView_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            this.QueueListView.SelectedIndex = -1;
+        }
     }
 }
