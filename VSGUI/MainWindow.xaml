@@ -343,7 +343,7 @@
                                         </DataTemplate>
                                     </GridViewColumn.CellTemplate>
                                 </GridViewColumn>
-                                <GridViewColumn Header="{DynamicResource output}" Width="170" >
+                                <GridViewColumn Header="{DynamicResource output}" Width="170">
                                     <GridViewColumn.CellTemplate>
                                         <DataTemplate>
                                             <TextBlock Text="{Binding OutputFilename}" ToolTipService.InitialShowDelay='0' ToolTip="{Binding OutputFilepath}"/>
