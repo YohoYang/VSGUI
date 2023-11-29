@@ -179,7 +179,7 @@ namespace VSGUI
             });
         }
 
-        public void UpdateQueueList()
+        public void UpdateQueueList(bool notBtn = false)
         {
             try
             {
@@ -187,21 +187,25 @@ namespace VSGUI
                 {
                     int lastSelected = QueueListView.SelectedIndex;
                     var queueItemData = QueueApi.GetQueueMember();
-                    //更新左侧按钮状态
-                    if (QueueApi.runningQueueCount > 0)
+                    //更新右侧按钮状态
+                    if (notBtn == false)
                     {
-                        StartQueueAll.IsEnabled = false;
-                        StopQueueAll.IsEnabled = true;
-                        StartQueueAll.Visibility = Visibility.Collapsed;
-                        StopQueueAll.Visibility = Visibility.Visible;
+                        if (QueueApi.runningQueueCount > 0)
+                        {
+                            StartQueueAll.IsEnabled = false;
+                            StopQueueAll.IsEnabled = true;
+                            StartQueueAll.Visibility = Visibility.Collapsed;
+                            StopQueueAll.Visibility = Visibility.Visible;
+                        }
+                        else
+                        {
+                            StartQueueAll.IsEnabled = true;
+                            StopQueueAll.IsEnabled = false;
+                            StartQueueAll.Visibility = Visibility.Visible;
+                            StopQueueAll.Visibility = Visibility.Collapsed;
+                        }
                     }
-                    else
-                    {
-                        StartQueueAll.IsEnabled = true;
-                        StopQueueAll.IsEnabled = false;
-                        StartQueueAll.Visibility = Visibility.Visible;
-                        StopQueueAll.Visibility = Visibility.Collapsed;
-                    }
+
                     //如果列表空，显示一个东西
                     if (queueItemData.Count > 0)
                     {
@@ -756,7 +760,7 @@ namespace VSGUI
                     QueueApi.SetQueueListitem(queueid, "status", "running");
                     QueueApi.SetQueueListitem(queueid, "statustext", LanguageApi.FindRes("preparing"));
                     QueueApi.SetQueueListitem(queueid, "starttime", new DateTimeOffset(DateTime.UtcNow).ToUnixTimeSeconds().ToString());
-                    //UpdateQueueList();
+                    UpdateQueueList(notBtn: true);
 
                     //特殊格式文件特殊处理
                     QueueApi.SpecialFormatPreProcess(queueid);

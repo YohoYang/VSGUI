@@ -314,15 +314,11 @@
                     </DockPanel>
                 </TabItem.Header>
                 <Grid VerticalAlignment="Stretch">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="7*"/>
-                        <ColumnDefinition Width="16*"/>
-                    </Grid.ColumnDefinitions>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="*"/>
                         <RowDefinition Height="auto"/>
                     </Grid.RowDefinitions>
-                    <TextBlock x:Name="QueueListEmptyTips" Text="{DynamicResource nojobnow}" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Column="1" Margin="99,0,0,0" />
+                    <TextBlock x:Name="QueueListEmptyTips" Text="{DynamicResource nojobnow}" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.ColumnSpan="2"/>
                     <ListView x:Name="QueueListView" Grid.Row="0" Background="{x:Null}" BorderBrush="{x:Null}" SelectionMode="Single" SelectionChanged="QueueListView_SelectionChanged" Grid.ColumnSpan="2" MouseLeftButtonDown="QueueListView_MouseLeftButtonDown">
                         <ListView.View>
                             <GridView>
@@ -340,21 +336,21 @@
                                         </DataTemplate>
                                     </GridViewColumn.CellTemplate>
                                 </GridViewColumn>
-                                <GridViewColumn Header="{DynamicResource input}" Width="200" >
+                                <GridViewColumn Header="{DynamicResource input}" Width="170" >
                                     <GridViewColumn.CellTemplate>
                                         <DataTemplate>
                                             <TextBlock Text="{Binding InputFilename}" ToolTipService.InitialShowDelay='0' ToolTip="{Binding InputFilepath}"/>
                                         </DataTemplate>
                                     </GridViewColumn.CellTemplate>
                                 </GridViewColumn>
-                                <GridViewColumn Header="{DynamicResource output}" Width="200" >
+                                <GridViewColumn Header="{DynamicResource output}" Width="170" >
                                     <GridViewColumn.CellTemplate>
                                         <DataTemplate>
                                             <TextBlock Text="{Binding OutputFilename}" ToolTipService.InitialShowDelay='0' ToolTip="{Binding OutputFilepath}"/>
                                         </DataTemplate>
                                     </GridViewColumn.CellTemplate>
                                 </GridViewColumn>
-                                <GridViewColumn Header="{DynamicResource status}" Width="200" >
+                                <GridViewColumn Header="{DynamicResource status}" Width="250" >
                                     <GridViewColumn.CellTemplate>
                                         <DataTemplate>
                                             <DockPanel>
