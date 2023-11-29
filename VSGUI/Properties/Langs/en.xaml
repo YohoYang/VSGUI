@@ -156,4 +156,6 @@
     <system:String x:Key="simpleSubInputPlaceholder">support ass/srt/sup</system:String>
     <system:String x:Key="simpleCapInputPlaceholder">Currently only supports txt chapters</system:String>
 
+    <system:String x:Key="p001">Whether to restart the resource manager immediately to take effect immediately</system:String>
+
 </ResourceDictionary>
