@@ -825,6 +825,7 @@ namespace VSGUI
             {
                 string selectQueueid = QueueApi.GetQueueListitemFromSelectedIndex(QueueListView.SelectedIndex, "queueid");
                 string caseStr = QueueApi.GetQueueListitem(selectQueueid, "status");
+                this.QueueSelectItemDesc.Text = LanguageApi.FindRes("queue") + QueueApi.GetQueueListitem(selectQueueid, "queueid") + ": ";
                 switch (caseStr)
                 {
                     case "running":
@@ -882,6 +883,7 @@ namespace VSGUI
             }
             else
             {
+                this.QueueSelectItemDesc.Text = "";
                 resetQueueSelectButton();
             }
 
