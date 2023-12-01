@@ -158,5 +158,6 @@
 
     <system:String x:Key="p001">Whether to restart the resource manager immediately to take effect immediately</system:String>
     <system:String x:Key="p002">It will be filled in automatically after you put it into the input file, or you can set it manually.</system:String>
+    <system:String x:Key="p003">An unexpected error occurred</system:String>
 
 </ResourceDictionary>

@@ -22,34 +22,41 @@ namespace VSGUI.API
             if (inputpath != "" && File.Exists(inputpath))
             {
                 datarecevied = "";
-                if (clitype == "ffmpeg")
+                try
                 {
-                    ffmpegDemux(inputpath, DataReceivedCall, ExitedCall);
-                }
-                else if (clitype == "eac3to")
-                {
-                    eac3toDemux(inputpath, DataReceivedCall, ExitedCall);
-                }
-                else if (clitype == "mkvextract")
-                {
-                    mkvextractDemux(inputpath, DataReceivedCall, ExitedCall);
-                }
-                else
-                {
-                    //auto
-                    string ext = Path.GetExtension(inputpath).ToLower();
-                    if (ext == ".mp4" || ext == ".mov" || ext == ".flv")
+                    if (clitype == "ffmpeg")
                     {
                         ffmpegDemux(inputpath, DataReceivedCall, ExitedCall);
                     }
-                    else if (ext == ".mkv")
+                    else if (clitype == "eac3to")
+                    {
+                        eac3toDemux(inputpath, DataReceivedCall, ExitedCall);
+                    }
+                    else if (clitype == "mkvextract")
                     {
                         mkvextractDemux(inputpath, DataReceivedCall, ExitedCall);
                     }
                     else
                     {
-                        eac3toDemux(inputpath, DataReceivedCall, ExitedCall);
+                        //auto
+                        string ext = Path.GetExtension(inputpath).ToLower();
+                        if (ext == ".mp4" || ext == ".mov" || ext == ".flv")
+                        {
+                            ffmpegDemux(inputpath, DataReceivedCall, ExitedCall);
+                        }
+                        else if (ext == ".mkv")
+                        {
+                            mkvextractDemux(inputpath, DataReceivedCall, ExitedCall);
+                        }
+                        else
+                        {
+                            eac3toDemux(inputpath, DataReceivedCall, ExitedCall);
+                        }
                     }
+                }
+                catch (Exception)
+                {
+                    ExitedCall(LanguageApi.FindRes("p003"));
                 }
             }
             else
@@ -230,17 +237,47 @@ namespace VSGUI.API
 
             static void mkvextractDemux(string inputpath, Action<string> DataReceivedCall, Action<string> ExitedCall)
             {
+                TimeSpan timeout = new TimeSpan(0, 0, 1);
                 string clipath = MainWindow.binpath + @"\tools\mkvtoolnix\";
                 string info = ProcessApi.RunSyncProcess(clipath, @"mkvinfo.exe" + " --ui-language en " + "\"" + inputpath + "\"");
-                var x = Regex.Matches(info, @"mkvextract: (\d*)(?:.|\s)*?Track type: (.*)(?:.|\s)*?Codec ID: (.*)");
-                var xa = Regex.Matches(info, @"Attached(?:.|\s)*?File name: (.*)\s");
+                //新的mkv信息读取方法
+                string[] infolines = info.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None);
+                int infoindex = 0;
+                ArrayList mkvid = new ArrayList();
+                ArrayList typeid = new ArrayList();
+                ArrayList codecid = new ArrayList();
+                for (int i = 0; i < infolines.Length; i++)
+                {
+                    string cLine = infolines[i];
+                    if (cLine.Contains("mkvextract:"))
+                    {
+                        var result = Regex.Match(cLine, @"mkvextract: (\d*)");
+                        mkvid.Add(result.Groups[1].Value);
+                    }
+                    if (cLine.Contains("Track type:"))
+                    {
+                        var result = Regex.Match(cLine, @"Track type: (.*)");
+                        typeid.Add(result.Groups[1].Value);
+                    }
+                    if (cLine.Contains("Codec ID:"))
+                    {
+                        var result = Regex.Match(cLine, @"Codec ID: (.*)");
+                        codecid.Add(result.Groups[1].Value);
+                    }
+                    if (mkvid.Count > infoindex && typeid.Count > infoindex && codecid.Count > infoindex)
+                    {
+                        infoindex++;
+                    }
+                }
+                //老的字体读取方法（能用就不用改了吧）
+                var xa = Regex.Matches(info, @"Attached(?:.|\s)*?File name: (.*)\s", RegexOptions.Multiline, timeout);
 
-                if (x.Count > 0)
+                if (infoindex > 0)
                 {
                     string commonParameter = "";
-                    for (int i = 0; i < x.Count; i++)
+                    for (int i = 0; i < infoindex; i++)
                     {
-                        commonParameter += " " + x[i].Groups[1].Value + @":" + "\"" + Path.GetDirectoryName(inputpath) + @"\" + Path.GetFileNameWithoutExtension(inputpath) + " - " + x[i].Groups[1].Value + "." + getOutputExt(x[i].Groups[3].Value) + "\"";
+                        commonParameter += " " + mkvid[i].ToString() + @":" + "\"" + Path.GetDirectoryName(inputpath) + @"\" + Path.GetFileNameWithoutExtension(inputpath) + " - " + mkvid[i].ToString() + "." + getOutputExt(codecid[i].ToString()) + "\"";
                     }
                     if (xa.Count > 0)
                     {
