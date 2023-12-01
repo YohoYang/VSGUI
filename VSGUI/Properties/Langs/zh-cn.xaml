@@ -157,5 +157,6 @@
     <system:String x:Key="simpleCapInputPlaceholder">当前仅支持txt章节</system:String>
 
     <system:String x:Key="p001">是否立刻重启资源管理器以马上生效</system:String>
+    <system:String x:Key="p002">放入输入文件后会自动填写，也可以手动设置</system:String>
 
 </ResourceDictionary>

@@ -550,12 +550,11 @@ namespace VSGUI.API
         /// <param name="queueid"></param>
         public static void MakeScriptFile(string queueid)
         {
-            Directory.CreateDirectory(Path.GetTempPath() + @"vsgui");
             //判断是否需要复制必要文件
             bool needCopyFile = true;
-            if (File.Exists(Path.GetTempPath() + @"vsgui\LSMASHSource.dll"))
+            if (File.Exists(CommonApi.GetAppTempPath() + @"LSMASHSource.dll"))
             {
-                if (UpdateApi.CalculateMD5(MainWindow.binpath + @"\vs\vapoursynth64\plugins\LSMASHSource.dll") == UpdateApi.CalculateMD5(Path.GetTempPath() + @"vsgui\LSMASHSource.dll"))
+                if (UpdateApi.CalculateMD5(MainWindow.binpath + @"\vs\vapoursynth64\plugins\LSMASHSource.dll") == UpdateApi.CalculateMD5(CommonApi.GetAppTempPath() + @"LSMASHSource.dll"))
                 {
                     needCopyFile = false;
                 }
@@ -565,7 +564,7 @@ namespace VSGUI.API
             {
                 try
                 {
-                    File.Copy(MainWindow.binpath + @"\vs\vapoursynth64\plugins\LSMASHSource.dll", Path.GetTempPath() + @"vsgui\LSMASHSource.dll");
+                    File.Copy(MainWindow.binpath + @"\vs\vapoursynth64\plugins\LSMASHSource.dll", CommonApi.GetAppTempPath() + @"LSMASHSource.dll");
                 }
                 catch (Exception)
                 {
@@ -578,7 +577,7 @@ namespace VSGUI.API
                 if (Path.GetExtension(GetQueueListitem(queueid, "input")) != ".vpy")
                 {
                     string script = VideoApi.MakeVideoScript(GetQueueListitem(queueid, "input"), GetQueueListitem(queueid, "resolution"), GetQueueListitem(queueid, "subtitle"));
-                    string scriptpath = Path.GetTempPath() + @"vsgui\" + "Job_" + queueid + ".vpy";
+                    string scriptpath = CommonApi.GetAppTempPath() + "Job_" + queueid + ".vpy";
                     string command = ProcessCommandStr(int.Parse(queueid), "video", int.Parse(GetQueueListitem(queueid, "encoderid")), new string[] { GetQueueListitem(queueid, "input") }, GetQueueListitem(queueid, "output"), scriptpath, out string temp1, out string temp2);
                     SetQueueListitem(queueid, "script", script);
                     SetQueueListitem(queueid, "scriptfilepath", scriptpath);
@@ -591,7 +590,7 @@ namespace VSGUI.API
                 if (Path.GetExtension(GetQueueListitem(queueid, "input")) != ".avs")
                 {
                     string script = AudioApi.MakeAudioScript(int.Parse(GetQueueListitem(queueid, "encoderid")), GetQueueListitem(queueid, "audiocuttext"), GetQueueListitem(queueid, "audiofpstext"), GetQueueListitem(queueid, "input"), GetQueueListitem(queueid, "audiodelaytext"));
-                    string scriptpath = Path.GetTempPath() + @"vsgui\" + "Job_" + queueid + ".avs";
+                    string scriptpath = CommonApi.GetAppTempPath() + "Job_" + queueid + ".avs";
                     string command = ProcessCommandStr(int.Parse(queueid), "audio", int.Parse(GetQueueListitem(queueid, "encoderid")), new string[] { GetQueueListitem(queueid, "input") }, GetQueueListitem(queueid, "output"), scriptpath, out string temp1, out string temp2);
                     SetQueueListitem(queueid, "script", script);
                     SetQueueListitem(queueid, "scriptfilepath", scriptpath);
@@ -601,7 +600,7 @@ namespace VSGUI.API
             }
             else if (GetQueueListitem(queueid, "type") == "mux")
             {
-                SetQueueListitem(queueid, "deletefile", GetQueueListitem(queueid, "deletefile") + "|" + Path.GetTempPath() + @"vsgui\" + "Job_" + queueid.ToString() + ".txt");
+                SetQueueListitem(queueid, "deletefile", GetQueueListitem(queueid, "deletefile") + "|" + CommonApi.GetAppTempPath() + "Job_" + queueid.ToString() + ".txt");
             }
 
             //写入script文件

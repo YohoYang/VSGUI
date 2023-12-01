@@ -11,8 +11,6 @@ namespace VSGUI.API
     {
         public static string MakeAudioScript(int audioencoderid, string cutstr, string fpsstr, string inputstr, string delay)
         {
-            string temppath = Path.GetTempPath();
-
             string inputext = Path.GetExtension(inputstr).ToLower();
             if (delay == "") delay = "0";
             int delayint = int.Parse(delay);

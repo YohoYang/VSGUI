@@ -93,8 +93,7 @@ namespace VSGUI.API
 
         public static void PreviewTempVpy(string script)
         {
-            string temppath = Path.GetTempPath() + @"vsgui\preview.vpy";
-            Directory.CreateDirectory(Path.GetTempPath() + @"vsgui\");
+            string temppath = CommonApi.GetAppTempPath() + @"preview.vpy";
             File.WriteAllText(temppath, script);
             Process.Start(MainWindow.binpath + @"\vs\vsedit.exe", temppath);
         }

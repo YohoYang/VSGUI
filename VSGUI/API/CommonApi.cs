@@ -301,5 +301,16 @@ namespace VSGUI.API
             }
         }
 
+        /// <summary>
+        /// 返回程序路径下的temp文件夹
+        /// </summary>
+        /// <returns></returns>
+        public static string GetAppTempPath()
+        {
+            string pstr = MainWindow.binpath + @"\temp\";
+            Directory.CreateDirectory(pstr);
+            return pstr;
+        }
+
     }
 }

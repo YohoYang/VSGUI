@@ -105,7 +105,7 @@ namespace VSGUI.API
                 {
                     ExitedCall(LanguageApi.FindRes("mux") + LanguageApi.FindRes("error"));
                 }
-                CommonApi.TryDeleteFile(Path.GetTempPath() + @"vsgui\" + "Job_-1" + ".txt");
+                CommonApi.TryDeleteFile(CommonApi.GetAppTempPath() + "Job_-1" + ".txt");
             }
             void Pided(string pid)
             {

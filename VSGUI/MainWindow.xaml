@@ -30,7 +30,7 @@
                             </hc:ButtonGroup>
                         </WrapPanel>
                         <!--简易压制-->
-                        <StackPanel x:Name="simpleEncodePanel" Grid.Row="1">
+                        <StackPanel x:Name="simpleEncodePanel" Grid.Row="1" Visibility="Collapsed">
                             <TextBlock Text="{DynamicResource input}" Margin="5,3,0,6" Foreground="#a3a3a3"/>
                             <Border Style="{StaticResource BorderRegion}">
                                 <hc:UniformSpacingPanel Spacing="6" Orientation="Vertical">
@@ -151,7 +151,7 @@
                                             <ColumnDefinition Width="auto"/>
                                         </Grid.ColumnDefinitions>
                                         <TextBlock Grid.Column="0" VerticalAlignment="Center" Text="{DynamicResource videooutput}"/>
-                                        <TextBox x:Name="simplevideooutputbox" Grid.Column="1"/>
+                                        <hc:TextBox x:Name="simplevideooutputbox" Grid.Column="1" hc:InfoElement.Placeholder="{DynamicResource p002}"/>
                                         <Button x:Name="simplevideooutput" Grid.Column="2" Content="..." Margin="4,0,0,0" Tag="simplevideoout" Click="SaveFileSelect_Click"/>
                                     </Grid>
                                     <!--其他操作-->
@@ -576,8 +576,8 @@
                         <RowDefinition Height="*"/>
                         <RowDefinition Height="auto"/>
                     </Grid.RowDefinitions>
-                    <Border Style="{StaticResource BorderRegion}" Padding="15" Margin="8">
-                        <ScrollViewer>
+                    <Border Style="{StaticResource BorderRegion}" Padding="0" Margin="8">
+                        <ScrollViewer Padding="15">
                             <StackPanel Margin="5,0,0,0">
                                 <hc:UniformSpacingPanel x:Name="ConfigContainer" Spacing="10" Orientation="Vertical">
                                     <TextBlock Text="{DynamicResource softwarelanguage}"></TextBlock>
