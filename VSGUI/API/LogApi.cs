@@ -16,9 +16,17 @@ namespace VSGUI.API
             {
                 string logpath = Directory.GetCurrentDirectory() + @"\log";
                 Directory.CreateDirectory(logpath);
-                string logFileName = DateTime.Now.ToString("yyyyMMdd") + ".txt";
+                string logFileName = "run_" + DateTime.Now.ToString("yyyy-MM-dd") + ".txt";
                 File.AppendAllText(logpath + @"\" + logFileName, logstr);
             }
+        }
+
+        public static void WriteCrashLog(string logstr)
+        {
+            string logpath = Directory.GetCurrentDirectory() + @"\log";
+            Directory.CreateDirectory(logpath);
+            string logFileName = "crash_" + DateTime.Now.ToString("yyyy-MM-dd-HH-mm-ss") + ".txt";
+            File.WriteAllText(logpath + @"\" + logFileName, logstr);
         }
     }
 }

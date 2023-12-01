@@ -159,5 +159,6 @@
     <system:String x:Key="p001">Whether to restart the resource manager immediately to take effect immediately</system:String>
     <system:String x:Key="p002">It will be filled in automatically after you put it into the input file, or you can set it manually.</system:String>
     <system:String x:Key="p003">An unexpected error occurred</system:String>
+    <system:String x:Key="p004">A fatal error has been encountered and will exit. If everything goes smoothly, the crash log will be saved to the log directory. Please submit an issue to help me improve it.</system:String>
 
 </ResourceDictionary>
