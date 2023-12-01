@@ -65,9 +65,6 @@ namespace VSGUI
 
             //获取py和vs版本的情况
             UpdateVersion();
-
-            //test
-            Directory.Delete(binpath + @"\awf354");
         }
 
         /// <summary>
