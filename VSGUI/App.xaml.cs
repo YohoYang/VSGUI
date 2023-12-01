@@ -14,6 +14,7 @@ namespace VSGUI
     /// </summary>
     public partial class App : Application
     {
+    #if !DEBUG
         protected override void OnStartup(StartupEventArgs e)
         {
             RegisterEvents();
@@ -34,11 +35,7 @@ namespace VSGUI
                 Application.Current.Shutdown();
             };
         }
+    #endif
 
-        //private void Application_DispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
-        //{
-        //    LogApi.WriteCrashLog(e.Exception.Message);
-        //    e.Handled = true;
-        //}
     }
 }
