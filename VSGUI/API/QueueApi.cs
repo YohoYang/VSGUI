@@ -70,9 +70,9 @@ namespace VSGUI.API
                 string pipecommon = "";
                 string pipeconnect = "";
                 //处理输入输出文件
-                string inputpath = "\"" + input[0] + "\"";
+                string inputpath = "\"" + input[0].Trim() + "\"";
                 tempoutput = Path.GetDirectoryName(output) + @"\" + "VSGUI_Job_" + queueid.ToString() + "_temp" + Path.GetExtension(output);
-                string outputpath = "\"" + tempoutput + "\"";
+                string outputpath = "\"" + tempoutput.Trim() + "\"";
                 //根据类型处理参数
                 if (type == "video")
                 {
@@ -89,51 +89,53 @@ namespace VSGUI.API
                 //如果需要转换成script
                 if (scriptpath != "")
                 {
-                    inputpath = "\"" + scriptpath + "\"";
+                    inputpath = "\"" + scriptpath.Trim() + "\"";
                 }
                 //处理encoder
                 var encoderJson = JsonApi.ReadJsonObjectFromFile(MainWindow.binpath + @"\json\encoderprofiles.json");
-                string encoderpath = "";
-                string encoderpipeinputformat = "";
-                string encoderoutputformat = "";
-                string encoderparameter = "";
+                //全部依赖配置
                 JsonObject thisJobj = encoderJson[type][encoderid].AsObject();
-                string pEncoderName = thisJobj["encodername"].ToString();
-                if (pEncoderName == "x264")
-                {
-                    encoderpath = "\"" + MainWindow.binpath + @"\encoder\x264\x264.exe" + "\"";
-                    encoderpipeinputformat = " --demuxer y4m ";
-                    encoderoutputformat = " - -o ";
-                    encoderparameter = " " + thisJobj["parameter"].ToString() + " ";
-                }
-                else if (pEncoderName == "x265")
-                {
-                    encoderpath = "\"" + MainWindow.binpath + @"\encoder\x265\x265.exe" + "\"";
-                    encoderpipeinputformat = " --y4m ";
-                    encoderoutputformat = " - -o ";
-                    encoderparameter = " " + thisJobj["parameter"].ToString() + " ";
-                }
-                else if (pEncoderName == "nvenc")
-                {
-                    encoderpath = "\"" + MainWindow.binpath + @"\encoder\NVEncC\NVEncC64.exe" + "\"";
-                    encoderpipeinputformat = " --y4m ";
-                    encoderoutputformat = " -o ";
-                    encoderparameter = " -i - " + thisJobj["parameter"].ToString() + " ";
-                }
-                else if (pEncoderName == "qaac")
-                {
-                    encoderpath = "\"" + MainWindow.binpath + @"\encoder\qaac\qaac64.exe" + "\"";
-                    encoderpipeinputformat = "";
-                    encoderoutputformat = " - -o ";
-                    encoderparameter = " --ignorelength --threading " + thisJobj["parameter"].ToString() + " ";
-                }
-                else if (pEncoderName == "flac")
-                {
-                    encoderpath = "\"" + MainWindow.binpath + @"\tools\ffmpeg\ffmpeg.exe" + "\"";
-                    encoderpipeinputformat = " -y -i - ";
-                    encoderoutputformat = " ";
-                    encoderparameter = " " + thisJobj["parameter"].ToString() + " ";
-                }
+                //string pEncoderName = thisJobj["encodername"].ToString();
+                string encoderpath = "\"" + thisJobj["encoderpath"].ToString().Trim() + "\"" + " ";
+                string encoderpipeinputformat = thisJobj["pipeinputformat"].ToString().Trim() + " ";
+                string encoderparameter = thisJobj["parameter"].ToString().Trim() + " ";
+                string encoderoutputformat = thisJobj["outputformat"].ToString().Trim() + " ";
+
+                //if (pEncoderName == "x264")
+                //{
+                //    encoderpath = "\"" + MainWindow.binpath + @"\encoder\x264\x264.exe" + "\"";
+                //    encoderpipeinputformat = " --demuxer y4m ";
+                //    encoderoutputformat = " - -o ";
+                //    encoderparameter = " " + thisJobj["parameter"].ToString() + " ";
+                //}
+                //else if (pEncoderName == "x265")
+                //{
+                //    encoderpath = "\"" + MainWindow.binpath + @"\encoder\x265\x265.exe" + "\"";
+                //    encoderpipeinputformat = " --y4m ";
+                //    encoderoutputformat = " - -o ";
+                //    encoderparameter = " " + thisJobj["parameter"].ToString() + " ";
+                //}
+                //else if (pEncoderName == "nvenc")
+                //{
+                //    encoderpath = "\"" + MainWindow.binpath + @"\encoder\NVEncC\NVEncC64.exe" + "\"";
+                //    encoderpipeinputformat = " --y4m ";
+                //    encoderoutputformat = " -o ";
+                //    encoderparameter = " -i - " + thisJobj["parameter"].ToString() + " ";
+                //}
+                //else if (pEncoderName == "qaac")
+                //{
+                //    encoderpath = "\"" + MainWindow.binpath + @"\encoder\qaac\qaac64.exe" + "\"";
+                //    encoderpipeinputformat = "";
+                //    encoderoutputformat = " - -o ";
+                //    encoderparameter = " --ignorelength --threading " + thisJobj["parameter"].ToString() + " ";
+                //}
+                //else if (pEncoderName == "flac")
+                //{
+                //    encoderpath = "\"" + MainWindow.binpath + @"\tools\ffmpeg\ffmpeg.exe" + "\"";
+                //    encoderpipeinputformat = " -y -i - ";
+                //    encoderoutputformat = " ";
+                //    encoderparameter = " " + thisJobj["parameter"].ToString() + " ";
+                //}
                 string theCommandStr = pipecommon + inputpath + pipeconnect + encoderpath + encoderpipeinputformat + encoderparameter + encoderoutputformat + outputpath;
                 return theCommandStr;
             }

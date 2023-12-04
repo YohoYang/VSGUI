@@ -26,11 +26,11 @@ namespace VSGUI
         string ltype;
         string[,] encoders =
         {
-            {"video","x264",".h264|.m4v|.mp4" },
-            {"video","x265",".h265|.m4v|.mp4" },
-            {"video","nvenc",".h264|.h265|.m4v|.mp4" },
-            {"audio","qaac",".aac|.m4a" },
-            {"audio","flac",".flac" },
+            {"video","x264",".h264|.m4v|.mp4",@"\bin\encoder\x264\x264.exe","--demuxer y4m","- -o" },
+            {"video","x265",".h265|.m4v|.mp4",@"\bin\encoder\x265\x265.exe","--y4m" ,"- -o"},
+            {"video","nvenc",".h264|.h265|.m4v|.mp4",@"\bin\encoder\NVEncC\NVEncC64.exe","--y4m","-o" },
+            {"audio","qaac",".aac|.m4a",@"\bin\encoder\qaac\qaac64.exe","" , "- -o"},
+            {"audio","flac",".flac",@"\bin\tools\ffmpeg\ffmpeg.exe","-y -i -","" },
         };
 
         public EncoderWindow(string type)
@@ -51,6 +51,7 @@ namespace VSGUI
                 if (getconfig == "") getconfig = "0";
                 encoderbox.SelectedIndex = int.Parse(getconfig);
                 normalizebox.Visibility = Visibility.Collapsed;
+                this.encoderwin.Title = LanguageApi.FindRes("p010");
             }
             else
             {
@@ -59,6 +60,7 @@ namespace VSGUI
                 string getconfig = IniApi.IniReadValue("audioencoderboxSelectedIndex");
                 if (getconfig == "") getconfig = "0";
                 encoderbox.SelectedIndex = int.Parse(getconfig);
+                this.encoderwin.Title = LanguageApi.FindRes("p011");
             }
         }
 
@@ -92,11 +94,21 @@ namespace VSGUI
                     return;
                 }
             }
-            namebox.Text = jsonObj[ltype][selectIndex]["name"].ToString();
-            encodertypebox.Text = jsonObj[ltype][selectIndex]["encodername"].ToString();
-            parameterbox.Text = jsonObj[ltype][selectIndex]["parameter"].ToString();
+            namebox.Text = GetEncoderData(jsonObj, selectIndex, "name");
+            if (GetEncoderData(jsonObj, selectIndex, "encodername") == "c")
+            {
+                encodertypebox.Text = LanguageApi.FindRes("p009");
+            }
+            else
+            {
+                encodertypebox.Text = GetEncoderData(jsonObj, selectIndex, "encodername");
+            }
+            encoderpathbox.Text = GetEncoderData(jsonObj, selectIndex, "encoderpath");
+            pipeinputformatbox.Text = GetEncoderData(jsonObj, selectIndex, "pipeinputformat");
+            outputformatbox.Text = GetEncoderData(jsonObj, selectIndex, "outputformat");
+            parameterbox.Text = GetEncoderData(jsonObj, selectIndex, "parameter");
             suffixbox.ItemsSource = GetEncodersSuffix(encodertypebox.Text);
-            suffixbox.Text = jsonObj[ltype][selectIndex]["suffix"].ToString();
+            suffixbox.Text = GetEncoderData(jsonObj, selectIndex, "suffix");
             if (ltype == "audio")
             {
                 normalizebox.IsChecked = bool.Parse(jsonObj[ltype][selectIndex]["normalize"].ToString());
@@ -113,7 +125,28 @@ namespace VSGUI
                     buttondesc.Text = LanguageApi.FindRes("netEncoderProtectDesc");
                 }
             }
+            //老版本的配置的兼容性处理
+            if (encodertypebox.Text != LanguageApi.FindRes("p009"))
+            {
+
+            }
+
+            string GetEncoderData(JsonObject jsonObj, int selectIndex, string keyname)
+            {
+                if (jsonObj[ltype][selectIndex][keyname] == null)
+                {
+                    return "";
+                }
+                else
+                {
+                    return jsonObj[ltype][selectIndex][keyname].ToString();
+                }
+            }
+
         }
+
+
+
 
         private void encodertypebox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
@@ -121,6 +154,21 @@ namespace VSGUI
             {
                 return;
             }
+            if (encodertypebox.SelectedValue.ToString().Equals(LanguageApi.FindRes("p009")))
+            {
+                this.encoderpathbox.IsReadOnly = false;
+                this.pipeinputformatbox.IsReadOnly = false;
+                this.outputformatbox.IsReadOnly = false;
+            }
+            else
+            {
+                this.encoderpathbox.IsReadOnly = true;
+                this.pipeinputformatbox.IsReadOnly = true;
+                this.outputformatbox.IsReadOnly = true;
+            }
+            encoderpathbox.Text = GetEncoderPath(encodertypebox.SelectedValue.ToString());
+            pipeinputformatbox.Text = GetEncoderPipeinputformat(encodertypebox.SelectedValue.ToString());
+            outputformatbox.Text = GetEncoderOutputformat(encodertypebox.SelectedValue.ToString());
             suffixbox.ItemsSource = GetEncodersSuffix(encodertypebox.SelectedItem.ToString());
             suffixbox.SelectedIndex = 0;
         }
@@ -135,6 +183,7 @@ namespace VSGUI
                     list.Add(encoders[i, 1].ToString());
                 }
             }
+            list.Add(LanguageApi.FindRes("p009"));
             return list;
         }
 
@@ -177,7 +226,63 @@ namespace VSGUI
                     break;
                 }
             }
+            if (encodertypebox.SelectedValue.ToString().Equals(LanguageApi.FindRes("p009")))
+            {
+                this.suffixbox.IsEditable = true;
+            }
+            else
+            {
+                this.suffixbox.IsEditable = false;
+            }
             return list;
+        }
+
+        private string GetEncoderPath(string encodername)
+        {
+
+            if (!encodertypebox.SelectedValue.ToString().Equals(LanguageApi.FindRes("p009")))
+            {
+                for (int i = 0; i < encoders.GetLength(0); i++)
+                {
+                    if (encoders[i, 0].Equals(ltype) && encoders[i, 1].Equals(encodername))
+                    {
+                        return encoders[i, 3];
+                    }
+                }
+            }
+            return "";
+        }
+
+        private string GetEncoderPipeinputformat(string encodername)
+        {
+
+            if (!encodertypebox.SelectedValue.ToString().Equals(LanguageApi.FindRes("p009")))
+            {
+                for (int i = 0; i < encoders.GetLength(0); i++)
+                {
+                    if (encoders[i, 0].Equals(ltype) && encoders[i, 1].Equals(encodername))
+                    {
+                        return encoders[i, 4];
+                    }
+                }
+            }
+            return "";
+        }
+
+        private string GetEncoderOutputformat(string encodername)
+        {
+
+            if (!encodertypebox.SelectedValue.ToString().Equals(LanguageApi.FindRes("p009")))
+            {
+                for (int i = 0; i < encoders.GetLength(0); i++)
+                {
+                    if (encoders[i, 0].Equals(ltype) && encoders[i, 1].Equals(encodername))
+                    {
+                        return encoders[i, 5];
+                    }
+                }
+            }
+            return "";
         }
 
         private void Addbutton_Click(object sender, RoutedEventArgs e)
@@ -244,9 +349,24 @@ namespace VSGUI
                 MessageBoxApi.Show(LanguageApi.FindRes("profileOutputFormatCantBeEmpty"), LanguageApi.FindRes("error"));
                 return;
             }
+            if (encoderpathbox.Text == "")
+            {
+                MessageBoxApi.Show(LanguageApi.FindRes("p012"), LanguageApi.FindRes("error"));
+                return;
+            }
             JsonObject obj = new JsonObject();
             obj.Add("name", namebox.Text);
-            obj.Add("encodername", encodertypebox.Text);
+            if (encodertypebox.Text == LanguageApi.FindRes("p009"))
+            {
+                obj.Add("encodername", "c");
+            }
+            else
+            {
+                obj.Add("encodername", encodertypebox.Text);
+            }
+            obj.Add("encoderpath", encoderpathbox.Text);
+            obj.Add("pipeinputformat", pipeinputformatbox.Text);
+            obj.Add("outputformat", outputformatbox.Text);
             obj.Add("parameter", parameterbox.Text);
             obj.Add("suffix", suffixbox.Text);
             if (ltype == "audio")
