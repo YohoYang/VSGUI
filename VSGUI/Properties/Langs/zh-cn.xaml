@@ -167,5 +167,12 @@
     <system:String x:Key="p010">视频编码器参数设置</system:String>
     <system:String x:Key="p011">音频编码器参数设置</system:String>
     <system:String x:Key="p012">编码器路径不能为空</system:String>
+    <system:String x:Key="p013">输出路径前缀必须为.（如 .mp4）</system:String>
+    <system:String x:Key="p014">保存成功</system:String>
+    <system:String x:Key="p015">编码器路径指向文件不存在</system:String>
+    <system:String x:Key="p016">支持绝对路径与相对路径</system:String>
+    <system:String x:Key="p017">编码器接受由pipe传入的input的参数，如-y -i -</system:String>
+    <system:String x:Key="p018">编码器设置输出文件路径的参数，如-o</system:String>
+    <system:String x:Key="p019">用于设置压制参数，各编码器的设置参数类型不同</system:String>
 
 </ResourceDictionary>

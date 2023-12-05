@@ -159,10 +159,10 @@ namespace VSGUI
         {
             Dispatcher.Invoke(() =>
             {
-                videoencoderbox.ItemsSource = EncoderApi.GetEncoderProfiles("video");
-                simplevideoencoderbox.ItemsSource = EncoderApi.GetEncoderProfiles("video");
-                audioencoderbox.ItemsSource = EncoderApi.GetEncoderProfiles("audio");
-                simpleaudioencoderbox.ItemsSource = EncoderApi.GetEncoderProfiles("audio");
+                videoencoderbox.ItemsSource = EncoderApi.GetEncoderProfiles(EncoderApi.GetEncoderJson(), "video");
+                simplevideoencoderbox.ItemsSource = EncoderApi.GetEncoderProfiles(EncoderApi.GetEncoderJson(), "video");
+                audioencoderbox.ItemsSource = EncoderApi.GetEncoderProfiles(EncoderApi.GetEncoderJson(), "audio");
+                simpleaudioencoderbox.ItemsSource = EncoderApi.GetEncoderProfiles(EncoderApi.GetEncoderJson(), "audio");
                 string getconfig;
                 getconfig = IniApi.IniReadValue("videoencoderboxSelectedIndex");
                 if (getconfig == "" || getconfig == "-1") getconfig = "0";

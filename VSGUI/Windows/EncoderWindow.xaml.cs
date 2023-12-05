@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.Json.Nodes;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -45,7 +47,7 @@ namespace VSGUI
             tempObject = EncoderApi.GetEncoderJsonObject();
             if (ltype == "video")
             {
-                encoderbox.ItemsSource = GetEncoderData("video");
+                encoderbox.ItemsSource = EncoderApi.GetEncoderProfiles(tempObject, "video");
                 encodertypebox.ItemsSource = GetEncodersType();
                 string getconfig = IniApi.IniReadValue("videoencoderboxSelectedIndex");
                 if (getconfig == "") getconfig = "0";
@@ -55,7 +57,7 @@ namespace VSGUI
             }
             else
             {
-                encoderbox.ItemsSource = GetEncoderData("audio");
+                encoderbox.ItemsSource = EncoderApi.GetEncoderProfiles(tempObject, "audio");
                 encodertypebox.ItemsSource = GetEncodersType();
                 string getconfig = IniApi.IniReadValue("audioencoderboxSelectedIndex");
                 if (getconfig == "") getconfig = "0";
@@ -68,11 +70,11 @@ namespace VSGUI
         {
             if (ltype == "video")
             {
-                encoderbox.ItemsSource = GetEncoderData("video");
+                encoderbox.ItemsSource = EncoderApi.GetEncoderProfiles(tempObject, "video");
             }
             else
             {
-                encoderbox.ItemsSource = GetEncoderData("audio");
+                encoderbox.ItemsSource = EncoderApi.GetEncoderProfiles(tempObject, "audio");
             }
         }
 
@@ -128,7 +130,18 @@ namespace VSGUI
             //老版本的配置的兼容性处理
             if (encodertypebox.Text != LanguageApi.FindRes("p009"))
             {
-
+                if (encoderpathbox.Text == "")
+                {
+                    encoderpathbox.Text = GetEncoderPath(encodertypebox.Text);
+                }
+                if (pipeinputformatbox.Text == "")
+                {
+                    pipeinputformatbox.Text = GetEncoderPipeinputformat(encodertypebox.Text);
+                }
+                if (outputformatbox.Text == "")
+                {
+                    outputformatbox.Text = GetEncoderOutputformat(encodertypebox.Text);
+                }
             }
 
             string GetEncoderData(JsonObject jsonObj, int selectIndex, string keyname)
@@ -154,17 +167,17 @@ namespace VSGUI
             {
                 return;
             }
-            if (encodertypebox.SelectedValue.ToString().Equals(LanguageApi.FindRes("p009")))
+            if ((encodertypebox.SelectedIndex >= 0 && encodertypebox.SelectedValue.ToString().Equals(LanguageApi.FindRes("p009"))))
             {
-                this.encoderpathbox.IsReadOnly = false;
-                this.pipeinputformatbox.IsReadOnly = false;
-                this.outputformatbox.IsReadOnly = false;
+                this.encoderpathbox.IsEnabled = true;
+                this.pipeinputformatbox.IsEnabled = true;
+                this.outputformatbox.IsEnabled = true;
             }
             else
             {
-                this.encoderpathbox.IsReadOnly = true;
-                this.pipeinputformatbox.IsReadOnly = true;
-                this.outputformatbox.IsReadOnly = true;
+                this.encoderpathbox.IsEnabled = false;
+                this.pipeinputformatbox.IsEnabled = false;
+                this.outputformatbox.IsEnabled = false;
             }
             encoderpathbox.Text = GetEncoderPath(encodertypebox.SelectedValue.ToString());
             pipeinputformatbox.Text = GetEncoderPipeinputformat(encodertypebox.SelectedValue.ToString());
@@ -188,28 +201,34 @@ namespace VSGUI
         }
 
 
-        private List<string> GetEncoderData(string type)
-        {
-            var encoderJson = tempObject;
-            if (encoderJson == null)
-            {
-                return null;
-            }
-            List<string> ProfileLists = new List<string>();
-            for (int i = 0; i < encoderJson[type].AsArray().Count; i++)
-            {
-                string namestr = encoderJson[type][i]["encodername"].ToString() + "-" + encoderJson[type][i]["name"].ToString();
-                if (encoderJson[type][i].AsObject().ContainsKey("tag"))
-                {
-                    if (encoderJson[type][i]["tag"].ToString() == "server")
-                    {
-                        namestr = @"[s] " + namestr;
-                    }
-                }
-                ProfileLists.Add(namestr);
-            }
-            return ProfileLists;
-        }
+        //private List<string> GetEncoderData(string type)
+        //{
+        //    var encoderJson = tempObject;
+        //    if (encoderJson == null)
+        //    {
+        //        return null;
+        //    }
+        //    List<string> ProfileLists = new List<string>();
+        //    for (int i = 0; i < encoderJson[type].AsArray().Count; i++)
+        //    {
+        //        //增加自定义的显示
+        //        string encoderName = encoderJson[type][i]["encodername"].ToString();
+        //        if (encoderJson[type][i]["encodername"].ToString() == "c")
+        //        {
+        //            encoderName = encoderJson[type][i]["encoderpath"].ToString().Substring(encoderJson[type][i]["encoderpath"].ToString().LastIndexOf(@"\") + 1);
+        //        }
+        //        string namestr = encoderName + "-" + encoderJson[type][i]["name"].ToString();
+        //        if (encoderJson[type][i].AsObject().ContainsKey("tag"))
+        //        {
+        //            if (encoderJson[type][i]["tag"].ToString() == "server")
+        //            {
+        //                namestr = @"[s] " + namestr;
+        //            }
+        //        }
+        //        ProfileLists.Add(namestr);
+        //    }
+        //    return ProfileLists;
+        //}
 
         private List<string> GetEncodersSuffix(string encodername)
         {
@@ -226,7 +245,7 @@ namespace VSGUI
                     break;
                 }
             }
-            if (encodertypebox.SelectedValue.ToString().Equals(LanguageApi.FindRes("p009")))
+            if ((encodertypebox.SelectedIndex >= 0 && encodertypebox.SelectedValue.ToString().Equals(LanguageApi.FindRes("p009"))))
             {
                 this.suffixbox.IsEditable = true;
             }
@@ -240,7 +259,7 @@ namespace VSGUI
         private string GetEncoderPath(string encodername)
         {
 
-            if (!encodertypebox.SelectedValue.ToString().Equals(LanguageApi.FindRes("p009")))
+            if (!(encodertypebox.SelectedIndex >= 0 && encodertypebox.SelectedValue.ToString().Equals(LanguageApi.FindRes("p009"))))
             {
                 for (int i = 0; i < encoders.GetLength(0); i++)
                 {
@@ -256,7 +275,7 @@ namespace VSGUI
         private string GetEncoderPipeinputformat(string encodername)
         {
 
-            if (!encodertypebox.SelectedValue.ToString().Equals(LanguageApi.FindRes("p009")))
+            if (!(encodertypebox.SelectedIndex >= 0 && encodertypebox.SelectedValue.ToString().Equals(LanguageApi.FindRes("p009"))))
             {
                 for (int i = 0; i < encoders.GetLength(0); i++)
                 {
@@ -272,7 +291,7 @@ namespace VSGUI
         private string GetEncoderOutputformat(string encodername)
         {
 
-            if (!encodertypebox.SelectedValue.ToString().Equals(LanguageApi.FindRes("p009")))
+            if (!(encodertypebox.SelectedIndex >= 0 && encodertypebox.SelectedValue.ToString().Equals(LanguageApi.FindRes("p009"))))
             {
                 for (int i = 0; i < encoders.GetLength(0); i++)
                 {
@@ -289,6 +308,9 @@ namespace VSGUI
         {
             JsonObject obj = new JsonObject();
             obj.Add("name", "new profiles");
+            obj.Add("encoderpath", "");
+            obj.Add("pipeinputformat", "");
+            obj.Add("outputformat", "");
             obj.Add("encodername", "");
             obj.Add("parameter", "");
             obj.Add("suffix", "");
@@ -349,10 +371,37 @@ namespace VSGUI
                 MessageBoxApi.Show(LanguageApi.FindRes("profileOutputFormatCantBeEmpty"), LanguageApi.FindRes("error"));
                 return;
             }
+            if (!suffixbox.Text.StartsWith("."))
+            {
+                MessageBoxApi.Show(LanguageApi.FindRes("p013"), LanguageApi.FindRes("error"));
+                return;
+            }
             if (encoderpathbox.Text == "")
             {
                 MessageBoxApi.Show(LanguageApi.FindRes("p012"), LanguageApi.FindRes("error"));
                 return;
+            }
+            else
+            {
+                if (encoderpathbox.Text.Contains(':'))
+                {
+                    //绝对
+                    if (!File.Exists(encoderpathbox.Text))
+                    {
+                        MessageBoxApi.Show(LanguageApi.FindRes("p015"), LanguageApi.FindRes("error"));
+                        return;
+                    }
+                }
+                else
+                {
+                    //相对
+                    string pathtext = System.IO.Directory.GetCurrentDirectory() + encoderpathbox.Text;
+                    if (!File.Exists(pathtext))
+                    {
+                        MessageBoxApi.Show(LanguageApi.FindRes("p015"), LanguageApi.FindRes("error"));
+                        return;
+                    }
+                }
             }
             JsonObject obj = new JsonObject();
             obj.Add("name", namebox.Text);
@@ -389,6 +438,19 @@ namespace VSGUI
             int lastselect = encoderbox.SelectedIndex;
             UpdateEncoderData();
             encoderbox.SelectedIndex = lastselect;
+            this.savebutton.Content = LanguageApi.FindRes("p014");
+            this.savebutton.IsEnabled = false;
+            new Thread(
+               () =>
+               {
+                   Thread.Sleep(2000);
+                   Dispatcher.Invoke(() =>
+                   {
+                       this.savebutton.Content = LanguageApi.FindRes("save");
+                       this.savebutton.IsEnabled = true;
+                   });
+               }
+               ).Start();
         }
     }
 }

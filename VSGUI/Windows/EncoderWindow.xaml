@@ -43,7 +43,7 @@
                                 <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
                             <TextBlock Grid.Column="0" VerticalAlignment="Center" Text="{DynamicResource p005}"/>
-                            <TextBox x:Name="encoderpathbox" Grid.Column="1" TextWrapping="Wrap"/>
+                            <hc:TextBox x:Name="encoderpathbox" Grid.Column="1" TextWrapping="Wrap" hc:InfoElement.Placeholder="{DynamicResource p016}"/>
                         </Grid>
                         <Grid>
                             <Grid.ColumnDefinitions>
@@ -51,7 +51,7 @@
                                 <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
                             <TextBlock Grid.Column="0" VerticalAlignment="Center" Text="{DynamicResource p007}"/>
-                            <TextBox x:Name="pipeinputformatbox" Grid.Column="1" TextWrapping="Wrap"/>
+                            <hc:TextBox x:Name="pipeinputformatbox" Grid.Column="1" TextWrapping="Wrap" hc:InfoElement.Placeholder="{DynamicResource p017}"/>
                         </Grid>
                         <Grid>
                             <Grid.ColumnDefinitions>
@@ -59,10 +59,10 @@
                                 <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
                             <TextBlock Grid.Column="0" VerticalAlignment="Center" Text="{DynamicResource p008}"/>
-                            <TextBox x:Name="outputformatbox" Grid.Column="1" TextWrapping="Wrap"/>
+                            <hc:TextBox x:Name="outputformatbox" Grid.Column="1" TextWrapping="Wrap" hc:InfoElement.Placeholder="{DynamicResource p018}"/>
                         </Grid>
                         <TextBlock Text="{DynamicResource profileparameter}" Margin="0,7,0,3"/>
-                        <TextBox x:Name="parameterbox" MinHeight="100" TextWrapping="Wrap" VerticalContentAlignment="Top" AcceptsReturn="False"/>
+                        <hc:TextBox x:Name="parameterbox" MinHeight="100" TextWrapping="Wrap" VerticalContentAlignment="Top" AcceptsReturn="False" hc:InfoElement.Placeholder="{DynamicResource p019}"/>
                         <!--音频其他设置-->
                         <CheckBox x:Name="normalizebox" Content="{DynamicResource profileaudionormalize}" Margin="0,5,0,5"/>
                         <Grid>

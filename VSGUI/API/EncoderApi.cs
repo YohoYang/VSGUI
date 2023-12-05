@@ -18,7 +18,7 @@ namespace VSGUI.API
         }
 
 
-        private static JsonObject GetEncoderJson()
+        public static JsonObject GetEncoderJson()
         {
             if (encoderJsonPub == null)
             {
@@ -26,20 +26,20 @@ namespace VSGUI.API
                 if (File.Exists(path))
                 {
                     encoderJsonPub = JsonApi.ReadJsonObjectFromFile(path);
-                    foreach (var item in encoderJsonPub)
-                    {
-                        foreach (JsonObject jsonitem in item.Value as JsonArray)
-                        {
-                            jsonitem["name"] = jsonitem["encodername"].ToString() + "-" + jsonitem["name"].ToString();
-                            if (jsonitem.ContainsKey("tag"))
-                            {
-                                if (jsonitem["tag"].ToString() == "server")
-                                {
-                                    jsonitem["name"] = @"[s] " + jsonitem["name"].ToString();
-                                }
-                            }
-                        }
-                    }
+                    //foreach (var item in encoderJsonPub)
+                    //{
+                    //    foreach (JsonObject jsonitem in item.Value as JsonArray)
+                    //    {
+                    //        jsonitem["name"] = jsonitem["encodername"].ToString() + "-" + jsonitem["name"].ToString();
+                    //        if (jsonitem.ContainsKey("tag"))
+                    //        {
+                    //            if (jsonitem["tag"].ToString() == "server")
+                    //            {
+                    //                jsonitem["name"] = @"[s] " + jsonitem["name"].ToString();
+                    //            }
+                    //        }
+                    //    }
+                    //}
                 }
                 return encoderJsonPub;
             }
@@ -84,19 +84,43 @@ namespace VSGUI.API
             return (bool)thisJobj["normalize"];
         }
 
-        public static List<string> GetEncoderProfiles(string type)
+        public static List<string> GetEncoderProfiles(JsonObject encoderJson, string type)
         {
-            var encoderJson = GetEncoderJson();
+            //var encoderJson = GetEncoderJson();
+            //if (encoderJson == null)
+            //{
+            //    return null;
+            //}
+            //List<string> videoProfileLists = new List<string>();
+            //for (int i = 0; i < encoderJson[type].AsArray().Count; i++)
+            //{
+            //    videoProfileLists.Add(encoderJson[type][i]["name"].ToString());
+            //}
+            //return videoProfileLists;
             if (encoderJson == null)
             {
                 return null;
             }
-            List<string> videoProfileLists = new List<string>();
+            List<string> ProfileLists = new List<string>();
             for (int i = 0; i < encoderJson[type].AsArray().Count; i++)
             {
-                videoProfileLists.Add(encoderJson[type][i]["name"].ToString());
+                //增加自定义的显示
+                string encoderName = encoderJson[type][i]["encodername"].ToString();
+                if (encoderJson[type][i]["encodername"].ToString() == "c")
+                {
+                    encoderName = encoderJson[type][i]["encoderpath"].ToString().Substring(encoderJson[type][i]["encoderpath"].ToString().LastIndexOf(@"\") + 1);
+                }
+                string namestr = encoderName + "-" + encoderJson[type][i]["name"].ToString();
+                if (encoderJson[type][i].AsObject().ContainsKey("tag"))
+                {
+                    if (encoderJson[type][i]["tag"].ToString() == "server")
+                    {
+                        namestr = @"[s] " + namestr;
+                    }
+                }
+                ProfileLists.Add(namestr);
             }
-            return videoProfileLists;
+            return ProfileLists;
         }
 
         public static JsonObject GetEncoderJsonObject()

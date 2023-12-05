@@ -30,7 +30,7 @@
                             </hc:ButtonGroup>
                         </WrapPanel>
                         <!--简易压制-->
-                        <StackPanel x:Name="simpleEncodePanel" Grid.Row="1" Visibility="Collapsed">
+                        <StackPanel x:Name="simpleEncodePanel" Grid.Row="1" Visibility="Visible">
                             <TextBlock Text="{DynamicResource input}" Margin="5,3,0,6" Foreground="#a3a3a3"/>
                             <Border Style="{StaticResource BorderRegion}">
                                 <hc:UniformSpacingPanel Spacing="6" Orientation="Vertical">
