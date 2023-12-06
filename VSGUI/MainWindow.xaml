@@ -30,7 +30,7 @@
                             </hc:ButtonGroup>
                         </WrapPanel>
                         <!--简易压制-->
-                        <StackPanel x:Name="simpleEncodePanel" Grid.Row="1" Visibility="Visible">
+                        <StackPanel x:Name="simpleEncodePanel" Grid.Row="1" Visibility="Collapsed">
                             <TextBlock Text="{DynamicResource input}" Margin="5,3,0,6" Foreground="#a3a3a3"/>
                             <Border Style="{StaticResource BorderRegion}">
                                 <hc:UniformSpacingPanel Spacing="6" Orientation="Vertical">
@@ -169,7 +169,7 @@
                             </Border>
                         </StackPanel>
                         <!--手动压制-->
-                        <StackPanel x:Name="advancedEncodePanel" Grid.Row="1" Visibility="Collapsed">
+                        <StackPanel x:Name="advancedEncodePanel" Grid.Row="1" Visibility="Visible">
                             <!--视频区-->
                             <TextBlock Text="{DynamicResource video}" Margin="5,3,0,6" Foreground="#a3a3a3"/>
                             <Border x:Name="videoborder" Style="{StaticResource BorderRegion}" AllowDrop="True" PreviewDrop="Border_Drop">
@@ -182,7 +182,7 @@
                                             <ColumnDefinition Width="auto"/>
                                         </Grid.ColumnDefinitions>
                                         <TextBlock Grid.Column="0" VerticalAlignment="Center" Text="{DynamicResource videoinput}"/>
-                                        <TextBox x:Name="videoinputbox" Grid.Column="1" PreviewDragOver="TextBox_PreviewDragOver"/>
+                                        <hc:TextBox x:Name="videoinputbox" Grid.Column="1" hc:InfoElement.Placeholder="{DynamicResource p017}" PreviewDragOver="TextBox_PreviewDragOver"/>
                                         <Button x:Name="videoinput" Grid.Column="2" Content="..." Margin="4,0,0,0" Click="OpenFileSelect_Click"/>
                                     </Grid>
                                     <!--视频输出-->

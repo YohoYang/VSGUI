@@ -167,17 +167,24 @@ namespace VSGUI
             {
                 return;
             }
+            BrushConverter brushConverter = new BrushConverter();
             if ((encodertypebox.SelectedIndex >= 0 && encodertypebox.SelectedValue.ToString().Equals(LanguageApi.FindRes("p009"))))
             {
-                this.encoderpathbox.IsEnabled = true;
-                this.pipeinputformatbox.IsEnabled = true;
-                this.outputformatbox.IsEnabled = true;
+                this.encoderpathbox.IsReadOnly = false;
+                this.encoderpathbox.Foreground = (Brush)brushConverter.ConvertFromString("#212121");
+                this.pipeinputformatbox.IsReadOnly = false;
+                this.pipeinputformatbox.Foreground = (Brush)brushConverter.ConvertFromString("#212121");
+                this.outputformatbox.IsReadOnly = false;
+                this.outputformatbox.Foreground = (Brush)brushConverter.ConvertFromString("#212121");
             }
             else
             {
-                this.encoderpathbox.IsEnabled = false;
-                this.pipeinputformatbox.IsEnabled = false;
-                this.outputformatbox.IsEnabled = false;
+                this.encoderpathbox.IsReadOnly = true;
+                this.encoderpathbox.Foreground = (Brush)brushConverter.ConvertFromString("#808080");
+                this.pipeinputformatbox.IsReadOnly = true;
+                this.pipeinputformatbox.Foreground = (Brush)brushConverter.ConvertFromString("#808080");
+                this.outputformatbox.IsReadOnly = true;
+                this.outputformatbox.Foreground = (Brush)brushConverter.ConvertFromString("#808080");
             }
             encoderpathbox.Text = GetEncoderPath(encodertypebox.SelectedValue.ToString());
             pipeinputformatbox.Text = GetEncoderPipeinputformat(encodertypebox.SelectedValue.ToString());
@@ -451,6 +458,36 @@ namespace VSGUI
                    });
                }
                ).Start();
+        }
+
+        private void encoderpathbox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            BrushConverter brushConverter = new BrushConverter();
+            if (encoderpathbox.Text.Contains(':'))
+            {
+                //绝对
+                if (!File.Exists(encoderpathbox.Text))
+                {
+                    this.encoderpathbox.BorderBrush = (Brush)brushConverter.ConvertFromString("#EC1414");
+                }
+                else
+                {
+                    this.encoderpathbox.BorderBrush = (Brush)brushConverter.ConvertFromString("#46D021");
+                }
+            }
+            else
+            {
+                //相对
+                string pathtext = System.IO.Directory.GetCurrentDirectory() + encoderpathbox.Text;
+                if (!File.Exists(pathtext))
+                {
+                    this.encoderpathbox.BorderBrush = (Brush)brushConverter.ConvertFromString("#EC1414");
+                }
+                else
+                {
+                    this.encoderpathbox.BorderBrush = (Brush)brushConverter.ConvertFromString("#46D021");
+                }
+            }
         }
     }
 }

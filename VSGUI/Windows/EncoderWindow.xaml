@@ -43,7 +43,7 @@
                                 <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
                             <TextBlock Grid.Column="0" VerticalAlignment="Center" Text="{DynamicResource p005}"/>
-                            <hc:TextBox x:Name="encoderpathbox" Grid.Column="1" TextWrapping="Wrap" hc:InfoElement.Placeholder="{DynamicResource p016}"/>
+                            <hc:TextBox x:Name="encoderpathbox" Grid.Column="1" TextWrapping="Wrap" hc:InfoElement.Placeholder="{DynamicResource p016}" TextChanged="encoderpathbox_TextChanged" BorderBrush="#FF46D021"/>
                         </Grid>
                         <Grid>
                             <Grid.ColumnDefinitions>
