@@ -182,9 +182,9 @@
                                             <ColumnDefinition Width="auto"/>
                                         </Grid.ColumnDefinitions>
                                         <TextBlock Grid.Column="0" VerticalAlignment="Center" Text="{DynamicResource videoinput}"/>
-                                        <hc:TextBox x:Name="videoinputbox" Grid.Column="1" hc:InfoElement.Placeholder="{DynamicResource p017}" PreviewDragOver="TextBox_PreviewDragOver"/>
-                                        <Path x:Name="videoinputPbSucc" Data="{StaticResource SuccessGeometry}" Grid.Column="1" Width="22" Height="22" Stretch="Uniform" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,8,0" Fill="{DynamicResource SuccessBrush}" Visibility="Collapsed"/>
-                                        <hc:CircleProgressBar x:Name="videoinputPb" IsIndeterminate="True" Grid.Column="1" Width="22" Height="22" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,8,0" Visibility="Collapsed"/>
+                                        <hc:TextBox x:Name="videoinputbox" Grid.Column="1" hc:InfoElement.Placeholder="{DynamicResource p020}" PreviewDragOver="TextBox_PreviewDragOver" LostFocus="videoinputbox_LostFocus"/>
+                                        <Path x:Name="videoinputPbSucc" Data="{StaticResource SuccessGeometry}" Grid.Column="1" Width="20" Height="20" Stretch="Uniform" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,8,0" Fill="{DynamicResource SuccessBrush}" Visibility="Collapsed"/>
+                                        <hc:CircleProgressBar x:Name="videoinputPb" IsIndeterminate="True" Grid.Column="1" Width="20" Height="20" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,8,0" Visibility="Collapsed"/>
                                         <Button x:Name="videoinput" Grid.Column="2" Content="..." Margin="4,0,0,0" Click="OpenFileSelect_Click"/>
                                     </Grid>
                                     <!--视频输出-->
@@ -195,7 +195,7 @@
                                             <ColumnDefinition Width="auto"/>
                                         </Grid.ColumnDefinitions>
                                         <TextBlock Grid.Column="0" VerticalAlignment="Center" Text="{DynamicResource videooutput}"/>
-                                        <TextBox x:Name="videooutputbox" Grid.Column="1" PreviewDragOver="TextBox_PreviewDragOver"/>
+                                        <hc:TextBox x:Name="videooutputbox" Grid.Column="1" hc:InfoElement.Placeholder="{DynamicResource p021}" PreviewDragOver="TextBox_PreviewDragOver"/>
                                         <Button x:Name="videooutput" Grid.Column="2" Content="..." Margin="4,0,0,0" Tag="videoout" Click="SaveFileSelect_Click"/>
                                     </Grid>
                                     <!--编码参数-->
@@ -230,9 +230,9 @@
                                             <ColumnDefinition Width="auto"/>
                                         </Grid.ColumnDefinitions>
                                         <TextBlock Grid.Column="0" VerticalAlignment="Center" Text="{DynamicResource audioinput}"/>
-                                        <TextBox x:Name="audioinputbox" Grid.Column="1" PreviewDragOver="TextBox_PreviewDragOver" ToolTip="{DynamicResource audioinputtooltip}"/>
-                                        <Path x:Name="audioinputPbSucc" Data="{StaticResource SuccessGeometry}" Grid.Column="1" Width="22" Height="22" Stretch="Uniform" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,8,0" Fill="{DynamicResource SuccessBrush}" Visibility="Collapsed"/>
-                                        <hc:CircleProgressBar x:Name="audioinputPb" IsIndeterminate="True" Grid.Column="1" Width="22" Height="22" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,8,0" Visibility="Collapsed"/>
+                                        <hc:TextBox x:Name="audioinputbox" Grid.Column="1" hc:InfoElement.Placeholder="{DynamicResource p022}" PreviewDragOver="TextBox_PreviewDragOver" LostFocus="audioinputbox_LostFocus" ToolTip="{DynamicResource audioinputtooltip}"/>
+                                        <Path x:Name="audioinputPbSucc" Data="{StaticResource SuccessGeometry}" Grid.Column="1" Width="20" Height="20" Stretch="Uniform" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,8,0" Fill="{DynamicResource SuccessBrush}" Visibility="Collapsed"/>
+                                        <hc:CircleProgressBar x:Name="audioinputPb" IsIndeterminate="True" Grid.Column="1" Width="20" Height="20" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,8,0" Visibility="Collapsed"/>
                                         <Button x:Name="audioinput" Grid.Column="2" Content="..." Margin="4,0,0,0" Click="OpenFileSelect_Click"/>
                                     </Grid>
                                     <!--视频输出-->
@@ -243,7 +243,7 @@
                                             <ColumnDefinition Width="auto"/>
                                         </Grid.ColumnDefinitions>
                                         <TextBlock Grid.Column="0" VerticalAlignment="Center" Text="{DynamicResource audiooutput}"/>
-                                        <TextBox x:Name="audiooutputbox" Grid.Column="1" PreviewDragOver="TextBox_PreviewDragOver"/>
+                                        <hc:TextBox x:Name="audiooutputbox" Grid.Column="1" hc:InfoElement.Placeholder="{DynamicResource p023}" PreviewDragOver="TextBox_PreviewDragOver"/>
                                         <Button x:Name="audiooutput" Grid.Column="2" Content="..." Margin="4,0,0,0" Tag="audioout" Click="SaveFileSelect_Click"/>
                                     </Grid>
                                     <!--编码参数-->
@@ -289,7 +289,7 @@
                                             <ColumnDefinition Width="auto"/>
                                         </Grid.ColumnDefinitions>
                                         <TextBlock Grid.Column="0" VerticalAlignment="Center" Text="{DynamicResource chapterfile}"/>
-                                        <TextBox x:Name="capinputbox" Grid.Column="1" PreviewDragOver="TextBox_PreviewDragOver"/>
+                                        <hc:TextBox x:Name="capinputbox" Grid.Column="1" hc:InfoElement.Placeholder="{DynamicResource p024}" PreviewDragOver="TextBox_PreviewDragOver"/>
                                         <Button x:Name="capinput" Grid.Column="2" Content="..." Margin="4,0,0,0" Click="OpenFileSelect_Click"/>
                                     </Grid>
                                     <!--其他操作-->

@@ -17,7 +17,7 @@
     <system:String x:Key="encodesingle">单独队列</system:String>
     <system:String x:Key="encodeauto">自动队列</system:String>
     <system:String x:Key="audio">音频</system:String>
-    <system:String x:Key="audioinputtooltip">支持直接放入视频文件，智能处理如动态帧率等情况，并且剪切不需要输入帧率。但一般情况下依然推荐解流后单独放入音频。</system:String>
+    <system:String x:Key="audioinputtooltip">支持直接放入视频文件，将读取第一音轨并智能处理如动态帧率等情况，并且自动输入帧率。但也可以解流处理延迟后单独放入音频。</system:String>
     <system:String x:Key="cut">剪切</system:String>
     <system:String x:Key="cuttooltip">每一个剪切使用[xxx:xxx]的格式（xxx为帧数），使用+连接表示同一组剪切，使用&amp;连接表示在上一组剪切后的再剪切。</system:String>
     <system:String x:Key="delay">延迟</system:String>
@@ -174,5 +174,10 @@
     <system:String x:Key="p017">编码器接受由pipe传入的input的参数，如-y -i -</system:String>
     <system:String x:Key="p018">编码器设置输出文件路径的参数，如-o</system:String>
     <system:String x:Key="p019">用于设置压制参数，各编码器的设置参数类型不同</system:String>
+    <system:String x:Key="p020">仅支持放入vpy脚本，支持1个或多个</system:String>
+    <system:String x:Key="p021">vpy脚本读取后会自动生成，也可以手动修改</system:String>
+    <system:String x:Key="p022">支持放入视频或单独音频，放入视频时自动选择第1音轨并读取延迟</system:String>
+    <system:String x:Key="p023">音频输入读取后将自动生成，也可以手动修改</system:String>
+    <system:String x:Key="p024">可选。目前仅支持txt格式章节</system:String>
 
 </ResourceDictionary>

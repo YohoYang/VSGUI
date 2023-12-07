@@ -1489,5 +1489,31 @@ namespace VSGUI
         {
             this.QueueListView.SelectedIndex = -1;
         }
+
+        private void videoinputbox_LostFocus(object sender, RoutedEventArgs e)
+        {
+            string inputStr = videoinputbox.Text;
+            if (File.Exists(inputStr) && Path.GetExtension(inputStr) == ".vpy")
+            {
+                VideoInputUpdate();
+            }
+            else
+            {
+                this.videoinputPbSucc.Visibility = Visibility.Collapsed;
+            }
+        }
+
+        private void audioinputbox_LostFocus(object sender, RoutedEventArgs e)
+        {
+            string inputStr = audioinputbox.Text;
+            if (File.Exists(inputStr))
+            {
+                AudioInputUpdate();
+            }
+            else
+            {
+                this.audioinputPbSucc.Visibility = Visibility.Collapsed;
+            }
+        }
     }
 }
