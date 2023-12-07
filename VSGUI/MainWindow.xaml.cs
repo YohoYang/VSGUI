@@ -280,23 +280,26 @@ namespace VSGUI
         private void Border_Drop(object sender, DragEventArgs e)
         {
             string[] filenames = (string[])e.Data.GetData(DataFormats.FileDrop);
-            if (((Border)sender).Name == "videoborder")
+            if (filenames != null)
             {
-                videoinputbox.Text = filenames[0];
-                VideoInputUpdate();
-            }
-            else if (((Border)sender).Name == "audioborder")
-            {
-                audioinputbox.Text = filenames[0];
-                AudioInputUpdate();
-            }
-            else if (((Border)sender).Name == "muxborder")
-            {
-                capinputbox.Text = filenames[0];
-            }
-            else if (((Border)sender).Name == "demuxborder")
-            {
-                demuxinputbox.Text = filenames[0];
+                if (((Border)sender).Name == "videoborder")
+                {
+                    videoinputbox.Text = filenames[0];
+                    VideoInputUpdate();
+                }
+                else if (((Border)sender).Name == "audioborder")
+                {
+                    audioinputbox.Text = filenames[0];
+                    AudioInputUpdate();
+                }
+                else if (((Border)sender).Name == "muxborder")
+                {
+                    capinputbox.Text = filenames[0];
+                }
+                else if (((Border)sender).Name == "demuxborder")
+                {
+                    demuxinputbox.Text = filenames[0];
+                }
             }
         }
 
@@ -364,19 +367,35 @@ namespace VSGUI
         /// </summary>
         private void VideoInputUpdate()
         {
-            QueueApi.VpyFileInputCheck(videoinputbox.Text, out string cuttextboxText, out string fpstextboxText, out bool cutischeckedIsChecked, out bool isError);
-            cuttextbox.Text = cuttextboxText;
-            fpstextbox.Text = fpstextboxText;
-            cutischecked.IsChecked = cutischeckedIsChecked;
-            if (isError)
-            {
-                videoinputbox.Text = "";
-                videooutputbox.Text = "";
-            }
-            else
-            {
-                UpdateEncoderSuffix("video", EncoderApi.GetEncoderSuffix("video", videoencoderbox.SelectedIndex));
-            }
+            string inputStr = videoinputbox.Text;
+            UpdateEncoderSuffix("video", EncoderApi.GetEncoderSuffix("video", videoencoderbox.SelectedIndex));
+            this.videoinputPbSucc.Visibility = Visibility.Collapsed;
+            this.videoinputPb.Visibility = Visibility.Visible;
+            new Thread(
+                () =>
+                {
+                    QueueApi.VpyFileInputCheck(inputStr, out string cuttextboxText, out string fpstextboxText, out bool cutischeckedIsChecked, out bool isError);
+                    Dispatcher.Invoke(() =>
+                    {
+                        cuttextbox.Text = cuttextboxText;
+                        fpstextbox.Text = fpstextboxText;
+                        cutischecked.IsChecked = cutischeckedIsChecked;
+                        this.videoinputPb.Visibility = Visibility.Collapsed;
+                        if (isError)
+                        {
+                            videoinputbox.Text = "";
+                            videooutputbox.Text = "";
+                        }
+                        else
+                        {
+                            this.videoinputPbSucc.Visibility = Visibility.Visible;
+                        }
+                    });
+                }
+            ).Start();
+
+
+
         }
 
         /// <summary>
@@ -384,9 +403,22 @@ namespace VSGUI
         /// </summary>
         private void AudioInputUpdate()
         {
-            QueueApi.AudioFileInputCheck(audioinputbox.Text, out string audiodelayboxText, out bool isError);
-            audiodelaybox.Text = audiodelayboxText;
+            string inputStr = audioinputbox.Text;
             UpdateEncoderSuffix("audio", EncoderApi.GetEncoderSuffix("audio", audioencoderbox.SelectedIndex));
+            this.audioinputPbSucc.Visibility = Visibility.Collapsed;
+            this.audioinputPb.Visibility = Visibility.Visible;
+            new Thread(
+                () =>
+                {
+                    QueueApi.AudioFileInputCheck(inputStr, out string audiodelayboxText, out bool isError);
+                    Dispatcher.Invoke(() =>
+                    {
+                        this.audioinputPb.Visibility = Visibility.Collapsed;
+                        audiodelaybox.Text = audiodelayboxText;
+                        this.audioinputPbSucc.Visibility = Visibility.Visible;
+                    });
+                }
+            ).Start();
         }
 
         /// <summary>

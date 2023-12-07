@@ -183,6 +183,8 @@
                                         </Grid.ColumnDefinitions>
                                         <TextBlock Grid.Column="0" VerticalAlignment="Center" Text="{DynamicResource videoinput}"/>
                                         <hc:TextBox x:Name="videoinputbox" Grid.Column="1" hc:InfoElement.Placeholder="{DynamicResource p017}" PreviewDragOver="TextBox_PreviewDragOver"/>
+                                        <Path x:Name="videoinputPbSucc" Data="{StaticResource SuccessGeometry}" Grid.Column="1" Width="22" Height="22" Stretch="Uniform" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,8,0" Fill="{DynamicResource SuccessBrush}" Visibility="Collapsed"/>
+                                        <hc:CircleProgressBar x:Name="videoinputPb" IsIndeterminate="True" Grid.Column="1" Width="22" Height="22" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,8,0" Visibility="Collapsed"/>
                                         <Button x:Name="videoinput" Grid.Column="2" Content="..." Margin="4,0,0,0" Click="OpenFileSelect_Click"/>
                                     </Grid>
                                     <!--视频输出-->
@@ -229,6 +231,8 @@
                                         </Grid.ColumnDefinitions>
                                         <TextBlock Grid.Column="0" VerticalAlignment="Center" Text="{DynamicResource audioinput}"/>
                                         <TextBox x:Name="audioinputbox" Grid.Column="1" PreviewDragOver="TextBox_PreviewDragOver" ToolTip="{DynamicResource audioinputtooltip}"/>
+                                        <Path x:Name="audioinputPbSucc" Data="{StaticResource SuccessGeometry}" Grid.Column="1" Width="22" Height="22" Stretch="Uniform" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,8,0" Fill="{DynamicResource SuccessBrush}" Visibility="Collapsed"/>
+                                        <hc:CircleProgressBar x:Name="audioinputPb" IsIndeterminate="True" Grid.Column="1" Width="22" Height="22" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,8,0" Visibility="Collapsed"/>
                                         <Button x:Name="audioinput" Grid.Column="2" Content="..." Margin="4,0,0,0" Click="OpenFileSelect_Click"/>
                                     </Grid>
                                     <!--视频输出-->

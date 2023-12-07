@@ -235,7 +235,7 @@ namespace VSGUI.API
         //}
 
 
-        public static async void RunProcess(string clipath, string common, Action<string, bool> inDataReceived, Action inExited, Action<string> processid, Encoding? outputEncoding = null)
+        public static async void RunProcess(string clipath, string common, Action<string, bool> inDataReceived, Action inExited, Action<string> processid, Encoding? outputEncoding = null, bool isQueueJob = true)
         {
             if (outputEncoding == null)
             {

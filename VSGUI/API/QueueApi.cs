@@ -96,6 +96,9 @@ namespace VSGUI.API
                 //全部依赖配置
                 JsonObject thisJobj = encoderJson[type][encoderid].AsObject();
                 //string pEncoderName = thisJobj["encodername"].ToString();
+
+
+
                 string encoderpath = "\"" + thisJobj["encoderpath"].ToString().Trim() + "\"" + " ";
                 string encoderpipeinputformat = thisJobj["pipeinputformat"].ToString().Trim() + " ";
                 string encoderparameter = thisJobj["parameter"].ToString().Trim() + " ";
