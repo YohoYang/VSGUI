@@ -26,6 +26,7 @@ namespace VSGUI
         private bool forcedStop = false;
         private string coreversion = "v0.4.2";
         public static string logBoxStr = "";
+        private string[] videoMultiInputLists, audioMultiInputLists;
 
         public MainWindow()
         {
@@ -284,13 +285,29 @@ namespace VSGUI
             {
                 if (((Border)sender).Name == "videoborder")
                 {
-                    videoinputbox.Text = filenames[0];
-                    VideoInputUpdate();
+                    if (filenames.Length > 1)
+                    {
+                        MultiInputUpdate(1, filenames);
+                    }
+                    else
+                    {
+                        MultiInputClear(1);
+                        videoinputbox.Text = filenames[0];
+                        VideoInputUpdate();
+                    }
                 }
                 else if (((Border)sender).Name == "audioborder")
                 {
-                    audioinputbox.Text = filenames[0];
-                    AudioInputUpdate();
+                    if (filenames.Length > 1)
+                    {
+                        MultiInputUpdate(2, filenames);
+                    }
+                    else
+                    {
+                        MultiInputClear(2);
+                        audioinputbox.Text = filenames[0];
+                        AudioInputUpdate();
+                    }
                 }
                 else if (((Border)sender).Name == "muxborder")
                 {
@@ -308,15 +325,26 @@ namespace VSGUI
         /// </summary>
         /// <param name="filter"></param>
         /// <returns>返回的文件名</returns>
-        private string CallOpenFileDialog(string filter = "所有文件(*.*)|*.*")
+        private string[] CallOpenFileDialog(string filter = "所有文件(*.*)|*.*", bool isMulti = false)
         {
             Microsoft.Win32.OpenFileDialog ofd = new Microsoft.Win32.OpenFileDialog();
+            if (isMulti)
+            {
+                ofd.Multiselect = true;
+            }
             ofd.Filter = filter;
             if (ofd.ShowDialog() == true)
             {
-                return ofd.FileName;
+                string[] rStrs = new string[ofd.FileNames.Length];
+                int index = 0;
+                foreach (string filename in ofd.FileNames)
+                {
+                    rStrs[index] = filename;
+                    index++;
+                }
+                return rStrs;
             }
-            return "";
+            return null;
         }
 
         /// <summary>
@@ -347,18 +375,60 @@ namespace VSGUI
         {
             string controlname = ((Button)sender).Name + "box";
             var toTextBox = (TextBox)this.FindName(controlname);
-            toTextBox.Text = CallOpenFileDialog();
-            if (controlname == "videoinputbox" && videoinputbox.Text != "")
-            {
-                VideoInputUpdate();
-            }
-            else if (controlname == "audioinputbox" && audioinputbox.Text != "")
-            {
-                AudioInputUpdate();
-            }
-            else if (controlname == "simplevideoinputbox" && simplevideoinputbox.Text != "")
+            string[] files = CallOpenFileDialog();
+            toTextBox.Text = files[0];
+            if (controlname == "simplevideoinputbox" && simplevideoinputbox.Text != "")
             {
                 SimpleVideoInputUpdate();
+            }
+        }
+
+        /// <summary>
+        /// 打开文件按钮事件
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void OpenMultiFileSelect_Click(object sender, RoutedEventArgs e)
+        {
+            string controlname = ((Button)sender).Name + "box";
+            var toTextBox = (TextBox)this.FindName(controlname);
+            string[] files = CallOpenFileDialog(isMulti: true);
+            if (files == null)
+            {
+                return;
+            }
+            if (files.Length > 1)
+            {
+                //多文件输入
+                if (controlname == "videoinputbox")
+                {
+                    MultiInputUpdate(1, files);
+                }
+                else if (controlname == "audioinputbox")
+                {
+                    MultiInputUpdate(2, files);
+                }
+            }
+            else
+            {
+                if (controlname == "videoinputbox")
+                {
+                    MultiInputClear(1);
+                    toTextBox.Text = files[0];
+                    if (videoinputbox.Text != "")
+                    {
+                        VideoInputUpdate();
+                    }
+                }
+                else if (controlname == "audioinputbox")
+                {
+                    MultiInputClear(2);
+                    toTextBox.Text = files[0];
+                    if (audioinputbox.Text != "")
+                    {
+                        AudioInputUpdate();
+                    }
+                }
             }
         }
 
@@ -368,29 +438,36 @@ namespace VSGUI
         private void VideoInputUpdate()
         {
             string inputStr = videoinputbox.Text;
-            UpdateEncoderSuffix("video", EncoderApi.GetEncoderSuffix("video", videoencoderbox.SelectedIndex));
+            UpdateEncoderSuffix("video", inputStr, EncoderApi.GetEncoderSuffix("video", videoencoderbox.SelectedIndex));
             this.videoinputPbSucc.Visibility = Visibility.Collapsed;
             this.videoinputPb.Visibility = Visibility.Visible;
             new Thread(
                 () =>
                 {
                     QueueApi.VpyFileInputCheck(inputStr, out string cuttextboxText, out string fpstextboxText, out bool cutischeckedIsChecked, out bool isError);
-                    Dispatcher.Invoke(() =>
+                    try
                     {
-                        cuttextbox.Text = cuttextboxText;
-                        fpstextbox.Text = fpstextboxText;
-                        cutischecked.IsChecked = cutischeckedIsChecked;
-                        this.videoinputPb.Visibility = Visibility.Collapsed;
-                        if (isError)
+                        Dispatcher.Invoke(() =>
                         {
-                            videoinputbox.Text = "";
-                            videooutputbox.Text = "";
-                        }
-                        else
-                        {
-                            this.videoinputPbSucc.Visibility = Visibility.Visible;
-                        }
-                    });
+                            cuttextbox.Text = cuttextboxText;
+                            fpstextbox.Text = fpstextboxText;
+                            cutischecked.IsChecked = cutischeckedIsChecked;
+                            this.videoinputPb.Visibility = Visibility.Collapsed;
+                            if (isError)
+                            {
+                                videoinputbox.Text = "";
+                                videooutputbox.Text = "";
+                            }
+                            else
+                            {
+                                this.videoinputPbSucc.Visibility = Visibility.Visible;
+                            }
+                        });
+                    }
+                    catch (Exception)
+                    {
+                        //执行时可能遇到问题
+                    }
                 }
             ).Start();
 
@@ -404,21 +481,86 @@ namespace VSGUI
         private void AudioInputUpdate()
         {
             string inputStr = audioinputbox.Text;
-            UpdateEncoderSuffix("audio", EncoderApi.GetEncoderSuffix("audio", audioencoderbox.SelectedIndex));
+            UpdateEncoderSuffix("audio", inputStr, EncoderApi.GetEncoderSuffix("audio", audioencoderbox.SelectedIndex));
             this.audioinputPbSucc.Visibility = Visibility.Collapsed;
             this.audioinputPb.Visibility = Visibility.Visible;
             new Thread(
                 () =>
                 {
                     QueueApi.AudioFileInputCheck(inputStr, out string audiodelayboxText, out bool isError);
-                    Dispatcher.Invoke(() =>
+                    try
                     {
-                        this.audioinputPb.Visibility = Visibility.Collapsed;
-                        audiodelaybox.Text = audiodelayboxText;
-                        this.audioinputPbSucc.Visibility = Visibility.Visible;
-                    });
+                        Dispatcher.Invoke(() =>
+                        {
+                            this.audioinputPb.Visibility = Visibility.Collapsed;
+                            audiodelaybox.Text = audiodelayboxText;
+                            this.audioinputPbSucc.Visibility = Visibility.Visible;
+                        });
+                    }
+                    catch (Exception)
+                    {
+                        //执行时可能遇到问题
+                    }
                 }
             ).Start();
+        }
+
+        /// <summary>
+        /// 多文件输入时的处理
+        /// </summary>
+        private void MultiInputUpdate(int type, string[] inputList)
+        {
+            //type 1 视频 type 2 音频
+            if (type == 1)
+            {
+                videoMultiInputLists = inputList;
+                this.videoinputbox.Text = inputList.Length + LanguageApi.FindRes("p025");
+                this.videooutputbox.Text = inputList.Length + LanguageApi.FindRes("p026");
+                this.videooutputbox.IsEnabled = false;
+                this.videooutput.IsEnabled = false;
+                this.videoinputPbSucc.Visibility = Visibility.Collapsed;
+            }
+            else if (type == 2)
+            {
+                audioMultiInputLists = inputList;
+                this.audioinputbox.Text = inputList.Length + LanguageApi.FindRes("p025");
+                this.audiooutputbox.Text = inputList.Length + LanguageApi.FindRes("p026");
+                this.audiooutputbox.IsEnabled = false;
+                this.audiooutput.IsEnabled = false;
+                this.audioinputPbSucc.Visibility = Visibility.Collapsed;
+            }
+        }
+
+        /// <summary>
+        /// 取消多文件输入的快速方法
+        /// </summary>
+        private void MultiInputClear(int type, bool isClearInput = true)
+        {
+            //type 1 视频 type 2 音频
+            if (type == 1)
+            {
+                videoMultiInputLists = null;
+                if (isClearInput)
+                {
+                    this.videoinputbox.Text = "";
+                }
+                this.videooutputbox.Text = "";
+                this.videooutputbox.IsEnabled = true;
+                this.videooutput.IsEnabled = true;
+                this.videoinputPbSucc.Visibility = Visibility.Collapsed;
+            }
+            else if (type == 2)
+            {
+                audioMultiInputLists = null;
+                if (isClearInput)
+                {
+                    this.audioinputbox.Text = "";
+                }
+                this.audiooutputbox.Text = "";
+                this.audiooutputbox.IsEnabled = true;
+                this.audiooutput.IsEnabled = true;
+                this.audioinputPbSucc.Visibility = Visibility.Collapsed;
+            }
         }
 
         /// <summary>
@@ -431,7 +573,7 @@ namespace VSGUI
             simpleaudioinputbox.Text = audioinputboxtext;
             if (videoinputboxText != "")
             {
-                UpdateEncoderSuffix("simpleencode", @"_vsgui." + simplemuxsuffixbox.Text.ToLower());
+                UpdateEncoderSuffix("simpleencode", videoinputboxText, @"_vsgui." + simplemuxsuffixbox.Text.ToLower());
             }
         }
 
@@ -470,65 +612,59 @@ namespace VSGUI
             {
                 if (videoinputbox.Text != "")
                 {
-                    UpdateEncoderSuffix("video", EncoderApi.GetEncoderSuffix("video", videoencoderbox.SelectedIndex));
+                    UpdateEncoderSuffix("video", videoinputbox.Text, EncoderApi.GetEncoderSuffix("video", videoencoderbox.SelectedIndex));
                 }
                 IniApi.IniWriteValue("videoencoderboxSelectedIndex", videoencoderbox.SelectedIndex.ToString());
-            }
-            else if (((ComboBox)sender).Name == "simplevideoencoderbox")
-            {
-                if (simplevideoinputbox.Text != "")
-                {
-                    UpdateEncoderSuffix("video", EncoderApi.GetEncoderSuffix("video", simplevideoencoderbox.SelectedIndex));
-                }
-                IniApi.IniWriteValue("simplevideoencoderboxSelectedIndex", simplevideoencoderbox.SelectedIndex.ToString());
             }
             else if (((ComboBox)sender).Name == "audioencoderbox")
             {
                 if (audioinputbox.Text != "")
                 {
-                    UpdateEncoderSuffix("audio", EncoderApi.GetEncoderSuffix("audio", audioencoderbox.SelectedIndex));
+                    UpdateEncoderSuffix("audio", audioinputbox.Text, EncoderApi.GetEncoderSuffix("audio", audioencoderbox.SelectedIndex));
                 }
                 IniApi.IniWriteValue("audioencoderboxSelectedIndex", audioencoderbox.SelectedIndex.ToString());
+            }
+            else if (((ComboBox)sender).Name == "simplevideoencoderbox")
+            {
+                if (simplevideoinputbox.Text != "")
+                {
+                    UpdateEncoderSuffix("video", simplevideoinputbox.Text, EncoderApi.GetEncoderSuffix("video", simplevideoencoderbox.SelectedIndex));
+                }
+                IniApi.IniWriteValue("simplevideoencoderboxSelectedIndex", simplevideoencoderbox.SelectedIndex.ToString());
             }
             else if (((ComboBox)sender).Name == "simpleaudioencoderbox")
             {
                 if (simpleaudioinputbox.Text != "")
                 {
-                    UpdateEncoderSuffix("audio", EncoderApi.GetEncoderSuffix("audio", simpleaudioencoderbox.SelectedIndex));
+                    UpdateEncoderSuffix("audio", simpleaudioinputbox.Text, EncoderApi.GetEncoderSuffix("audio", simpleaudioencoderbox.SelectedIndex));
                 }
                 IniApi.IniWriteValue("simpleaudioencoderboxSelectedIndex", simpleaudioencoderbox.SelectedIndex.ToString());
             }
         }
 
-        private void UpdateEncoderSuffix(string type, string suffixstr)
+        private string UpdateEncoderSuffix(string type, string inputstr, string suffixstr, bool returnMode = false)
         {
-            if (type == "video")
+            string outputpath = Path.GetDirectoryName(inputstr) + @"\" + Path.GetFileNameWithoutExtension(inputstr) + suffixstr;
+            if (File.Exists(outputpath))
             {
-                string outputpath = Path.GetDirectoryName(videoinputbox.Text) + @"\" + Path.GetFileNameWithoutExtension(videoinputbox.Text) + suffixstr;
-                if (File.Exists(outputpath))
-                {
-                    outputpath = Path.GetDirectoryName(videoinputbox.Text) + @"\" + Path.GetFileNameWithoutExtension(videoinputbox.Text) + @"-" + DateTime.Now.ToString("yyMMddHHmmss") + suffixstr;
-                }
-                videooutputbox.Text = outputpath;
+                outputpath = Path.GetDirectoryName(inputstr) + @"\" + Path.GetFileNameWithoutExtension(inputstr) + @"-" + DateTime.Now.ToString("yyMMddHHmmss") + suffixstr;
             }
-            else if (type == "audio")
+            if (returnMode == false)
             {
-                string outputpath = Path.GetDirectoryName(audioinputbox.Text) + @"\" + Path.GetFileNameWithoutExtension(audioinputbox.Text) + suffixstr;
-                if (File.Exists(outputpath))
+                if (type == "video")
                 {
-                    outputpath = Path.GetDirectoryName(audioinputbox.Text) + @"\" + Path.GetFileNameWithoutExtension(audioinputbox.Text) + @"-" + DateTime.Now.ToString("yyMMddHHmmss") + suffixstr;
+                    videooutputbox.Text = outputpath;
                 }
-                audiooutputbox.Text = outputpath;
-            }
-            else if (type == "simpleencode")
-            {
-                string outputpath = Path.GetDirectoryName(simplevideoinputbox.Text) + @"\" + Path.GetFileNameWithoutExtension(simplevideoinputbox.Text) + suffixstr;
-                if (File.Exists(outputpath))
+                else if (type == "audio")
                 {
-                    outputpath = Path.GetDirectoryName(simplevideoinputbox.Text) + @"\" + Path.GetFileNameWithoutExtension(simplevideoinputbox.Text) + @"-" + DateTime.Now.ToString("yyMMddHHmmss") + suffixstr;
+                    audiooutputbox.Text = outputpath;
                 }
-                simplevideooutputbox.Text = outputpath;
+                else if (type == "simpleencode")
+                {
+                    simplevideooutputbox.Text = outputpath;
+                }
             }
+            return outputpath;
         }
 
         /// <summary>
@@ -553,7 +689,20 @@ namespace VSGUI
                 MessageBoxApi.Show(LanguageApi.FindRes("noEncoderProfilesSelected"), LanguageApi.FindRes("error"));
                 return;
             }
-            QueueApi.AddQueueList("video", videoencoderbox.SelectedIndex, new string[] { videoinputbox.Text }, videooutputbox.Text);
+            if (videoMultiInputLists != null)
+            {
+                //多任务
+                foreach (var item in videoMultiInputLists)
+                {
+                    string outputFileName = UpdateEncoderSuffix("video", item, EncoderApi.GetEncoderSuffix("video", videoencoderbox.SelectedIndex), returnMode: true);
+                    QueueApi.AddQueueList("video", videoencoderbox.SelectedIndex, new string[] { item }, outputFileName);
+                }
+            }
+            else
+            {
+                //单任务
+                QueueApi.AddQueueList("video", videoencoderbox.SelectedIndex, new string[] { videoinputbox.Text }, videooutputbox.Text);
+            }
             UpdateQueueList();
             if (IniApi.IniReadValue("AutoStartQueue") == "true")
             {
@@ -598,7 +747,7 @@ namespace VSGUI
                 MessageBoxApi.Show(LanguageApi.FindRes("fpsstrFormatError"), LanguageApi.FindRes("error"));
                 return;
             }
-
+            //音频参数里面东西多，多输入的情况下，需要处理
             string cuttext = "";
             if (cutischecked.IsChecked == true) cuttext = cuttextbox.Text;
             QueueApi.AddQueueList("audio", audioencoderbox.SelectedIndex, new string[] { audioinputbox.Text }, audiooutputbox.Text, deletefile: audioinputbox.Text + ".lwi", audiocuttext: cuttext, audiofpstext: fpstextbox.Text, audiodelaytext: audiodelaybox.Text);
@@ -662,6 +811,18 @@ namespace VSGUI
                 {
                     return;
                 }
+            }
+            //多文件判断
+            if (videoMultiInputLists != null || audioMultiInputLists != null)
+            {
+                //视频多，音频1
+                if (videoMultiInputLists != null && audioMultiInputLists == null)
+                {
+
+                }
+                //视频1，音频多
+
+                //视频多，音频多（必须相等）
             }
             //封装格式选择
             //生成groud名
@@ -1493,6 +1654,7 @@ namespace VSGUI
         private void videoinputbox_LostFocus(object sender, RoutedEventArgs e)
         {
             string inputStr = videoinputbox.Text;
+            MultiInputClear(1, isClearInput: false);
             if (File.Exists(inputStr) && Path.GetExtension(inputStr) == ".vpy")
             {
                 VideoInputUpdate();
@@ -1506,6 +1668,7 @@ namespace VSGUI
         private void audioinputbox_LostFocus(object sender, RoutedEventArgs e)
         {
             string inputStr = audioinputbox.Text;
+            MultiInputClear(2, isClearInput: false);
             if (File.Exists(inputStr))
             {
                 AudioInputUpdate();

@@ -151,7 +151,7 @@
     <system:String x:Key="openfiltersscriptsdirectory">打开滤镜/脚本目录</system:String>
     <system:String x:Key="openfilters">滤镜(dll)目录</system:String>
     <system:String x:Key="openscripts">脚本(py)目录</system:String>
-    <system:String x:Key="simpleVideoInputPlaceholder">将要压制的视频拖入此处，将自动判断并填充音频输入</system:String>
+    <system:String x:Key="simpleVideoInputPlaceholder">单文件，将要压制的视频拖入此处，将自动判断并填充音频输入</system:String>
     <system:String x:Key="simpleAudioInputPlaceholder">如果需要使用与原视频不同的音频，可以在拖入视频后将音频拖入此处</system:String>
     <system:String x:Key="simpleSubInputPlaceholder">支持ass/srt/sup</system:String>
     <system:String x:Key="simpleCapInputPlaceholder">当前仅支持txt章节</system:String>
@@ -174,10 +174,12 @@
     <system:String x:Key="p017">编码器接受由pipe传入的input的参数，如-y -i -</system:String>
     <system:String x:Key="p018">编码器设置输出文件路径的参数，如-o</system:String>
     <system:String x:Key="p019">用于设置压制参数，各编码器的设置参数类型不同</system:String>
-    <system:String x:Key="p020">仅支持放入vpy脚本，支持1个或多个</system:String>
+    <system:String x:Key="p020">只支持放入vpy脚本，1个或多个文件</system:String>
     <system:String x:Key="p021">vpy脚本读取后会自动生成，也可以手动修改</system:String>
-    <system:String x:Key="p022">支持放入视频或单独音频，放入视频时自动选择第1音轨并读取延迟</system:String>
+    <system:String x:Key="p022">放入视频或单独音频，1个或多个文件，放入视频时自动选择第1音轨并读取延迟</system:String>
     <system:String x:Key="p023">音频输入读取后将自动生成，也可以手动修改</system:String>
     <system:String x:Key="p024">可选。目前仅支持txt格式章节</system:String>
+    <system:String x:Key="p025">个输入…</system:String>
+    <system:String x:Key="p026">个输出…</system:String>
 
 </ResourceDictionary>

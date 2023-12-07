@@ -151,7 +151,7 @@
     <system:String x:Key="openfiltersscriptsdirectory">Open the filters/scripts directory</system:String>
     <system:String x:Key="openfilters">Filter (dll) directory</system:String>
     <system:String x:Key="openscripts">script (py) directory</system:String>
-    <system:String x:Key="simpleVideoInputPlaceholder">Drag the video to be suppressed here, it will automatically judge and fill the audio input</system:String>
+    <system:String x:Key="simpleVideoInputPlaceholder">Single file, Drag the video to be suppressed here, it will automatically judge and fill the audio input</system:String>
     <system:String x:Key="simpleAudioInputPlaceholder">If you need to use a different audio from the original video, you can drag the audio here after dragging the video</system:String>
     <system:String x:Key="simpleSubInputPlaceholder">support ass/srt/sup</system:String>
     <system:String x:Key="simpleCapInputPlaceholder">Currently only supports txt chapters</system:String>
