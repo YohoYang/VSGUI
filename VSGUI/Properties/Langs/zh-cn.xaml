@@ -153,7 +153,7 @@
     <system:String x:Key="openscripts">脚本(py)目录</system:String>
     <system:String x:Key="simpleVideoInputPlaceholder">单文件，将要压制的视频拖入此处，将自动判断并填充音频输入</system:String>
     <system:String x:Key="simpleAudioInputPlaceholder">如果需要使用与原视频不同的音频，可以在拖入视频后将音频拖入此处</system:String>
-    <system:String x:Key="simpleSubInputPlaceholder">支持ass/srt/sup</system:String>
+    <system:String x:Key="simpleSubInputPlaceholder">支持ass/srt/sup，使用|符号分隔多个文件</system:String>
     <system:String x:Key="simpleCapInputPlaceholder">当前仅支持txt章节</system:String>
 
     <system:String x:Key="p001">是否立刻重启资源管理器以马上生效</system:String>

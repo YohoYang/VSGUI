@@ -72,17 +72,23 @@ namespace VSGUI.API
             //字幕
             if (subpath != "")
             {
-                if (File.Exists(subpath))
+                string[] asspathList = subpath.Split("|");
+                foreach (var item in asspathList)
                 {
-
-                    if (Path.GetExtension(subpath) == ".sup")
+                    if (item != "")
                     {
-                        //scriptstr += @"def rgba(r, g, b, a=255):" + "\r\n" + @"    if r < 0 or r > 255 or g < 0 or g > 255 or b < 0 or b > 255 or a < 0 or a > 255:" + "\r\n" + @"        raise vs.Error(""Colours must be in the range [0, 255]."")" + "\r\n" + @"    return (a << 24) + (r << 16) + (g << 8) + b" + "\r\n" + "\r\n" + @"unused = 1 << 42" + "\r\n";
-                        scriptstr += @"video = core.sub.ImageFile(video, r" + "\"" + subpath + "\"" + ")" + "\r\n";
-                    }
-                    else
-                    {
-                        scriptstr += @"video = core.assrender.TextSub(video, file=r" + "\"" + subpath + "\"" + ")" + "\r\n";
+                        if (File.Exists(item))
+                        {
+                            if (Path.GetExtension(item) == ".sup")
+                            {
+                                //scriptstr += @"def rgba(r, g, b, a=255):" + "\r\n" + @"    if r < 0 or r > 255 or g < 0 or g > 255 or b < 0 or b > 255 or a < 0 or a > 255:" + "\r\n" + @"        raise vs.Error(""Colours must be in the range [0, 255]."")" + "\r\n" + @"    return (a << 24) + (r << 16) + (g << 8) + b" + "\r\n" + "\r\n" + @"unused = 1 << 42" + "\r\n";
+                                scriptstr += @"video = core.sub.ImageFile(video, r" + "\"" + item + "\"" + ")" + "\r\n";
+                            }
+                            else
+                            {
+                                scriptstr += @"video = core.assrender.TextSub(video, file=r" + "\"" + item + "\"" + ")" + "\r\n";
+                            }
+                        }
                     }
                 }
             }

@@ -153,7 +153,7 @@
     <system:String x:Key="openscripts">script (py) directory</system:String>
     <system:String x:Key="simpleVideoInputPlaceholder">Single file, Drag the video to be suppressed here, it will automatically judge and fill the audio input</system:String>
     <system:String x:Key="simpleAudioInputPlaceholder">If you need to use a different audio from the original video, you can drag the audio here after dragging the video</system:String>
-    <system:String x:Key="simpleSubInputPlaceholder">support ass/srt/sup</system:String>
+    <system:String x:Key="simpleSubInputPlaceholder">support ass/srt/sup, use the | symbol to separate multiple files</system:String>
     <system:String x:Key="simpleCapInputPlaceholder">Currently only supports txt chapters</system:String>
 
     <system:String x:Key="p001">Whether to restart the resource manager immediately to take effect immediately</system:String>
@@ -167,5 +167,20 @@
     <system:String x:Key="p010">Video encoder parameter settings</system:String>
     <system:String x:Key="p011">Audio encoder parameter settings</system:String>
     <system:String x:Key="p012">Encoder path cannot be empty</system:String>
-
+    <system:String x:Key="p013">The output path prefix must be . (such as .mp4)</system:String>
+    <system:String x:Key="p014">Save successfully</system:String>
+    <system:String x:Key="p015">The file pointed to by the encoder path does not exist</system:String>
+    <system:String x:Key="p016">Supports absolute paths and relative paths</system:String>
+    <system:String x:Key="p017">The encoder accepts input parameters passed in by pipe, such as -y -i -</system:String>
+    <system:String x:Key="p018">The encoder sets the parameters of the output file path, such as -o</system:String>
+    <system:String x:Key="p019">Used to set suppression parameters, the setting parameter types of each encoder are different</system:String>
+    <system:String x:Key="p020">Only supports placing vpy scripts, 1 or more files</system:String>
+    <system:String x:Key="p021">The vpy script will be automatically generated after reading, and can also be modified manually</system:String>
+    <system:String x:Key="p022">Put in video or separate audio, 1 or more files, automatically select the first audio track and read the delay when placing the video</system:String>
+    <system:String x:Key="p023">The audio input will be automatically generated after reading, and can also be modified manually</system:String>
+    <system:String x:Key="p024">Optional. Currently only supports chapters in txt format</system:String>
+    <system:String x:Key="p025">Inputs...</system:String>
+    <system:String x:Key="p026">outputs...</system:String>
+    <system:String x:Key="p027">When inputting multiple files, the automatic queue function cannot be used. Please queue video and audio separately.</system:String>
+    
 </ResourceDictionary>

@@ -271,6 +271,18 @@ namespace VSGUI
                     }
                 }
             }
+            else if (((TextBox)sender).Name == "simpleasspathinputbox")
+            {
+                if (filename.Length > 1)
+                {
+                    string assinputStr = "";
+                    foreach (var item in filename)
+                    {
+                        assinputStr += item + "|";
+                    }
+                    this.simpleasspathinputbox.Text = assinputStr;
+                }
+            }
         }
 
         /// <summary>
@@ -376,7 +388,10 @@ namespace VSGUI
             string controlname = ((Button)sender).Name + "box";
             var toTextBox = (TextBox)this.FindName(controlname);
             string[] files = CallOpenFileDialog();
-            toTextBox.Text = files[0];
+            if (files != null)
+            {
+                toTextBox.Text = files[0];
+            }
             if (controlname == "simplevideoinputbox" && simplevideoinputbox.Text != "")
             {
                 SimpleVideoInputUpdate();
@@ -407,6 +422,18 @@ namespace VSGUI
                 else if (controlname == "audioinputbox")
                 {
                     MultiInputUpdate(2, files);
+                }
+                else if (controlname == "simpleasspathinputbox")
+                {
+                    if (files.Length > 1)
+                    {
+                        string assinputStr = "";
+                        foreach (var item in files)
+                        {
+                            assinputStr += item + "|";
+                        }
+                        this.simpleasspathinputbox.Text = assinputStr;
+                    }
                 }
             }
             else
@@ -572,13 +599,46 @@ namespace VSGUI
         /// </summary>
         private void SimpleVideoInputUpdate()
         {
-            QueueApi.SimpleEncodeFileInputCheck(simplevideoinputbox.Text, out string videoinputboxText, out string audioinputboxtext);
-            simplevideoinputbox.Text = videoinputboxText;
-            simpleaudioinputbox.Text = audioinputboxtext;
-            if (videoinputboxText != "")
-            {
-                UpdateEncoderSuffix("simpleencode", videoinputboxText, @"_vsgui." + simplemuxsuffixbox.Text.ToLower());
-            }
+            string inputStr = simplevideoinputbox.Text;
+
+            this.simplevideoinputPbSucc.Visibility = Visibility.Collapsed;
+            this.simplevideoinputPb.Visibility = Visibility.Visible;
+            this.simpleAddQueueBtn.IsEnabled = false;
+            new Thread(
+                () =>
+                {
+                    QueueApi.SimpleEncodeFileInputCheck(inputStr, out string videoinputboxText, out string audioinputboxtext);
+                    try
+                    {
+                        Dispatcher.Invoke(() =>
+                        {
+                            this.simplevideoinputPb.Visibility = Visibility.Collapsed;
+                            this.simplevideoinputPbSucc.Visibility = Visibility.Visible;
+                            this.simpleAddQueueBtn.IsEnabled = true;
+                            simplevideoinputbox.Text = videoinputboxText;
+                            simpleaudioinputbox.Text = audioinputboxtext;
+                            if (videoinputboxText != "")
+                            {
+                                UpdateEncoderSuffix("simpleencode", videoinputboxText, @"_vsgui." + simplemuxsuffixbox.Text.ToLower());
+                            }
+                        });
+                    }
+                    catch (Exception)
+                    {
+                        //执行时可能遇到问题
+                    }
+                }
+            ).Start();
+
+
+
+            //QueueApi.SimpleEncodeFileInputCheck(simplevideoinputbox.Text, out string videoinputboxText, out string audioinputboxtext);
+            //simplevideoinputbox.Text = videoinputboxText;
+            //simpleaudioinputbox.Text = audioinputboxtext;
+            //if (videoinputboxText != "")
+            //{
+            //    UpdateEncoderSuffix("simpleencode", videoinputboxText, @"_vsgui." + simplemuxsuffixbox.Text.ToLower());
+            //}
         }
 
 
@@ -597,7 +657,7 @@ namespace VSGUI
             }
             else if (((Button)sender).Tag.ToString() == "audioout")
             {
-                toTextBox.Text = CallSaveFileDialog(filename: Path.GetFileNameWithoutExtension(toTextBox.Text), ext: EncoderApi.GetEncoderSuffix("audio", videoencoderbox.SelectedIndex));
+                toTextBox.Text = CallSaveFileDialog(filename: Path.GetFileNameWithoutExtension(toTextBox.Text), ext: EncoderApi.GetEncoderSuffix("audio", audioencoderbox.SelectedIndex));
             }
             else if (((Button)sender).Tag.ToString() == "simplevideoout")
             {
@@ -903,10 +963,17 @@ namespace VSGUI
             }
             if (simpleasspathinputbox.Text != "")
             {
-                if (!File.Exists(simpleasspathinputbox.Text))
+                string[] asspathList = simpleasspathinputbox.Text.Split("|");
+                foreach (var item in asspathList)
                 {
-                    MessageBoxApi.Show(LanguageApi.FindRes("subtitleFileError"), LanguageApi.FindRes("error"));
-                    return;
+                    if (item != "")
+                    {
+                        if (!File.Exists(item))
+                        {
+                            MessageBoxApi.Show(LanguageApi.FindRes("subtitleFileError"), LanguageApi.FindRes("error"));
+                            return;
+                        }
+                    }
                 }
             }
 
@@ -1678,6 +1745,20 @@ namespace VSGUI
             if (File.Exists(inputStr) && Path.GetExtension(inputStr) == ".vpy")
             {
                 VideoInputUpdate();
+            }
+            else
+            {
+                this.videoinputPbSucc.Visibility = Visibility.Collapsed;
+            }
+        }
+
+        private void simplevideoinputbox_LostFocus(object sender, RoutedEventArgs e)
+        {
+            string inputStr = simplevideoinputbox.Text;
+            //MultiInputClear(1, isClearInput: false);
+            if (File.Exists(inputStr))
+            {
+                SimpleVideoInputUpdate();
             }
             else
             {
