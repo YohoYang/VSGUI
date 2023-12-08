@@ -43,7 +43,7 @@
                                         </Grid.ColumnDefinitions>
                                         <TextBlock Grid.Column="0" VerticalAlignment="Center" Text="{DynamicResource videoinput}"/>
                                         <hc:TextBox x:Name="simplevideoinputbox" Grid.Column="1" PreviewDragOver="TextBox_PreviewDragOver" PreviewDrop="TextBox_PreviewDrop" LostFocus="simplevideoinputbox_LostFocus" hc:InfoElement.Placeholder="{DynamicResource simpleVideoInputPlaceholder}"/>
-                                        <Path x:Name="simplevideoinputPbSucc" Data="{StaticResource SuccessGeometry}" Grid.Column="1" Width="20" Height="20" Stretch="Uniform" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,8,0" Fill="{DynamicResource SuccessBrush}" Visibility="Collapsed"/>
+                                        <Path x:Name="simplevideoinputPbSucc" Data="{StaticResource SuccessGeometry}" Grid.Column="1" Width="20" Height="20" Stretch="Uniform" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,8,0" Fill="{DynamicResource SuccessBrush}" MouseLeftButtonUp="inputPbSucc_MouseLeftButtonUp" Visibility="Collapsed"/>
                                         <hc:CircleProgressBar x:Name="simplevideoinputPb" IsIndeterminate="True" Grid.Column="1" Width="20" Height="20" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,8,0" Visibility="Collapsed"/>
                                         <Button x:Name="simplevideoinput" Grid.Column="2" Content="..." Margin="4,0,0,0" Click="OpenFileSelect_Click"/>
                                     </Grid>
@@ -185,7 +185,7 @@
                                         </Grid.ColumnDefinitions>
                                         <TextBlock Grid.Column="0" VerticalAlignment="Center" Text="{DynamicResource videoinput}"/>
                                         <hc:TextBox x:Name="videoinputbox" Grid.Column="1" hc:InfoElement.Placeholder="{DynamicResource p020}" PreviewDragOver="TextBox_PreviewDragOver" LostFocus="videoinputbox_LostFocus"/>
-                                        <Path x:Name="videoinputPbSucc" Data="{StaticResource SuccessGeometry}" Grid.Column="1" Width="20" Height="20" Stretch="Uniform" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,8,0" Fill="{DynamicResource SuccessBrush}" Visibility="Collapsed"/>
+                                        <Path x:Name="videoinputPbSucc" Data="{StaticResource SuccessGeometry}" Grid.Column="1" Width="20" Height="20" Stretch="Uniform" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,8,0" Fill="{DynamicResource SuccessBrush}" MouseLeftButtonUp="inputPbSucc_MouseLeftButtonUp" Visibility="Collapsed"/>
                                         <hc:CircleProgressBar x:Name="videoinputPb" IsIndeterminate="True" Grid.Column="1" Width="20" Height="20" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,8,0" Visibility="Collapsed"/>
                                         <Button x:Name="videoinput" Grid.Column="2" Content="..." Margin="4,0,0,0" Click="OpenMultiFileSelect_Click"/>
                                     </Grid>
@@ -233,7 +233,7 @@
                                         </Grid.ColumnDefinitions>
                                         <TextBlock Grid.Column="0" VerticalAlignment="Center" Text="{DynamicResource audioinput}"/>
                                         <hc:TextBox x:Name="audioinputbox" Grid.Column="1" hc:InfoElement.Placeholder="{DynamicResource p022}" PreviewDragOver="TextBox_PreviewDragOver" LostFocus="audioinputbox_LostFocus" ToolTip="{DynamicResource audioinputtooltip}"/>
-                                        <Path x:Name="audioinputPbSucc" Data="{StaticResource SuccessGeometry}" Grid.Column="1" Width="20" Height="20" Stretch="Uniform" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,8,0" Fill="{DynamicResource SuccessBrush}" Visibility="Collapsed"/>
+                                        <Path x:Name="audioinputPbSucc" Data="{StaticResource SuccessGeometry}" Grid.Column="1" Width="20" Height="20" Stretch="Uniform" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,8,0" Fill="{DynamicResource SuccessBrush}" MouseLeftButtonUp="inputPbSucc_MouseLeftButtonUp" Visibility="Collapsed"/>
                                         <hc:CircleProgressBar x:Name="audioinputPb" IsIndeterminate="True" Grid.Column="1" Width="20" Height="20" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,8,0" Visibility="Collapsed"/>
                                         <Button x:Name="audioinput" Grid.Column="2" Content="..." Margin="4,0,0,0" Click="OpenMultiFileSelect_Click"/>
                                     </Grid>

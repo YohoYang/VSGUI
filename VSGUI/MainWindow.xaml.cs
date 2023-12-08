@@ -1779,5 +1779,10 @@ namespace VSGUI
                 this.audioinputPbSucc.Visibility = Visibility.Collapsed;
             }
         }
+
+        private void inputPbSucc_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            ((System.Windows.Shapes.Path)sender).Visibility = Visibility.Collapsed;
+        }
     }
 }
