@@ -95,14 +95,37 @@ namespace VSGUI.API
                 var encoderJson = JsonApi.ReadJsonObjectFromFile(MainWindow.binpath + @"\json\encoderprofiles.json");
                 //全部依赖配置
                 JsonObject thisJobj = encoderJson[type][encoderid].AsObject();
-                //string pEncoderName = thisJobj["encodername"].ToString();
+                string pEncoderName = thisJobj["encodername"].ToString();
 
-
-
-                string encoderpath = "\"" + thisJobj["encoderpath"].ToString().Trim() + "\"" + " ";
-                string encoderpipeinputformat = thisJobj["pipeinputformat"].ToString().Trim() + " ";
+                //自定义编码器兼容性处理
+                string encoderpath;
+                if (!thisJobj.ContainsKey("encoderpath"))
+                {
+                    encoderpath = "\"" + GetDefaultEncoderP(type, pEncoderName, "encoderpath") + "\"" + " ";
+                }
+                else
+                {
+                    encoderpath = "\"" + thisJobj["encoderpath"].ToString().Trim() + "\"" + " ";
+                }
+                string encoderpipeinputformat;
+                if (!thisJobj.ContainsKey("pipeinputformat"))
+                {
+                    encoderpipeinputformat = GetDefaultEncoderP(type, pEncoderName, "pipeinputformat") + " ";
+                }
+                else
+                {
+                    encoderpipeinputformat = thisJobj["pipeinputformat"].ToString().Trim() + " ";
+                }
+                string encoderoutputformat;
+                if (!thisJobj.ContainsKey("outputformat"))
+                {
+                    encoderoutputformat = GetDefaultEncoderP(type, pEncoderName, "outputformat") + " ";
+                }
+                else
+                {
+                    encoderoutputformat = thisJobj["outputformat"].ToString().Trim() + " ";
+                }
                 string encoderparameter = thisJobj["parameter"].ToString().Trim() + " ";
-                string encoderoutputformat = thisJobj["outputformat"].ToString().Trim() + " ";
 
                 //if (pEncoderName == "x264")
                 //{
@@ -143,6 +166,39 @@ namespace VSGUI.API
                 return theCommandStr;
             }
 
+        }
+
+        private static string GetDefaultEncoderP(string encodertype, string encodername, string pname)
+        {
+            int index = 0;
+            string returnStr = "";
+            if (pname == "encoderpath")
+            {
+                index = 3;
+            }
+            else if (pname == "pipeinputformat")
+            {
+                index = 4;
+            }
+            else if (pname == "outputformat")
+            {
+                index = 5;
+            }
+            string[,] encoders = EncoderWindow.encoders;
+            for (int i = 0; i < encoders.GetLength(0); i++)
+            {
+                if (encoders[i, 0].Equals(encodertype) && encoders[i, 1].Equals(encodername))
+                {
+                    returnStr = encoders[i, index];
+                    break;
+                }
+            }
+            if (pname == "encoderpath")
+            {
+                returnStr = System.IO.Directory.GetCurrentDirectory() + returnStr;
+            }
+
+            return returnStr;
         }
 
         public static void AddQueueList(string type, int encoderid, string[] input, string output, string group = "", string deletefile = "", string resolution = "", string subtitle = "", string audiocuttext = "", string audiofpstext = "", string audiodelaytext = "")

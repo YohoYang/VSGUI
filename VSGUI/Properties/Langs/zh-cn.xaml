@@ -181,5 +181,6 @@
     <system:String x:Key="p024">可选。目前仅支持txt格式章节</system:String>
     <system:String x:Key="p025">个输入…</system:String>
     <system:String x:Key="p026">个输出…</system:String>
+    <system:String x:Key="p027">多文件输入时，无法使用自动队列功能。请分别将视频和音频单独队列。</system:String>
 
 </ResourceDictionary>

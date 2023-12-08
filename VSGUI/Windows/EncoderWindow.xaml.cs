@@ -26,7 +26,7 @@ namespace VSGUI
     {
         JsonObject tempObject;
         string ltype;
-        string[,] encoders =
+        public static string[,] encoders =
         {
             {"video","x264",".h264|.m4v|.mp4",@"\bin\encoder\x264\x264.exe","--demuxer y4m","- -o" },
             {"video","x265",".h265|.m4v|.mp4",@"\bin\encoder\x265\x265.exe","--y4m" ,"- -o"},

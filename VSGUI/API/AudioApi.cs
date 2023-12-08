@@ -13,7 +13,18 @@ namespace VSGUI.API
         {
             string inputext = Path.GetExtension(inputstr).ToLower();
             if (delay == "") delay = "0";
-            int delayint = int.Parse(delay);
+            //批量输入的参数
+            int delayint;
+            if (delay == "auto")
+            {
+                QueueApi.AudioFileInputCheck(inputstr, out string audiodelayboxText, out bool isError);
+                delayint = int.Parse(audiodelayboxText);
+            }
+            else
+            {
+                delayint = int.Parse(delay);
+            }
+
             bool isNormalize = EncoderApi.GetNormalize("audio", audioencoderid);
             string NormalizeStr = "";
             if (isNormalize) NormalizeStr = @"Normalize()";

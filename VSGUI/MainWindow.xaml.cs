@@ -525,6 +525,8 @@ namespace VSGUI
                 audioMultiInputLists = inputList;
                 this.audioinputbox.Text = inputList.Length + LanguageApi.FindRes("p025");
                 this.audiooutputbox.Text = inputList.Length + LanguageApi.FindRes("p026");
+                this.audiodelaybox.Text = "auto";
+                this.audiodelaybox.IsEnabled = false;
                 this.audiooutputbox.IsEnabled = false;
                 this.audiooutput.IsEnabled = false;
                 this.audioinputPbSucc.Visibility = Visibility.Collapsed;
@@ -559,6 +561,8 @@ namespace VSGUI
                 this.audiooutputbox.Text = "";
                 this.audiooutputbox.IsEnabled = true;
                 this.audiooutput.IsEnabled = true;
+                this.audiodelaybox.Text = "0";
+                this.audiodelaybox.IsEnabled = true;
                 this.audioinputPbSucc.Visibility = Visibility.Collapsed;
             }
         }
@@ -734,8 +738,11 @@ namespace VSGUI
             }
             if (!Regex.IsMatch(audiodelaybox.Text, @"^-?\d+") || audiodelaybox.Text == "")
             {
-                MessageBoxApi.Show(LanguageApi.FindRes("delayFormatError"), LanguageApi.FindRes("error"));
-                return;
+                if (!(audioMultiInputLists != null && audiodelaybox.Text == "auto"))
+                {
+                    MessageBoxApi.Show(LanguageApi.FindRes("delayFormatError"), LanguageApi.FindRes("error"));
+                    return;
+                }
             }
             if (cutischecked.IsChecked == true && AudioApi.CheckCutStrIsError(cuttextbox.Text))
             {
@@ -747,10 +754,26 @@ namespace VSGUI
                 MessageBoxApi.Show(LanguageApi.FindRes("fpsstrFormatError"), LanguageApi.FindRes("error"));
                 return;
             }
-            //音频参数里面东西多，多输入的情况下，需要处理
-            string cuttext = "";
-            if (cutischecked.IsChecked == true) cuttext = cuttextbox.Text;
-            QueueApi.AddQueueList("audio", audioencoderbox.SelectedIndex, new string[] { audioinputbox.Text }, audiooutputbox.Text, deletefile: audioinputbox.Text + ".lwi", audiocuttext: cuttext, audiofpstext: fpstextbox.Text, audiodelaytext: audiodelaybox.Text);
+            //音频参数里面东西多，多输入的情况下，需要处理。考虑直接禁用cut。
+            if (audioMultiInputLists != null)
+            {
+                //多任务
+                foreach (var item in audioMultiInputLists)
+                {
+                    string cuttext = "";
+                    if (cutischecked.IsChecked == true) cuttext = cuttextbox.Text;
+                    string outputFileName = UpdateEncoderSuffix("audio", item, EncoderApi.GetEncoderSuffix("audio", audioencoderbox.SelectedIndex), returnMode: true);
+                    QueueApi.AddQueueList("audio", audioencoderbox.SelectedIndex, new string[] { item }, outputFileName, deletefile: item + ".lwi", audiocuttext: cuttext, audiofpstext: fpstextbox.Text, audiodelaytext: "auto");
+                }
+            }
+            else
+            {
+                //单任务
+                string cuttext = "";
+                if (cutischecked.IsChecked == true) cuttext = cuttextbox.Text;
+                QueueApi.AddQueueList("audio", audioencoderbox.SelectedIndex, new string[] { audioinputbox.Text }, audiooutputbox.Text, deletefile: audioinputbox.Text + ".lwi", audiocuttext: cuttext, audiofpstext: fpstextbox.Text, audiodelaytext: audiodelaybox.Text);
+            }
+
             UpdateQueueList();
             if (IniApi.IniReadValue("AutoStartQueue") == "true")
             {
@@ -815,14 +838,8 @@ namespace VSGUI
             //多文件判断
             if (videoMultiInputLists != null || audioMultiInputLists != null)
             {
-                //视频多，音频1
-                if (videoMultiInputLists != null && audioMultiInputLists == null)
-                {
-
-                }
-                //视频1，音频多
-
-                //视频多，音频多（必须相等）
+                MessageBoxApi.Show(LanguageApi.FindRes("p027"), LanguageApi.FindRes("error"));
+                return;
             }
             //封装格式选择
             //生成groud名
@@ -945,7 +962,10 @@ namespace VSGUI
 
         internal void StartQueueJob(string queueid, bool isSingle = false)
         {
-            this.StartQueueAll.IsEnabled = false;
+            Dispatcher.Invoke(() =>
+            {
+                this.StartQueueAll.IsEnabled = false;
+            });
 
             new Thread(
                 () =>
