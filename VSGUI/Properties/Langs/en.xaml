@@ -182,5 +182,8 @@
     <system:String x:Key="p025">Inputs...</system:String>
     <system:String x:Key="p026">outputs...</system:String>
     <system:String x:Key="p027">When inputting multiple files, the automatic queue function cannot be used. Please queue video and audio separately.</system:String>
+    <system:String x:Key="p028">Use mkvtoolnix for packaging</system:String>
+    <system:String x:Key="p029">Update using agent</system:String>
+    <system:String x:Key="p030">The format is socks5://127.0.0.1:1234. If left blank, the system settings will be used</system:String>
     
 </ResourceDictionary>
