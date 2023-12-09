@@ -469,6 +469,7 @@
                                     </Grid>
                                     <!--按钮-->
                                     <Grid>
+                                        <Button Content="{DynamicResource p028}" Click="MkvtoolnixButton_Click" HorizontalAlignment="Left"/>
                                         <DockPanel HorizontalAlignment="Right">
                                             <TextBlock x:Name="smuxinfotext" Text="" Margin="0,0,6,0" VerticalAlignment="Center"/>
                                             <ComboBox x:Name="smuxsuffixbox" MinWidth="60" SelectedIndex="0" Margin="6,0,0,0">
