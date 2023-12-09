@@ -76,7 +76,7 @@
     <system:String x:Key="audioOutputIsEmpty">音频输出为空</system:String>
     <system:String x:Key="delayFormatError">延迟格式错误</system:String>
     <system:String x:Key="chapterFileDoesNotExist">章节文件不存在</system:String>
-    <system:String x:Key="chapterFormatErrorTipsDesc">章节文件格式错误！（仅支持txt章节文件）</system:String>
+    <system:String x:Key="chapterFormatErrorTipsDesc">章节文件格式不支持！（仅支持xml/txt特定章节文件）</system:String>
     <system:String x:Key="fileNotExist">文件不存在</system:String>
     <system:String x:Key="preparing">准备中</system:String>
     <system:String x:Key="demuxing">解流中</system:String>
@@ -154,7 +154,6 @@
     <system:String x:Key="simpleVideoInputPlaceholder">单文件，将要压制的视频拖入此处，将自动判断并填充音频输入</system:String>
     <system:String x:Key="simpleAudioInputPlaceholder">如果需要使用与原视频不同的音频，可以在拖入视频后将音频拖入此处</system:String>
     <system:String x:Key="simpleSubInputPlaceholder">支持ass/srt/sup，使用|符号分隔多个文件</system:String>
-    <system:String x:Key="simpleCapInputPlaceholder">当前仅支持txt章节</system:String>
 
     <system:String x:Key="p001">是否立刻重启资源管理器以马上生效</system:String>
     <system:String x:Key="p002">放入输入文件后会自动填写，也可以手动设置</system:String>
@@ -178,7 +177,7 @@
     <system:String x:Key="p021">vpy脚本读取后会自动生成，也可以手动修改</system:String>
     <system:String x:Key="p022">放入视频或单独音频，1个或多个文件，放入视频时自动选择第1音轨并读取延迟</system:String>
     <system:String x:Key="p023">音频输入读取后将自动生成，也可以手动修改</system:String>
-    <system:String x:Key="p024">可选。目前仅支持txt格式章节</system:String>
+    <system:String x:Key="p024">可选。仅支持xml/txt特定章节文件</system:String>
     <system:String x:Key="p025">个输入…</system:String>
     <system:String x:Key="p026">个输出…</system:String>
     <system:String x:Key="p027">多文件输入时，无法使用自动队列功能。请分别将视频和音频单独队列。</system:String>

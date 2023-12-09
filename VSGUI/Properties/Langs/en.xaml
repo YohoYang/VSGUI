@@ -76,7 +76,7 @@
     <system:String x:Key="audioOutputIsEmpty">Audio output is empty</system:String>
     <system:String x:Key="delayFormatError">Delay format error</system:String>
     <system:String x:Key="chapterFileDoesNotExist">Chapter file does not exist</system:String>
-    <system:String x:Key="chapterFormatErrorTipsDesc">Chapter Format Error. (Only supports txt chapter files.)</system:String>
+    <system:String x:Key="chapterFormatErrorTipsDesc">The chapter file format is not supported! (Only supports xml/txt specific chapter files)</system:String>
     <system:String x:Key="fileNotExist">File does not exist</system:String>
     <system:String x:Key="preparing">Preparing</system:String>
     <system:String x:Key="demuxing">Demuxing</system:String>
@@ -154,7 +154,6 @@
     <system:String x:Key="simpleVideoInputPlaceholder">Single file, Drag the video to be suppressed here, it will automatically judge and fill the audio input</system:String>
     <system:String x:Key="simpleAudioInputPlaceholder">If you need to use a different audio from the original video, you can drag the audio here after dragging the video</system:String>
     <system:String x:Key="simpleSubInputPlaceholder">support ass/srt/sup, use the | symbol to separate multiple files</system:String>
-    <system:String x:Key="simpleCapInputPlaceholder">Currently only supports txt chapters</system:String>
 
     <system:String x:Key="p001">Whether to restart the resource manager immediately to take effect immediately</system:String>
     <system:String x:Key="p002">It will be filled in automatically after you put it into the input file, or you can set it manually.</system:String>
@@ -178,7 +177,7 @@
     <system:String x:Key="p021">The vpy script will be automatically generated after reading, and can also be modified manually</system:String>
     <system:String x:Key="p022">Put in video or separate audio, 1 or more files, automatically select the first audio track and read the delay when placing the video</system:String>
     <system:String x:Key="p023">The audio input will be automatically generated after reading, and can also be modified manually</system:String>
-    <system:String x:Key="p024">Optional. Currently only supports chapters in txt format</system:String>
+    <system:String x:Key="p024">Optional. Only supports xml/txt specific chapter files</system:String>
     <system:String x:Key="p025">Inputs...</system:String>
     <system:String x:Key="p026">outputs...</system:String>
     <system:String x:Key="p027">When inputting multiple files, the automatic queue function cannot be used. Please queue video and audio separately.</system:String>

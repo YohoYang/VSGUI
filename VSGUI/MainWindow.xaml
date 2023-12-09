@@ -97,7 +97,7 @@
                                             <ColumnDefinition Width="*"/>
                                         </Grid.ColumnDefinitions>
                                         <TextBlock Grid.Column="0" VerticalAlignment="Center" Text="{DynamicResource resolutionSetting}"/>
-                                        <ComboBox x:Name="simpleresolutionbox" Grid.Column="1" MinWidth="60" SelectedIndex="0" ToolTip="{DynamicResource resolutionTipsDesc}" IsEditable="True">
+                                        <ComboBox x:Name="simpleresolutionbox" Grid.Column="1" MinWidth="60" SelectedIndex="0" ToolTipService.InitialShowDelay='0' ToolTip="{DynamicResource resolutionTipsDesc}" IsEditable="True">
                                             <ComboBoxItem Content="{DynamicResource resolutionDefault}"/>
                                             <ComboBoxItem Content="480P"/>
                                             <ComboBoxItem Content="720P"/>
@@ -125,7 +125,7 @@
                                             <ColumnDefinition Width="auto"/>
                                         </Grid.ColumnDefinitions>
                                         <TextBlock Grid.Column="0" VerticalAlignment="Center" Text="{DynamicResource chapterfile}"/>
-                                        <hc:TextBox x:Name="simplecapinputbox" Grid.Column="1" PreviewDragOver="TextBox_PreviewDragOver" PreviewDrop="TextBox_PreviewDrop" hc:InfoElement.Placeholder="{DynamicResource simpleCapInputPlaceholder}"/>
+                                        <hc:TextBox x:Name="simplecapinputbox" Grid.Column="1" PreviewDragOver="TextBox_PreviewDragOver" PreviewDrop="TextBox_PreviewDrop" hc:InfoElement.Placeholder="{DynamicResource p024}"/>
                                         <Button x:Name="simplecapinput" Grid.Column="2" Content="..." Margin="4,0,0,0" Click="OpenFileSelect_Click"/>
                                     </Grid>
                                     <!--封装格式-->
