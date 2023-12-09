@@ -420,7 +420,17 @@ namespace VSGUI
             {
                 obj.Add("encodername", encodertypebox.Text);
             }
-            obj.Add("encoderpath", encoderpathbox.Text);
+            if (encoderpathbox.Text.Contains(':'))
+            {
+                //绝对
+                obj.Add("encoderpath", encoderpathbox.Text);
+            }
+            else
+            {
+                //相对
+                string pathtext = System.IO.Directory.GetCurrentDirectory() + encoderpathbox.Text;
+                obj.Add("encoderpath", pathtext);
+            }
             obj.Add("pipeinputformat", pipeinputformatbox.Text);
             obj.Add("outputformat", outputformatbox.Text);
             obj.Add("parameter", parameterbox.Text);

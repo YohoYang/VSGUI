@@ -37,12 +37,31 @@ namespace VSGUI.API
                 {
                     queueidstr = QueueApi.GetGroupQueueidList(jsona[i]["group"].ToString())[0];
                 }
+                string fileinput = jsona[i]["input"].ToString();
+                if (fileinput.Contains("|"))
+                {
+                    string tempstr = jsona[i]["input"].ToString();
+                    string[] fileinputLists = tempstr.Split("|");
+                    fileinput = "";
+                    for (int j = 0; j < fileinputLists.Length; j++)
+                    {
+                        fileinput += Path.GetFileName(fileinputLists[j]);
+                        if (j != fileinputLists.Length - 1)
+                        {
+                            fileinput += "|";
+                        }
+                    }
+                }
+                else
+                {
+                    fileinput = Path.GetFileName(fileinput);
+                }
                 queueItemData.Add(new QueueMember()
                 {
                     Index = queueidstr,
                     Type = jsona[i]["type"].ToString(),
                     EncoderToolTip = EncoderApi.GetName(jsona[i]["type"].ToString(), int.Parse(jsona[i]["encoderid"].ToString())),
-                    InputFilename = Path.GetFileName(jsona[i]["input"].ToString()),
+                    InputFilename = fileinput,
                     InputFilepath = jsona[i]["input"].ToString(),
                     OutputFilename = Path.GetFileName(jsona[i]["output"].ToString()),
                     OutputFilepath = jsona[i]["output"].ToString(),
@@ -177,10 +196,28 @@ namespace VSGUI.API
             {
                 newid = int.Parse(queueJobj[queueJobj.Count - 1]["queueid"].ToString()) + 1;
             }
-            string jobchapinput = "";
+            string jobinput = input[0];
+            if (input.Length > 1)
+            {
+                jobinput = "";
+                for (int i = 0; i < input.Length; i++)
+                {
+                    jobinput += input[i];
+                    if (i != input.Length - 1)
+                    {
+                        jobinput += "|";
+                    }
+                }
+            }
+
+            string jobchapinput = chapinput;
             if (chapinput != "")
             {
-                jobchapinput = CommonApi.GetAppTempPath() + "Job_" + newid + ".txt";
+                ChapterApi chapter = new ChapterApi();
+                if (!chapter.LoadOgm(chapinput))
+                {
+                    jobchapinput = CommonApi.GetAppTempPath() + "Job_" + newid + ".txt";
+                }
             }
 
             JsonObject newqueue = new JsonObject();
@@ -190,7 +227,7 @@ namespace VSGUI.API
             newqueue.Add("status", "waiting");
             newqueue.Add("type", type);
             newqueue.Add("encoderid", encoderid);
-            newqueue.Add("input", input[0]);
+            newqueue.Add("input", jobinput);
             newqueue.Add("output", output);
             newqueue.Add("chapinput", chapinput);
             newqueue.Add("statustext", "");
@@ -631,7 +668,7 @@ namespace VSGUI.API
             }
             else if (GetQueueListitem(queueid, "type") == "mux")
             {
-                string chapterTempPath;
+                string chapterTempPath = CommonApi.GetAppTempPath() + "Job_" + queueid + ".txt";
                 ChapterApi chapter = new ChapterApi();
                 string chapinputStr = GetQueueListitem(queueid, "chapinput");
                 if (chapinputStr != null)
@@ -640,7 +677,6 @@ namespace VSGUI.API
                     {
                         if (chapter.LoadFile(chapinputStr))
                         {
-                            chapterTempPath = CommonApi.GetAppTempPath() + "Job_" + queueid + ".txt";
                             chapter.SaveText(chapterTempPath);
                             SetQueueListitem(queueid, "deletefile", GetQueueListitem(queueid, "deletefile") + "|" + chapterTempPath);
                         }
@@ -872,10 +908,13 @@ namespace VSGUI.API
             if (!string.IsNullOrEmpty(inputpath))
             {
                 string inputsuffix = Path.GetExtension(inputpath).ToLower();
-                if (inputsuffix == ".ts" || inputsuffix == ".m2ts" || inputsuffix == ".mkv" || inputsuffix == ".mp4")
+                //if (inputsuffix == ".ts" || inputsuffix == ".m2ts" || inputsuffix == ".mkv" || inputsuffix == ".mp4")
+
+
+                string result = ProcessApi.RunSyncProcess(MainWindow.binpath + @"\tools\mediainfo\", @"MediaInfo.exe" + " " + "\"" + inputpath + "\"");
+                if (result != null)
                 {
-                    string result = ProcessApi.RunSyncProcess(MainWindow.binpath + @"\tools\mediainfo\", @"MediaInfo.exe" + " " + "\"" + inputpath + "\"");
-                    if (result != null)
+                    if (result.Contains("Audio"))
                     {
                         var x = Regex.Matches(result, @"Audio(?: #)?(\d*)(?s:.)*?Delay relative to video.*?: (.*?)ms");
                         if (x.Count >= 1)
@@ -885,25 +924,34 @@ namespace VSGUI.API
                             audiodelayboxText = message;
                         }
                     }
-
-                    ////eac3to检测延迟
-                    //string result = ProcessApi.RunSyncProcess(MainWindow.binpath + @"\tools\eac3to\", @"eac3to.exe" + " " + "\"" + inputpath + "\"");
-                    //if (result != null)
-                    //{
-                    //    var x = Regex.Matches(result, @"\d+: (AAC|AC3|WAV|AC3|DTS|THD|FLAC).*");
-                    //    if (x.Count >= 1)
-                    //    {
-                    //        //就取第一个
-                    //        string message = x[0].ToString();
-                    //        var x2 = Regex.Matches(message, @", (-?\d+)ms");
-                    //        if (x2.Count > 0)
-                    //        {
-                    //            audiodelayboxText = x2[0].Groups[1].Value;
-                    //        }
-                    //    }
-                    //}
+                    else
+                    {
+                        isError = true;
+                    }
+                   
                 }
-                else
+
+                ////eac3to检测延迟
+                //string result = ProcessApi.RunSyncProcess(MainWindow.binpath + @"\tools\eac3to\", @"eac3to.exe" + " " + "\"" + inputpath + "\"");
+                //if (result != null)
+                //{
+                //    var x = Regex.Matches(result, @"\d+: (AAC|AC3|WAV|AC3|DTS|THD|FLAC).*");
+                //    if (x.Count >= 1)
+                //    {
+                //        //就取第一个
+                //        string message = x[0].ToString();
+                //        var x2 = Regex.Matches(message, @", (-?\d+)ms");
+                //        if (x2.Count > 0)
+                //        {
+                //            audiodelayboxText = x2[0].Groups[1].Value;
+                //        }
+                //    }
+                //}
+
+
+
+
+                if (audiodelayboxText == "0")
                 {
                     //尝试从文件名获取延迟
                     var x = Regex.Matches(inputpath, @"(-?\d+)ms");

@@ -533,7 +533,15 @@ namespace VSGUI
                         {
                             this.audioinputPb.Visibility = Visibility.Collapsed;
                             audiodelaybox.Text = audiodelayboxText;
-                            this.audioinputPbSucc.Visibility = Visibility.Visible;
+                            if (!isError)
+                            {
+                                this.audioinputPbSucc.Visibility = Visibility.Visible;
+                            }
+                            else
+                            {
+                                this.audioinputbox.Text = "";
+                                this.audiooutputbox.Text = "";
+                            }
                         });
                     }
                     catch (Exception)
@@ -624,13 +632,13 @@ namespace VSGUI
                     {
                         Dispatcher.Invoke(() =>
                         {
-                            this.simplevideoinputPb.Visibility = Visibility.Collapsed;
-                            this.simplevideoinputPbSucc.Visibility = Visibility.Visible;
                             this.simpleAddQueueBtn.IsEnabled = true;
                             simplevideoinputbox.Text = videoinputboxText;
                             simpleaudioinputbox.Text = audioinputboxtext;
+                            this.simplevideoinputPb.Visibility = Visibility.Collapsed;
                             if (videoinputboxText != "")
                             {
+                                this.simplevideoinputPbSucc.Visibility = Visibility.Visible;
                                 UpdateEncoderSuffix("simpleencode", videoinputboxText, @"_vsgui." + simplemuxsuffixbox.Text.ToLower());
                             }
                         });
