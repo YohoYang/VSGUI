@@ -50,7 +50,12 @@ namespace VSGUI
             coreversionshowtextblock.Text = coreversion;
 
             //检测更新
-            UpdateApi.UpdateCheck(UpdateProgressCall);
+            string proxyurl = "";
+            if (IniApi.IniReadValue("proxyurl") != "")
+            {
+                proxyurl = IniApi.IniReadValue("proxyurl");
+            }
+            UpdateApi.UpdateCheck(proxyurl, UpdateProgressCall, UpdateFinishCall);
 
             //显示队列
             UpdateQueueList();
@@ -75,6 +80,7 @@ namespace VSGUI
         {
             UpdateEncoderProfiles();
             string encoderJsonUrl = UseNetEncoderJsonBox.Text;
+            string proxy = proxyUrl.Text;
             new Thread(
                 () =>
                 {
@@ -94,7 +100,8 @@ namespace VSGUI
                              UseNetEncoderJsonDesc.Text = LanguageApi.FindRes("netEncoderUpdateError");
                          });
 
-                     });
+                     },
+                     proxy);
                 }
             ).Start();
         }
@@ -150,6 +157,11 @@ namespace VSGUI
             else
             {
                 advancedEncodeButton.IsChecked = true;
+            }
+            //代理设置
+            if (IniApi.IniReadValue("proxyurl") != "")
+            {
+                proxyUrl.Text = IniApi.IniReadValue("proxyurl");
             }
         }
 
@@ -1505,7 +1517,7 @@ namespace VSGUI
         {
             ReScanButton.IsEnabled = false;
             CommonApi.TryDeleteFile(binpath + @"\json\version.json");
-            UpdateApi.UpdateCheck(UpdateProgressCall);
+            UpdateApi.UpdateCheck(proxyUrl.Text, UpdateProgressCall, UpdateFinishCall);
         }
 
         private void UpdateProgressCall(string message)
@@ -1513,6 +1525,17 @@ namespace VSGUI
             Dispatcher.Invoke(() =>
             {
                 updateinfotext.Text = message;
+                ReScanButton.IsEnabled = false;
+                ReScanButton.Content = message;
+            });
+        }
+
+        private void UpdateFinishCall()
+        {
+            Dispatcher.Invoke(() =>
+            {
+                ReScanButton.IsEnabled = true;
+                ReScanButton.Content = LanguageApi.FindRes("rescan");
             });
         }
 
@@ -1778,6 +1801,11 @@ namespace VSGUI
             {
                 this.audioinputPbSucc.Visibility = Visibility.Collapsed;
             }
+        }
+
+        private void proxyUrl_LostFocus(object sender, RoutedEventArgs e)
+        {
+            IniApi.IniWriteValue("proxyurl", this.proxyUrl.Text);
         }
 
         private void inputPbSucc_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)

@@ -600,6 +600,10 @@
                                         <StackPanel Grid.Column="0">
                                             <CheckBox x:Name="AutoUpdate" Content="{DynamicResource autoupdate}" Checked="ConfigCheckBox_Checked" Unchecked="ConfigCheckBox_Checked"></CheckBox>
                                             <TextBlock Text="{DynamicResource autoupdatedesc}" Margin="23,5,0,0" TextWrapping="Wrap"/>
+                                            <DockPanel Margin="23,5,0,0">
+                                                <TextBlock Text="{DynamicResource p029}" VerticalAlignment="Center"></TextBlock>
+                                                <hc:TextBox x:Name="proxyUrl" Grid.Column="0" Margin="8,0,30,0" hc:InfoElement.Placeholder="{DynamicResource p030}" LostFocus="proxyUrl_LostFocus"/>
+                                            </DockPanel>
                                         </StackPanel>
                                         <Button x:Name="ReScanButton" Content="{DynamicResource rescan}" Grid.Column="1" Margin="5,0,0,0" Click="ReScanLocalFile_Click"></Button>
                                     </Grid>

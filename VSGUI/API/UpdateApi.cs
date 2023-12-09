@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Security.Cryptography;
 using System.Text;
@@ -20,7 +21,7 @@ namespace VSGUI.API
     {
         private static JsonObject? updatejson;
 
-        public static void UpdateCheck(Action<string> PCall)
+        public static void UpdateCheck(string proxy, Action<string> PCall, Action Finsihed)
         {
             try
             {
@@ -32,7 +33,7 @@ namespace VSGUI.API
                             PCall(LanguageApi.FindRes("updateCheckingLocalVersion"));
                             CheckLocalVersionJson();
                             PCall(LanguageApi.FindRes("updateGetingServerVersion"));
-                            await GetUpdateVersionAsync();
+                            await GetUpdateVersionAsync(proxy);
                             if (updatejson != null && File.Exists(MainWindow.binpath + @"\json\version.json"))
                             {
                                 PCall(LanguageApi.FindRes("updateFilesChecking"));
@@ -40,8 +41,8 @@ namespace VSGUI.API
                                 //7z包
                                 if (!(File.Exists(MainWindow.binpath + @"\7z.exe") && File.Exists(MainWindow.binpath + @"\7z.dll")))
                                 {
-                                    await DownloadFile(@"https://cloud.sbsub.com/vsgui/7z.exe", MainWindow.binpath + @"\7z.exe");
-                                    await DownloadFile(@"https://cloud.sbsub.com/vsgui/7z.dll", MainWindow.binpath + @"\7z.dll");
+                                    await DownloadFile(@"https://cloud.sbsub.com/vsgui/7z.exe", MainWindow.binpath + @"\7z.exe", proxy);
+                                    await DownloadFile(@"https://cloud.sbsub.com/vsgui/7z.dll", MainWindow.binpath + @"\7z.dll", proxy);
                                 }
                                 if (!(File.Exists(MainWindow.binpath + @"\vs\7z.exe") && File.Exists(MainWindow.binpath + @"\vs\7z.dll")))
                                 {
@@ -59,6 +60,7 @@ namespace VSGUI.API
                                 }
 #if DEBUG
                                 PCall("debug mode, disable auto update.");
+                                Finsihed();
                                 return;
 #endif
                                 //删除遗留文件
@@ -67,7 +69,7 @@ namespace VSGUI.API
                                 for (int i = 0; i < updatelist.Length; i++)
                                 {
                                     PCall(LanguageApi.FindRes("updateDownloading") + (i + 1) + @"/" + updatelist.Length);
-                                    await DownloadUpdateFile(updatelist[i]);
+                                    await DownloadUpdateFile(updatelist[i], proxy);
                                 }
                                 if (QueueApi.runningQueueCount > 0)
                                 {
@@ -140,6 +142,7 @@ namespace VSGUI.API
                             {
                                 PCall(LanguageApi.FindRes("updateCheckFail"));
                             }
+                            Finsihed();
                         }
                     ).Start();
             }
@@ -225,16 +228,36 @@ namespace VSGUI.API
         /// <summary>
         /// 获取服务器文件信息
         /// </summary>
-        private static async Task GetUpdateVersionAsync()
+        private static async Task GetUpdateVersionAsync(string proxy)
         {
             try
             {
-                using (var httpclient = new HttpClient())
+                if (proxy != "")
                 {
-                    string updateBaseUrl = @"https://cloud.sbsub.com/vsgui/";
-                    var jsonstr = await httpclient.GetStringAsync(updateBaseUrl + "update.json");
-                    var json = JsonApi.ReadJsonFromString(jsonstr);
-                    updatejson = json;
+                    string proxyURL = proxy;
+                    WebProxy webProxy = new WebProxy(proxyURL);
+
+                    HttpClientHandler httpClientHandler = new HttpClientHandler
+                    {
+                        Proxy = webProxy
+                    };
+                    using (var httpclient = new HttpClient(httpClientHandler))
+                    {
+                        string updateBaseUrl = @"https://cloud.sbsub.com/vsgui/";
+                        var jsonstr = await httpclient.GetStringAsync(updateBaseUrl + "update.json");
+                        var json = JsonApi.ReadJsonFromString(jsonstr);
+                        updatejson = json;
+                    }
+                }
+                else
+                {
+                    using (var httpclient = new HttpClient())
+                    {
+                        string updateBaseUrl = @"https://cloud.sbsub.com/vsgui/";
+                        var jsonstr = await httpclient.GetStringAsync(updateBaseUrl + "update.json");
+                        var json = JsonApi.ReadJsonFromString(jsonstr);
+                        updatejson = json;
+                    }
                 }
             }
             catch (Exception)
@@ -243,7 +266,7 @@ namespace VSGUI.API
             }
         }
 
-        private static async Task DownloadUpdateFile(string rurl)
+        private static async Task DownloadUpdateFile(string rurl,string proxy)
         {
             string ziprpath = rurl + @".update.7z";
             string filepath = MainWindow.binpath + @"\update\" + ziprpath.Substring(1);
@@ -262,24 +285,52 @@ namespace VSGUI.API
                 }
             }
             string updateBaseUrl = @"https://cloud.sbsub.com/vsgui/";
-            await DownloadFile(updateBaseUrl + ziprpath.Replace(@"\", @"/").Substring(1), filepath);
+            await DownloadFile(updateBaseUrl + ziprpath.Replace(@"\", @"/").Substring(1), filepath, proxy);
         }
 
-        public static async Task DownloadFile(string url, string localpath)
+        public static async Task DownloadFile(string url, string localpath, string proxy)
         {
             try
             {
-                using (var httpclient = new HttpClient())
+                if (proxy != "")
                 {
-                    var response = await httpclient.GetAsync(url);
-                    if (response.IsSuccessStatusCode)
+                    string proxyURL = proxy;
+                    WebProxy webProxy = new WebProxy(proxyURL);
+
+                    HttpClientHandler httpClientHandler = new HttpClientHandler
                     {
-                        using (var stream = await response.Content.ReadAsStreamAsync())
+                        Proxy = webProxy
+                    };
+                    using (var httpclient = new HttpClient(httpClientHandler))
+                    {
+                        var response = await httpclient.GetAsync(url);
+                        if (response.IsSuccessStatusCode)
                         {
-                            var fileInfo = new FileInfo(localpath);
-                            using (var fileStream = fileInfo.OpenWrite())
+                            using (var stream = await response.Content.ReadAsStreamAsync())
                             {
-                                await stream.CopyToAsync(fileStream);
+                                var fileInfo = new FileInfo(localpath);
+                                using (var fileStream = fileInfo.OpenWrite())
+                                {
+                                    await stream.CopyToAsync(fileStream);
+                                }
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    using (var httpclient = new HttpClient())
+                    {
+                        var response = await httpclient.GetAsync(url);
+                        if (response.IsSuccessStatusCode)
+                        {
+                            using (var stream = await response.Content.ReadAsStreamAsync())
+                            {
+                                var fileInfo = new FileInfo(localpath);
+                                using (var fileStream = fileInfo.OpenWrite())
+                                {
+                                    await stream.CopyToAsync(fileStream);
+                                }
                             }
                         }
                     }
@@ -329,7 +380,7 @@ namespace VSGUI.API
 
 
 
-        public static async void UpdateEncoderProfiles(string url, Action Callback, Action CallError)
+        public static async void UpdateEncoderProfiles(string url, Action Callback, Action CallError, string proxy)
         {
             JsonObject localencoderjson;
             JsonObject serverencoderjson;
@@ -346,10 +397,28 @@ namespace VSGUI.API
             {
                 if (IniApi.IniReadValue("UseNetEncoderJson") == "true")
                 {
-                    using (var httpclient = new HttpClient())
+                    if (proxy != "")
                     {
-                        var jsonstr = await httpclient.GetStringAsync(url);
-                        serverencoderjson = JsonApi.ReadJsonFromString(jsonstr);
+                        string proxyURL = proxy;
+                        WebProxy webProxy = new WebProxy(proxyURL);
+
+                        HttpClientHandler httpClientHandler = new HttpClientHandler
+                        {
+                            Proxy = webProxy
+                        };
+                        using (var httpclient = new HttpClient(httpClientHandler))
+                        {
+                            var jsonstr = await httpclient.GetStringAsync(url);
+                            serverencoderjson = JsonApi.ReadJsonFromString(jsonstr);
+                        }
+                    }
+                    else
+                    {
+                        using (var httpclient = new HttpClient())
+                        {
+                            var jsonstr = await httpclient.GetStringAsync(url);
+                            serverencoderjson = JsonApi.ReadJsonFromString(jsonstr);
+                        }
                     }
                     JsonApi.SaveJsonToFile(UpdateSubProfiles(localencoderjson, serverencoderjson), jsonpath);
                 }
