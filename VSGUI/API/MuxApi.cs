@@ -12,7 +12,7 @@ namespace VSGUI.API
 {
     internal class MuxApi
     {
-        public static string ProcessMuxCommandStr(string[] input, string output, int queueid, out string clipath)
+        public static string ProcessMuxCommandStr(string[] input, string chapinput, string output, int queueid, out string clipath)
         {
             if (Path.GetExtension(output.Replace("\"", "")).ToLower() == ".mp4")
             {
@@ -44,13 +44,13 @@ namespace VSGUI.API
                 {
                     if (item != "")
                     {
-                        string additionstr = "";
-                        if (Path.GetExtension(item) == ".txt")
-                        {
-                            additionstr = ":chap";
-                        }
-                        addstr += " -add " + "\"" + item + additionstr + "\"";
+                        addstr += " -add " + "\"" + item + "\"";
                     }
+                }
+                //拆分章节输入
+                if (chapinput != "")
+                {
+                    addstr += " -add " + "\"" + chapinput + ":chap" + "\"";
                 }
                 string theCommandStr = "MP4Box.exe" + addstr + " -new " + "\"" + output + "\"";
                 return theCommandStr;
@@ -63,12 +63,12 @@ namespace VSGUI.API
                 {
                     if (item != "")
                     {
-                        if (Path.GetExtension(item) == ".txt")
-                        {
-                            addstr += " --chapters";
-                        }
                         addstr += " " + "\"" + item + "\"";
                     }
+                }
+                if (chapinput != "")
+                {
+                    addstr += " --chapters" + " " + "\"" + chapinput + "\"";
                 }
                 string theCommandStr = @"mkvmerge.exe --ui-language en" + addstr + " -o " + "\"" + output + "\"";
                 return theCommandStr;
@@ -78,13 +78,26 @@ namespace VSGUI.API
         }
 
 
-        static string datarecevied = "";
-        public static void StartSMux(string[] input, string outputsuffix, Action<string> DataReceivedCall, Action<string> ExitedCall)
+        public static void StartSMux(string[] input, string chapinput, string outputsuffix, Action<string> DataReceivedCall, Action<string> ExitedCall)
         {
+            string datarecevied = "";
             string output = Path.GetDirectoryName(input[0]) + @"\" + Path.GetFileNameWithoutExtension(input[0]) + @"_mux." + outputsuffix.ToLower();
             CommonApi.TryDeleteFile(output);
 
-            string common = ProcessMuxCommandStr(input, output, -1, out string clipath);
+            string chapterTempPath = chapinput;
+            ChapterApi chapter = new ChapterApi();
+            if (chapinput != "")
+            {
+                if (!chapter.LoadOgm(chapinput))
+                {
+                    if (chapter.LoadFile(chapinput))
+                    {
+                        chapterTempPath = CommonApi.GetAppTempPath() + "Job_smux.txt";
+                        chapter.SaveText(chapterTempPath);
+                    }
+                }
+            }
+            string common = ProcessMuxCommandStr(input, chapterTempPath, output, -1, out string clipath);
 
             ProcessApi.RunProcess(clipath, common, DataReceived, Exited, Pided);
             void DataReceived(string data, bool processIsExited)
@@ -106,6 +119,7 @@ namespace VSGUI.API
                     ExitedCall(LanguageApi.FindRes("mux") + LanguageApi.FindRes("error"));
                 }
                 CommonApi.TryDeleteFile(CommonApi.GetAppTempPath() + "Job_-1" + ".txt");
+                CommonApi.TryDeleteFile(CommonApi.GetAppTempPath() + "Job_smux.txt");
             }
             void Pided(string pid)
             {

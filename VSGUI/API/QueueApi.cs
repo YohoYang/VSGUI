@@ -54,13 +54,13 @@ namespace VSGUI.API
             return queueItemData;
         }
 
-        public static string ProcessCommandStr(int queueid, string type, int encoderid, string[] input, string output, string scriptpath, out string tempoutput, out string clipath)
+        public static string ProcessCommandStr(int queueid, string type, int encoderid, string[] input, string chapinput, string output, string scriptpath, out string tempoutput, out string clipath)
         {
             if (type == "mux")
             {
                 tempoutput = Path.GetDirectoryName(output) + @"\" + "VSGUI_Job_" + queueid.ToString() + "_temp" + Path.GetExtension(output);
                 string outputpath = tempoutput;
-                string common = MuxApi.ProcessMuxCommandStr(input, outputpath, queueid, out clipath);
+                string common = MuxApi.ProcessMuxCommandStr(input, chapinput, outputpath, queueid, out clipath);
                 return common;
             }
             else
@@ -126,42 +126,6 @@ namespace VSGUI.API
                     encoderoutputformat = thisJobj["outputformat"].ToString().Trim() + " ";
                 }
                 string encoderparameter = thisJobj["parameter"].ToString().Trim() + " ";
-
-                //if (pEncoderName == "x264")
-                //{
-                //    encoderpath = "\"" + MainWindow.binpath + @"\encoder\x264\x264.exe" + "\"";
-                //    encoderpipeinputformat = " --demuxer y4m ";
-                //    encoderoutputformat = " - -o ";
-                //    encoderparameter = " " + thisJobj["parameter"].ToString() + " ";
-                //}
-                //else if (pEncoderName == "x265")
-                //{
-                //    encoderpath = "\"" + MainWindow.binpath + @"\encoder\x265\x265.exe" + "\"";
-                //    encoderpipeinputformat = " --y4m ";
-                //    encoderoutputformat = " - -o ";
-                //    encoderparameter = " " + thisJobj["parameter"].ToString() + " ";
-                //}
-                //else if (pEncoderName == "nvenc")
-                //{
-                //    encoderpath = "\"" + MainWindow.binpath + @"\encoder\NVEncC\NVEncC64.exe" + "\"";
-                //    encoderpipeinputformat = " --y4m ";
-                //    encoderoutputformat = " -o ";
-                //    encoderparameter = " -i - " + thisJobj["parameter"].ToString() + " ";
-                //}
-                //else if (pEncoderName == "qaac")
-                //{
-                //    encoderpath = "\"" + MainWindow.binpath + @"\encoder\qaac\qaac64.exe" + "\"";
-                //    encoderpipeinputformat = "";
-                //    encoderoutputformat = " - -o ";
-                //    encoderparameter = " --ignorelength --threading " + thisJobj["parameter"].ToString() + " ";
-                //}
-                //else if (pEncoderName == "flac")
-                //{
-                //    encoderpath = "\"" + MainWindow.binpath + @"\tools\ffmpeg\ffmpeg.exe" + "\"";
-                //    encoderpipeinputformat = " -y -i - ";
-                //    encoderoutputformat = " ";
-                //    encoderparameter = " " + thisJobj["parameter"].ToString() + " ";
-                //}
                 string theCommandStr = pipecommon + inputpath + pipeconnect + encoderpath + encoderpipeinputformat + encoderparameter + encoderoutputformat + outputpath;
                 return theCommandStr;
             }
@@ -201,7 +165,7 @@ namespace VSGUI.API
             return returnStr;
         }
 
-        public static void AddQueueList(string type, int encoderid, string[] input, string output, string group = "", string deletefile = "", string resolution = "", string subtitle = "", string audiocuttext = "", string audiofpstext = "", string audiodelaytext = "")
+        public static void AddQueueList(string type, int encoderid, string[] input, string output, string chapinput = "", string group = "", string deletefile = "", string resolution = "", string subtitle = "", string audiocuttext = "", string audiofpstext = "", string audiodelaytext = "")
         {
             JsonArray queueJobj = GetQueueList();
             int newid;
@@ -213,6 +177,11 @@ namespace VSGUI.API
             {
                 newid = int.Parse(queueJobj[queueJobj.Count - 1]["queueid"].ToString()) + 1;
             }
+            string jobchapinput = "";
+            if (chapinput != "")
+            {
+                jobchapinput = CommonApi.GetAppTempPath() + "Job_" + newid + ".txt";
+            }
 
             JsonObject newqueue = new JsonObject();
             string tempoutputpath;
@@ -223,11 +192,12 @@ namespace VSGUI.API
             newqueue.Add("encoderid", encoderid);
             newqueue.Add("input", input[0]);
             newqueue.Add("output", output);
+            newqueue.Add("chapinput", chapinput);
             newqueue.Add("statustext", "");
             newqueue.Add("starttime", "");
             newqueue.Add("endtime", "");
             newqueue.Add("fps", "");
-            newqueue.Add("command", ProcessCommandStr(newid, type, encoderid, input, output, "", out tempoutputpath, out string clipathnew));
+            newqueue.Add("command", ProcessCommandStr(newid, type, encoderid, input, jobchapinput, output, "", out tempoutputpath, out string clipathnew));
             newqueue.Add("clipath", clipathnew);
             newqueue.Add("deletefile", deletefile);
             newqueue.Add("processvalue", "0");
@@ -639,7 +609,7 @@ namespace VSGUI.API
                 {
                     string script = VideoApi.MakeVideoScript(GetQueueListitem(queueid, "input"), GetQueueListitem(queueid, "resolution"), GetQueueListitem(queueid, "subtitle"));
                     string scriptpath = CommonApi.GetAppTempPath() + "Job_" + queueid + ".vpy";
-                    string command = ProcessCommandStr(int.Parse(queueid), "video", int.Parse(GetQueueListitem(queueid, "encoderid")), new string[] { GetQueueListitem(queueid, "input") }, GetQueueListitem(queueid, "output"), scriptpath, out string temp1, out string temp2);
+                    string command = ProcessCommandStr(int.Parse(queueid), "video", int.Parse(GetQueueListitem(queueid, "encoderid")), new string[] { GetQueueListitem(queueid, "input") }, "", GetQueueListitem(queueid, "output"), scriptpath, out string temp1, out string temp2);
                     SetQueueListitem(queueid, "script", script);
                     SetQueueListitem(queueid, "scriptfilepath", scriptpath);
                     if (!GetQueueListitem(queueid, "deletefile").Contains(scriptpath)) SetQueueListitem(queueid, "deletefile", GetQueueListitem(queueid, "deletefile") + "|" + scriptpath);
@@ -652,7 +622,7 @@ namespace VSGUI.API
                 {
                     string script = AudioApi.MakeAudioScript(int.Parse(GetQueueListitem(queueid, "encoderid")), GetQueueListitem(queueid, "audiocuttext"), GetQueueListitem(queueid, "audiofpstext"), GetQueueListitem(queueid, "input"), GetQueueListitem(queueid, "audiodelaytext"));
                     string scriptpath = CommonApi.GetAppTempPath() + "Job_" + queueid + ".avs";
-                    string command = ProcessCommandStr(int.Parse(queueid), "audio", int.Parse(GetQueueListitem(queueid, "encoderid")), new string[] { GetQueueListitem(queueid, "input") }, GetQueueListitem(queueid, "output"), scriptpath, out string temp1, out string temp2);
+                    string command = ProcessCommandStr(int.Parse(queueid), "audio", int.Parse(GetQueueListitem(queueid, "encoderid")), new string[] { GetQueueListitem(queueid, "input") }, "", GetQueueListitem(queueid, "output"), scriptpath, out string temp1, out string temp2);
                     SetQueueListitem(queueid, "script", script);
                     SetQueueListitem(queueid, "scriptfilepath", scriptpath);
                     if (!GetQueueListitem(queueid, "deletefile").Contains(scriptpath)) SetQueueListitem(queueid, "deletefile", GetQueueListitem(queueid, "deletefile") + "|" + scriptpath);
@@ -661,7 +631,21 @@ namespace VSGUI.API
             }
             else if (GetQueueListitem(queueid, "type") == "mux")
             {
-                SetQueueListitem(queueid, "deletefile", GetQueueListitem(queueid, "deletefile") + "|" + CommonApi.GetAppTempPath() + "Job_" + queueid.ToString() + ".txt");
+                string chapterTempPath;
+                ChapterApi chapter = new ChapterApi();
+                string chapinputStr = GetQueueListitem(queueid, "chapinput");
+                if (chapinputStr != null)
+                {
+                    if (!chapter.LoadOgm(chapinputStr))
+                    {
+                        if (chapter.LoadFile(chapinputStr))
+                        {
+                            chapterTempPath = CommonApi.GetAppTempPath() + "Job_" + queueid + ".txt";
+                            chapter.SaveText(chapterTempPath);
+                            SetQueueListitem(queueid, "deletefile", GetQueueListitem(queueid, "deletefile") + "|" + chapterTempPath);
+                        }
+                    }
+                }
             }
 
             //写入script文件

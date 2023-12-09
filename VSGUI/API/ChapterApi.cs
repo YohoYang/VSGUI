@@ -8,12 +8,15 @@ using System.Xml.Serialization;
 using System.Diagnostics;
 using MessageBox = HandyControl.Controls.MessageBox;
 using System.Windows;
+using System.Text.RegularExpressions;
 
 // ****************************************************************************
 // 
 // Copyright (C) 2009  Jarrett Vance
 // 
 // code from http://jvance.com/pages/ChapterGrabber.xhtml
+//
+// 由YohoYang进行了部分修改
 // 
 // ****************************************************************************
 
@@ -92,15 +95,16 @@ namespace VSGUI.API
         public static bool ChapterFormatCheck(string chapterpath)
         {
             ChapterApi chapter = new ChapterApi();
-            return chapter.LoadText(chapterpath);
+            bool resultSucc = chapter.LoadFile(chapterpath);
+            return resultSucc;
         }
 
-        public static string MakeFFmpegMetaData(string chapterpath)
-        {
-            ChapterApi chapter = new ChapterApi();
-            chapter.LoadText(chapterpath);
-            return chapter.MakeFFmpegMetaDataFunc();
-        }
+        //public static string MakeFFmpegMetaData(string chapterpath)
+        //{
+        //    ChapterApi chapter = new ChapterApi();
+        //    chapter.LoadText(chapterpath);
+        //    return chapter.MakeFFmpegMetaDataFunc();
+        //}
 
         public ChapterApi()
         {
@@ -167,7 +171,10 @@ namespace VSGUI.API
             FileInfo oFileInfo = new FileInfo(strFileName);
             if (oFileInfo.Length < 20971520) // max 20 MB files are supported to avoid reading large files
             {
-                if (LoadText(strFileName) || LoadText2(strFileName) || LoadXML(strFileName))
+                Debug.WriteLine(LoadOgm(strFileName));
+                Debug.WriteLine(LoadText(strFileName));
+                Debug.WriteLine(LoadXML(strFileName));
+                if (LoadOgm(strFileName) || LoadText(strFileName) || LoadXML(strFileName))
                     return true;
             }
 
@@ -182,7 +189,7 @@ namespace VSGUI.API
             //FramesPerSecond = oInfo.ChapterInfo.FramesPerSecond;
             //Title = oInfo.ChapterInfo.Title;
             //Duration = oInfo.ChapterInfo.Duration;
-            return true;
+            return false;
         }
 
         #region helper functions
@@ -243,8 +250,10 @@ namespace VSGUI.API
             return metastr;
         }
 
-        private bool LoadText(string strFileName)
+        public bool LoadOgm(string strFileName)
         {
+            //CHAPTER01=00:00:00.000
+            //CHAPTER01NAME = Chapter 01 Avant - title
             try
             {
                 int num = 0;
@@ -291,27 +300,36 @@ namespace VSGUI.API
             catch (Exception)
             {
                 Chapters.Clear();
-                MessageBoxApi.Show(LanguageApi.FindRes("chapterFormatErrorTipsDesc"), LanguageApi.FindRes("error"));
                 return false;
             }
 
             return Chapters.Count != 0;
         }
 
-        private bool LoadText2(string strFileName)
+        private bool LoadText(string strFileName)
         {
-            // 00:00:00.000 Prologue
-            // 00:00:14.000 Opening
+            // 00:00:00.000?Prologue
+            // 00:00:14.000?Opening
 
             try
             {
+                bool firstLine = true;
+                string splitWord = " ";
                 foreach (string line in File.ReadAllLines(strFileName, Encoding.Default))
                 {
-                    int iPos = line.IndexOf(' ');
+                    if (firstLine)
+                    {
+                        var matchResult = Regex.Match(line, @"\d*\:\d*\:\d*\.\d*(.)");
+                        if (matchResult.Success)
+                        {
+                            splitWord = matchResult.Groups[1].Value;
+                        }
+                    }
+                    int iPos = line.IndexOf(splitWord);
                     if (iPos <= 0)
                         continue;
 
-                    string chapterTime = line.Split(' ')[0];
+                    string chapterTime = line.Split(splitWord)[0];
                     TimeSpan chapterSpan;
                     if (!TimeSpan.TryParse(chapterTime, out chapterSpan))
                         continue;

@@ -904,6 +904,7 @@ namespace VSGUI
                 }
                 if (!ChapterApi.ChapterFormatCheck(capinputbox.Text))
                 {
+                    MessageBoxApi.Show(LanguageApi.FindRes("chapterFormatErrorTipsDesc"), LanguageApi.FindRes("error"));
                     return;
                 }
             }
@@ -921,7 +922,7 @@ namespace VSGUI
             if (cutischecked.IsChecked == true) cuttext = cuttextbox.Text;
             QueueApi.AddQueueList("audio", audioencoderbox.SelectedIndex, new string[] { audioinputbox.Text }, audiooutputbox.Text, deletefile: audioinputbox.Text + ".lwi", audiocuttext: cuttext, audiofpstext: fpstextbox.Text, audiodelaytext: audiodelaybox.Text, group: groupname);
             //再添加一个混流任务
-            QueueApi.AddQueueList("mux", 0, new string[] { videooutputbox.Text, audiooutputbox.Text, capinputbox.Text }, Path.GetDirectoryName(videooutputbox.Text) + @"\" + Path.GetFileNameWithoutExtension(videooutputbox.Text) + @"_mux." + muxsuffixbox.Text.ToLower(), deletefile: videooutputbox.Text + "|" + audiooutputbox.Text, group: groupname);
+            QueueApi.AddQueueList("mux", 0, new string[] { videooutputbox.Text, audiooutputbox.Text }, Path.GetDirectoryName(videooutputbox.Text) + @"\" + Path.GetFileNameWithoutExtension(videooutputbox.Text) + @"_mux." + muxsuffixbox.Text.ToLower(), chapinput: capinputbox.Text, deletefile: videooutputbox.Text + "|" + audiooutputbox.Text, group: groupname);
             UpdateQueueList();
             if (IniApi.IniReadValue("AutoStartQueue") == "true")
             {
@@ -965,6 +966,7 @@ namespace VSGUI
                 }
                 if (!ChapterApi.ChapterFormatCheck(simplecapinputbox.Text))
                 {
+                    MessageBoxApi.Show(LanguageApi.FindRes("chapterFormatErrorTipsDesc"), LanguageApi.FindRes("error"));
                     return;
                 }
             }
@@ -996,7 +998,7 @@ namespace VSGUI
             QueueApi.AddQueueList("video", simplevideoencoderbox.SelectedIndex, new string[] { simplevideoinputbox.Text }, tempvideopath, resolution: simpleresolutionbox.Text.ToUpper(), subtitle: simpleasspathinputbox.Text, group: groupname);
             QueueApi.AddQueueList("audio", simpleaudioencoderbox.SelectedIndex, new string[] { simpleaudioinputbox.Text }, tempaudiopath, deletefile: simpleaudioinputbox.Text + ".lwi", group: groupname);
             //再添加一个混流任务
-            QueueApi.AddQueueList("mux", 0, new string[] { tempvideopath, tempaudiopath, simplecapinputbox.Text }, Path.GetDirectoryName(simplevideooutputbox.Text) + @"\" + Path.GetFileNameWithoutExtension(simplevideooutputbox.Text) + @"_mux." + simplemuxsuffixbox.Text.ToLower(), deletefile: tempvideopath + "|" + tempaudiopath, group: groupname);
+            QueueApi.AddQueueList("mux", 0, new string[] { tempvideopath, tempaudiopath }, Path.GetDirectoryName(simplevideooutputbox.Text) + @"\" + Path.GetFileNameWithoutExtension(simplevideooutputbox.Text) + @"_mux." + simplemuxsuffixbox.Text.ToLower(), chapinput: simplecapinputbox.Text, deletefile: tempvideopath + "|" + tempaudiopath, group: groupname);
             UpdateQueueList();
             if (IniApi.IniReadValue("AutoStartQueue") == "true")
             {
@@ -1365,21 +1367,12 @@ namespace VSGUI
                 }
                 if (!ChapterApi.ChapterFormatCheck(smuxchapterinputbox.Text))
                 {
+                    MessageBoxApi.Show(LanguageApi.FindRes("chapterFormatErrorTipsDesc"), LanguageApi.FindRes("error"));
                     return;
                 }
             }
-
-            string[] inputlist;
-            if (smuxchapterinputbox.Text != "")
-            {
-                inputlist = new string[] { smuxvideoinputbox.Text, smuxaudioinputbox.Text, smuxchapterinputbox.Text };
-            }
-            else
-            {
-                inputlist = new string[] { smuxvideoinputbox.Text, smuxaudioinputbox.Text };
-            }
             smuxStartButton.IsEnabled = false;
-            MuxApi.StartSMux(inputlist, smuxsuffixbox.Text.ToLower(), WhenDataReceived, WhenExited);
+            MuxApi.StartSMux(new string[] { smuxvideoinputbox.Text, smuxaudioinputbox.Text }, smuxchapterinputbox.Text, smuxsuffixbox.Text.ToLower(), WhenDataReceived, WhenExited);
             void WhenDataReceived(string message)
             {
                 Dispatcher.Invoke(() =>
