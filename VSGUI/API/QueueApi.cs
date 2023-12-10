@@ -704,7 +704,7 @@ namespace VSGUI.API
                 {
                     string inputpath = GetQueueListitem(queueid, "input");
                     string outputpath = "";
-                    string clipath = MainWindow.binpath + @"\tools\ffmpeg\";
+                    string clipath = MainWindow.binpath + @"\encoder\ffmpeg\";
                     string defaultcommon = @"ffmpeg.exe" + " -hide_banner -y ";
                     string info = ProcessApi.RunSyncProcess(clipath, defaultcommon + "-i " + "\"" + inputpath + "\"");
                     var x = Regex.Matches(info, @"Stream #(\d+:\d+).*?: (.*?): (.*?) ");
@@ -876,7 +876,7 @@ namespace VSGUI.API
             string inputpath = videoinputboxText;
             if (!string.IsNullOrEmpty(inputpath))
             {
-                string result = ProcessApi.RunSyncProcess(MainWindow.binpath + @"\tools\ffmpeg\", @"ffmpeg.exe" + " -hide_banner -y -i " + "\"" + inputpath + "\"");
+                string result = ProcessApi.RunSyncProcess(MainWindow.binpath + @"\encoder\ffmpeg\", @"ffmpeg.exe" + " -hide_banner -y -i " + "\"" + inputpath + "\"");
                 var videoinfo = Regex.Matches(result, @"Stream.*Video:.*");
                 var audioinfo = Regex.Matches(result, @"Stream.*Audio:.*");
                 if (videoinfo.Count >= 1)
@@ -978,7 +978,7 @@ namespace VSGUI.API
             string inputpath = audioinputboxText;
             if (!string.IsNullOrEmpty(inputpath))
             {
-                string result = ProcessApi.RunSyncProcess(MainWindow.binpath + @"\tools\ffmpeg\", @"ffmpeg.exe" + " -hide_banner -y -i " + "\"" + inputpath + "\"");
+                string result = ProcessApi.RunSyncProcess(MainWindow.binpath + @"\encoder\ffmpeg\", @"ffmpeg.exe" + " -hide_banner -y -i " + "\"" + inputpath + "\"");
                 var audioinfo = Regex.Matches(result, @"Stream.*Audio:.*");
                 if (audioinfo.Count >= 1)
                 {

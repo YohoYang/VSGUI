@@ -108,6 +108,10 @@ namespace VSGUI.API
         /// < returns ></ returns >
         public static string[] GetAllFileInFolder(string path)
         {
+            if (!Directory.Exists(path))
+            {
+                return new string[] { };
+            }
             ArrayList array = new ArrayList();
             DirectoryInfo d = new DirectoryInfo(path);
             FileSystemInfo[] fsinfos = d.GetFileSystemInfos();

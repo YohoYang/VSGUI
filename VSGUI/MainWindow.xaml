@@ -97,7 +97,7 @@
                                             <ColumnDefinition Width="*"/>
                                         </Grid.ColumnDefinitions>
                                         <TextBlock Grid.Column="0" VerticalAlignment="Center" Text="{DynamicResource resolutionSetting}"/>
-                                        <ComboBox x:Name="simpleresolutionbox" Grid.Column="1" MinWidth="60" SelectedIndex="0" ToolTipService.InitialShowDelay='0' ToolTip="{DynamicResource resolutionTipsDesc}" IsEditable="True">
+                                        <ComboBox x:Name="simpleresolutionbox" Grid.Column="1" MinWidth="60" SelectedIndex="0" ToolTipService.InitialShowDelay='100' ToolTip="{DynamicResource resolutionTipsDesc}" IsEditable="True">
                                             <ComboBoxItem Content="{DynamicResource resolutionDefault}"/>
                                             <ComboBoxItem Content="480P"/>
                                             <ComboBoxItem Content="720P"/>
@@ -163,8 +163,9 @@
                                             <ColumnDefinition Width="auto"/>
                                         </Grid.ColumnDefinitions>
                                         <DockPanel Grid.Column="1">
-                                            <Button Content="{DynamicResource simpleEncodePreview}" Margin="4,0,0,0" ToolTipService.InitialShowDelay='0' ToolTip="{DynamicResource simpleEncodePreviewTipsDesc}" Click="SimpleOpenEditorButton_Click"/>
-                                            <Button x:Name="simpleAddQueueBtn" Content="{DynamicResource addqueue}" Style="{StaticResource ButtonPrimary}" Margin="6,0,0,0" Click="SimpleAutoEncodeButton_Click"/>
+                                            <Button x:Name="converToAdvanced" Content="{DynamicResource p031}" Margin="4,0,0,0" Click="converToAdvanced_Click" Visibility="Collapsed"/>
+                                            <Button x:Name="simplePreviewBtn" Content="{DynamicResource EncodePreview}" Margin="4,0,0,0" ToolTipService.InitialShowDelay='0' ToolTip="{DynamicResource simpleEncodePreviewTipsDesc}" Click="SimpleOpenEditorButton_Click"/>
+                                            <Button x:Name="simpleAddQueueBtn" Content="{DynamicResource addqueue}" Style="{StaticResource ButtonPrimary}" Margin="6,0,0,0" Click="SimpleAutoEncodeButton_Click" Padding="20,6,20,6"/>
                                         </DockPanel>
                                     </Grid>
                                 </hc:UniformSpacingPanel>
@@ -215,7 +216,8 @@
                                     <Grid>
                                         <DockPanel HorizontalAlignment="Right">
                                             <Button Content="{DynamicResource openvseditor}" Margin="4,0,0,0" Click="OpenEditorButton_Click"/>
-                                            <Button Content="{DynamicResource encodesingle}" Style="{StaticResource ButtonInfo}" Margin="4,0,0,0" Click="VideoSingleButton_Click"/>
+                                            <Button Content="{DynamicResource EncodePreview}" Margin="4,0,0,0" Click="OpenEditorPreviewButton_Click"/>
+                                            <Button Content="{DynamicResource encodesingle}" Style="{StaticResource ButtonInfo}" Margin="4,0,0,0" Click="VideoSingleButton_Click" Padding="20,6,20,6"/>
                                         </DockPanel>
                                     </Grid>
                                 </hc:UniformSpacingPanel>
@@ -264,7 +266,7 @@
                                         <WrapPanel HorizontalAlignment="Right">
                                             <CheckBox x:Name="cutischecked" Content="{DynamicResource cut}" Checked="cutischecked_Checked" Unchecked="cutischecked_Checked"/>
                                             <DockPanel x:Name="cutpanel" Visibility="Collapsed">
-                                                <TextBox x:Name="cuttextbox" Width="200" TextWrapping="Wrap" ToolTip="{DynamicResource cuttooltip}" Margin="6,0,6,0"/>
+                                                <hc:TextBox x:Name="cuttextbox" Width="200" TextWrapping="Wrap" ToolTipService.InitialShowDelay='100' ToolTip="{DynamicResource cuttooltip}" hc:InfoElement.Placeholder="{DynamicResource p032}" Margin="6,0,6,0"/>
                                                 <TextBlock VerticalAlignment="Center" Text="fps" Margin="0,0,6,0"/>
                                                 <ComboBox x:Name="fpstextbox" MinWidth="80" IsEditable="True" VerticalAlignment="Center">
                                                     <ComboBoxItem Content="23.976"/>
@@ -274,7 +276,7 @@
                                             <TextBlock Text="{DynamicResource delay}" VerticalAlignment="Center" Margin="6,0,4,0"/>
                                             <TextBox x:Name="audiodelaybox" Text="0" VerticalAlignment="Center" Width="60"/>
                                             <TextBlock Text="ms" VerticalAlignment="Center" Margin="1,0,0,0"/>
-                                            <Button Content="{DynamicResource encodesingle}" Style="{StaticResource ButtonInfo}" Margin="8,0,0,0" Click="AudioSingleButton_Click"/>
+                                            <Button Content="{DynamicResource encodesingle}" Style="{StaticResource ButtonInfo}" Margin="8,0,0,0" Click="AudioSingleButton_Click" Padding="20,6,20,6"/>
                                         </WrapPanel>
                                     </Grid>
                                 </hc:UniformSpacingPanel>
@@ -302,7 +304,7 @@
                                                 <ComboBoxItem Content="mp4"/>
                                                 <ComboBoxItem Content="mkv"/>
                                             </ComboBox>
-                                            <Button Content="{DynamicResource encodeauto}" Style="{StaticResource ButtonPrimary}" Margin="6,0,0,0" Click="AutoEncodeButton_Click"/>
+                                            <Button Content="{DynamicResource encodeauto}" Style="{StaticResource ButtonPrimary}" Margin="6,0,0,0" Click="AutoEncodeButton_Click" Padding="20,6,20,6"/>
                                         </DockPanel>
 
                                     </Grid>
@@ -380,12 +382,12 @@
                             </StackPanel>
                             <Grid Grid.Row="1">
                                 <WrapPanel HorizontalAlignment="Right">
-                                    <Button x:Name="StartQueueAll" Margin="5" Click="StartQueueAll_Click" Style="{StaticResource ButtonPrimary}" Content="{DynamicResource startqueue}" MinWidth="140" FontWeight="Bold"/>
+                                    <Button x:Name="StartQueueAll" Margin="5" Click="StartQueueAll_Click" Style="{StaticResource ButtonPrimary}" Content="{DynamicResource startqueue}" MinWidth="140" FontWeight="Bold" IsEnabled="False"/>
                                     <Button x:Name="StopQueueAll" Margin="5" Click="StopQueueAll_Click"  Style="{StaticResource ButtonDanger}" Visibility="Collapsed" Content="{DynamicResource stopalljob}" FontWeight="Bold" MinWidth="140"></Button>
                                 </WrapPanel>
                                 <WrapPanel HorizontalAlignment="Left">
                                     <TextBlock x:Name="QueueSelectItemDesc" Text="" VerticalAlignment="Center" Margin="8,5,5,5"/>
-                                    <Button x:Name="StartQueueItem" Margin="5" Style="{StaticResource ButtonPrimary}" Click="StartQueueItem_Click" Visibility="Collapsed" ToolTip="{DynamicResource startjobtooltip}" Content="{DynamicResource startjob}"/>
+                                    <Button x:Name="StartQueueItem" Margin="5" Style="{StaticResource ButtonPrimary}" Click="StartQueueItem_Click" Visibility="Collapsed" ToolTip="{DynamicResource startjobtooltip}" Content="{DynamicResource startjob}" IsEnabled="False"/>
                                     <Button x:Name="PauseQueueItem" Margin="5" Style="{StaticResource ButtonWarning}" Click="PauseQueueItem_Click" Visibility="Collapsed" Content="{DynamicResource pausejob}"/>
                                     <Button x:Name="ResumeQueueItem" Margin="5" Style="{StaticResource ButtonSuccess}" Click="ResumeQueueItem_Click" Visibility="Collapsed" Content="{DynamicResource resumejob}"/>
                                     <Button x:Name="StopQueueItem" Margin="5" Style="{StaticResource ButtonDanger}" Click="StopQueueItem_Click" Visibility="Collapsed" Content="{DynamicResource stopjob}"/>
@@ -426,7 +428,7 @@
                                                 <ComboBoxItem Content="eac3to"/>
                                                 <ComboBoxItem Content="mkvextract"/>
                                             </ComboBox>
-                                            <Button x:Name="demuxStartButton" Content="{DynamicResource demux}" Style="{StaticResource ButtonPrimary}" Margin="6,0,0,0" Click="DemuxStartButton_Click"/>
+                                            <Button x:Name="demuxStartButton" Content="{DynamicResource demux}" Style="{StaticResource ButtonPrimary}" Margin="6,0,0,0" Click="DemuxStartButton_Click" IsEnabled="False"/>
                                         </DockPanel>
 
                                     </Grid>
@@ -476,7 +478,7 @@
                                                 <ComboBoxItem Content="mp4"/>
                                                 <ComboBoxItem Content="mkv"/>
                                             </ComboBox>
-                                            <Button x:Name="smuxStartButton" Content="{DynamicResource mux}" Style="{StaticResource ButtonPrimary}" Margin="6,0,0,0" Click="SmuxStartButton_Click"/>
+                                            <Button x:Name="smuxStartButton" Content="{DynamicResource mux}" Style="{StaticResource ButtonPrimary}" Margin="6,0,0,0" Click="SmuxStartButton_Click" IsEnabled="False"/>
                                         </DockPanel>
 
                                     </Grid>
@@ -674,14 +676,14 @@
                                 <TextBlock x:Name="coreversionshowtextblock" Text="v0.0.0"/>
                                 <TextBlock Text="Powered by " Margin="8,0,0,0"/>
                                 <TextBlock Text="银色子弹SBSUB" TextDecorations="Underline" Foreground="#FF013FFF" Cursor="Hand" MouseDown="SBSUBTextBlock_MouseDown"/>
-                                <TextBlock Text=" YohoYang."/>
+                                <TextBlock Text=" 优羽Yoho(YohoYang)."/>
                             </DockPanel>
                         </StackPanel>
                     </Border>
                 </Grid>
             </TabItem>
         </TabControl>
-        <Border Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Center" BorderThickness="1" BorderBrush="#FFE0E0E0">
+        <Border x:Name="updateBorder" Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Center" BorderThickness="1" BorderBrush="#FFE0E0E0">
             <Grid Margin="10,0">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>

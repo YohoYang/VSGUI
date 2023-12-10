@@ -229,26 +229,26 @@ namespace VSGUI.API
 
         #region load file
 
-        private string MakeFFmpegMetaDataFunc()
-        {
-            string metastr = string.Empty;
+        //private string MakeFFmpegMetaDataFunc()
+        //{
+        //    string metastr = string.Empty;
 
-            if (Chapters.Count > 0)
-            {
-                metastr += ";FFMETADATA1\ntitle = VSGUI\nartist = VSGUI\n\n";
-                foreach (var chap in Chapters)
-                {
-                    metastr += @"[CHAPTER]" + "\n";
-                    metastr += @"TIMEBASE=1/1000" + "\n";
-                    metastr += @"START=" + Math.Round(chap.Time.TotalMilliseconds) + "\n";
-                    metastr += @"END=" + Math.Round(chap.Time.TotalMilliseconds) + "\n";
-                    metastr += @"title=" + chap.Name + "\n";
-                    metastr += "\n";
-                }
-            }
+        //    if (Chapters.Count > 0)
+        //    {
+        //        metastr += ";FFMETADATA1\ntitle = VSGUI\nartist = VSGUI\n\n";
+        //        foreach (var chap in Chapters)
+        //        {
+        //            metastr += @"[CHAPTER]" + "\n";
+        //            metastr += @"TIMEBASE=1/1000" + "\n";
+        //            metastr += @"START=" + Math.Round(chap.Time.TotalMilliseconds) + "\n";
+        //            metastr += @"END=" + Math.Round(chap.Time.TotalMilliseconds) + "\n";
+        //            metastr += @"title=" + chap.Name + "\n";
+        //            metastr += "\n";
+        //        }
+        //    }
 
-            return metastr;
-        }
+        //    return metastr;
+        //}
 
         public bool LoadOgm(string strFileName)
         {

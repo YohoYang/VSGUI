@@ -13,7 +13,7 @@
     <system:String x:Key="audioinput">Audio input</system:String>
     <system:String x:Key="audiooutput">Audio output</system:String>
     <system:String x:Key="encoderprofiles">Encoder profiles</system:String>
-    <system:String x:Key="openvseditor">Open Vapoursynth editor</system:String>
+    <system:String x:Key="openvseditor">vpy editor</system:String>
     <system:String x:Key="encodesingle">Queue Only</system:String>
     <system:String x:Key="encodeauto">Auto-Queue</system:String>
     <system:String x:Key="audio">Audio</system:String>
@@ -90,7 +90,7 @@
     <system:String x:Key="updateCheckingLocalVersion">Checking local program version</system:String>
     <system:String x:Key="updateGetingServerVersion">Getting server version</system:String>
     <system:String x:Key="updateFilesChecking">Checking for updates</system:String>
-    <system:String x:Key="updateButDisabel">Update found, but automatic update is turned off in settings</system:String>
+    <system:String x:Key="updateButDisable">Update found, but automatic update is turned off in settings</system:String>
     <system:String x:Key="updateDownloading">Downloading update:</system:String>
     <system:String x:Key="updateUpdating">Updating file:</system:String>
     <system:String x:Key="updateButJobIsRuning">Jobs is running, update on next startup</system:String>
@@ -119,7 +119,7 @@
     <system:String x:Key="resolutionSetting">Resolution Setting</system:String>
     <system:String x:Key="resolutionDefault">Default Resolution</system:String>
     <system:String x:Key="resolutionTipsDesc">Choosing a larger resolution than the default video is generally not necessary, VSGUI does not do any AI methods, just simple stretching.</system:String>
-    <system:String x:Key="simpleEncodePreview">Editor preview</system:String>
+    <system:String x:Key="EncodePreview">Preview</system:String>
     <system:String x:Key="simpleEncodePreviewTipsDesc">After opening the editor, click Preview (or shortcut key F5) to preview. Modifying the script will not save the final suppression result. If you need to edit the script, please use advanced suppression.</system:String>
     <system:String x:Key="resolutionFormatError">Resolution format error</system:String>
     <system:String x:Key="subtitleFileError">Subtitle File Error</system:String>
@@ -184,5 +184,8 @@
     <system:String x:Key="p028">Use mkvtoolnix for packaging</system:String>
     <system:String x:Key="p029">Update using agent</system:String>
     <system:String x:Key="p030">The format is socks5://127.0.0.1:1234. If left blank, the system settings will be used</system:String>
+    <system:String x:Key="p031">Go to advanced suppression</system:String>
+    <system:String x:Key="p032">[xxx:xxx]+[xxx:xxx]</system:String>
+    <system:String x:Key="p033">The update has been downloaded and will be updated after the next restart</system:String>
     
 </ResourceDictionary>

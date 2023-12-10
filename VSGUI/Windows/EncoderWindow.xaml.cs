@@ -31,8 +31,9 @@ namespace VSGUI
             {"video","x264",".h264|.m4v|.mp4",@"\bin\encoder\x264\x264.exe","--demuxer y4m","- -o" },
             {"video","x265",".h265|.m4v|.mp4",@"\bin\encoder\x265\x265.exe","--y4m" ,"- -o"},
             {"video","nvenc",".h264|.h265|.m4v|.mp4",@"\bin\encoder\NVEncC\NVEncC64.exe","--y4m","-o" },
+            {"video","ffmpeg","",@"\bin\encoder\ffmpeg\ffmpeg.exe","-y -i -","" },
             {"audio","qaac",".aac|.m4a",@"\bin\encoder\qaac\qaac64.exe","" , "- -o"},
-            {"audio","flac",".flac",@"\bin\tools\ffmpeg\ffmpeg.exe","-y -i -","" },
+            {"audio","ffmpeg","",@"\bin\encoder\ffmpeg\ffmpeg.exe","-y -i -","" },
         };
 
         public EncoderWindow(string type)
@@ -247,12 +248,15 @@ namespace VSGUI
                     string[] spl = encoders[i, 2].Split('|');
                     foreach (var item in spl)
                     {
-                        list.Add(item);
+                        if (item != "")
+                        {
+                            list.Add(item);
+                        }
                     }
                     break;
                 }
             }
-            if ((encodertypebox.SelectedIndex >= 0 && encodertypebox.SelectedValue.ToString().Equals(LanguageApi.FindRes("p009"))))
+            if ((encodertypebox.SelectedIndex >= 0 && encodertypebox.SelectedValue.ToString().Equals(LanguageApi.FindRes("p009"))) || list.Count == 0)
             {
                 this.suffixbox.IsEditable = true;
             }
@@ -260,6 +264,7 @@ namespace VSGUI
             {
                 this.suffixbox.IsEditable = false;
             }
+
             return list;
         }
 

@@ -12,6 +12,7 @@ using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media;
 using System.Windows.Navigation;
 using VSGUI.API;
 
@@ -24,7 +25,7 @@ namespace VSGUI
     {
         public static string binpath = Directory.GetCurrentDirectory() + @"\bin";
         private bool forcedStop = false;
-        private string coreversion = "v0.4.2";
+        private string coreversion = "v1.0.0";
         public static string logBoxStr = "";
         private string[] videoMultiInputLists, audioMultiInputLists;
 
@@ -624,6 +625,7 @@ namespace VSGUI
             this.simplevideoinputPbSucc.Visibility = Visibility.Collapsed;
             this.simplevideoinputPb.Visibility = Visibility.Visible;
             this.simpleAddQueueBtn.IsEnabled = false;
+            this.simplePreviewBtn.IsEnabled = false;
             new Thread(
                 () =>
                 {
@@ -633,6 +635,7 @@ namespace VSGUI
                         Dispatcher.Invoke(() =>
                         {
                             this.simpleAddQueueBtn.IsEnabled = true;
+                            this.simplePreviewBtn.IsEnabled = true;
                             simplevideoinputbox.Text = videoinputboxText;
                             simpleaudioinputbox.Text = audioinputboxtext;
                             this.simplevideoinputPb.Visibility = Visibility.Collapsed;
@@ -692,6 +695,8 @@ namespace VSGUI
         /// <param name="e"></param>
         private void encoderbox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            //增加一个编码器路径检测
+
             if (((ComboBox)sender).Name == "videoencoderbox")
             {
                 if (videoinputbox.Text != "")
@@ -1505,6 +1510,19 @@ namespace VSGUI
             }
         }
 
+        /// <summary>
+        /// 打开编辑器预览按钮
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void OpenEditorPreviewButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (videoinputbox.Text != "" && Path.GetExtension(videoinputbox.Text).ToLower() == ".vpy")
+            {
+                VideoApi.OpenPreviewWindows(videoinputbox.Text);
+            }
+        }
+
         //保存编码器在线按钮
         private void NetEncoderJsonBoxSave_Click(object sender, RoutedEventArgs e)
         {
@@ -1528,6 +1546,11 @@ namespace VSGUI
                 updateinfotext.Text = message;
                 ReScanButton.IsEnabled = false;
                 ReScanButton.Content = message;
+                if (message == LanguageApi.FindRes("p033"))
+                {
+                    BrushConverter brushConverter = new BrushConverter();
+                    updateBorder.Background = (Brush)brushConverter.ConvertFromString("#FF5050");
+                }
             });
         }
 
@@ -1537,6 +1560,10 @@ namespace VSGUI
             {
                 ReScanButton.IsEnabled = true;
                 ReScanButton.Content = LanguageApi.FindRes("rescan");
+                StartQueueItem.IsEnabled = true;
+                StartQueueAll.IsEnabled = true;
+                demuxStartButton.IsEnabled = true;
+                smuxStartButton.IsEnabled = true;
             });
         }
 
@@ -1726,6 +1753,10 @@ namespace VSGUI
 
         private void SimpleOpenEditorButton_Click(object sender, RoutedEventArgs e)
         {
+            if (simplevideoinputbox.Text == "")
+            {
+                return;
+            }
             string script = VideoApi.MakeVideoScript(simplevideoinputbox.Text, simpleresolutionbox.Text.ToUpper(), simpleasspathinputbox.Text);
             if (script == null)
             {
@@ -1807,6 +1838,11 @@ namespace VSGUI
         private void proxyUrl_LostFocus(object sender, RoutedEventArgs e)
         {
             IniApi.IniWriteValue("proxyurl", this.proxyUrl.Text);
+        }
+
+        private void converToAdvanced_Click(object sender, RoutedEventArgs e)
+        {
+
         }
 
         private void inputPbSucc_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)

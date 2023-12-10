@@ -19,7 +19,7 @@ namespace VSGUI.API
             bool tfm = false;
             if (!string.IsNullOrEmpty(videoinputpath) && File.Exists(videoinputpath))
             {
-                string result = ProcessApi.RunSyncProcess(MainWindow.binpath + @"\tools\ffmpeg\", @"ffmpeg.exe" + " -hide_banner -y -i " + "\"" + videoinputpath + "\"");
+                string result = ProcessApi.RunSyncProcess(MainWindow.binpath + @"\encoder\ffmpeg\", @"ffmpeg.exe" + " -hide_banner -y -i " + "\"" + videoinputpath + "\"");
                 var videoInfo = Regex.Matches(result, @"Stream.*Video:.*");
                 if (videoInfo.Count >= 1)
                 {
@@ -101,7 +101,21 @@ namespace VSGUI.API
         {
             string temppath = CommonApi.GetAppTempPath() + @"preview.vpy";
             File.WriteAllText(temppath, script);
-            Process.Start(MainWindow.binpath + @"\vs\vsedit.exe", temppath);
+            OpenPreviewWindows(temppath);
+        }
+
+        public static void OpenPreviewWindows(string vpyPath)
+        {
+            Process proc = new Process
+            {
+                StartInfo = new ProcessStartInfo(MainWindow.binpath + @"\vs\vsedit-previewer.exe")
+                {
+                    CreateNoWindow = true,
+                    UseShellExecute = false,
+                    Arguments = vpyPath,
+                }
+            };
+            proc.Start();
         }
     }
 }

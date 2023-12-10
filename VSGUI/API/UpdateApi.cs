@@ -30,6 +30,8 @@ namespace VSGUI.API
                         {
                             PCall(LanguageApi.FindRes("updateChecking"));
                             UpdateCore();
+                            //增加一个update其他文件的方法
+                            UpdateLocal7z(PCall);
                             PCall(LanguageApi.FindRes("updateCheckingLocalVersion"));
                             CheckLocalVersionJson();
                             PCall(LanguageApi.FindRes("updateGetingServerVersion"));
@@ -54,7 +56,7 @@ namespace VSGUI.API
                                 {
                                     if (updatelist.Length > 0)
                                     {
-                                        PCall(LanguageApi.FindRes("updateButDisabel"));
+                                        PCall(LanguageApi.FindRes("updateButDisable"));
                                         return;
                                     }
                                 }
@@ -63,80 +65,14 @@ namespace VSGUI.API
                                 Finsihed();
                                 return;
 #endif
-                                //删除遗留文件
-                                CommonApi.TryDeleteFile(MainWindow.binpath + @"\vs\vapoursynth64\plugins\libvslsmashsource.dll");
-                                //更新开始
+                                //下载开始
                                 for (int i = 0; i < updatelist.Length; i++)
                                 {
                                     PCall(LanguageApi.FindRes("updateDownloading") + (i + 1) + @"/" + updatelist.Length);
                                     await DownloadUpdateFile(updatelist[i], proxy);
                                 }
-                                if (QueueApi.runningQueueCount > 0)
-                                {
-                                    PCall(LanguageApi.FindRes("updateButJobIsRuning"));
-                                }
-                                else
-                                {
-                                    bool needupdatecore = false;
-                                    var jsonlocal = JsonApi.ReadJsonObjectFromFile(MainWindow.binpath + @"\json\version.json");
-                                    for (int i = 0; i < updatelist.Length; i++)
-                                    {
-                                        if (updatelist[i].Substring(1) == "VSGUI.exe")
-                                        {
-                                            needupdatecore = true;
-                                            continue;
-                                        }
-                                        PCall(LanguageApi.FindRes("updateUpdating") + (i + 1) + @"/" + updatelist.Length);
-                                        string rpath = updatelist[i] + @".update.7z";
-                                        string filepath = MainWindow.binpath + @"\update\" + rpath.Substring(1);
-                                        if (File.Exists(filepath))
-                                        {
-                                            string unzippath = Directory.GetCurrentDirectory() + updatelist[i];
-                                            ProcessApi.RunSyncProcess(MainWindow.binpath, @"7z.exe -y x " + @"""" + filepath + @"""" + @" -o" + @"""" + Path.GetDirectoryName(unzippath) + @"""");
-                                            if (CalculateMD5(unzippath) == updatejson[updatelist[i]]["f"].ToString())
-                                            {
-                                                File.Delete(filepath);
-                                                if (Directory.GetFiles(Path.GetDirectoryName(filepath)).Length == 0 && Directory.GetDirectories(Path.GetDirectoryName(filepath)).Length == 0)
-                                                {
-                                                    Directory.Delete(Path.GetDirectoryName(filepath));
-                                                }
-                                                if (jsonlocal.ContainsKey(updatelist[i]))
-                                                {
-                                                    jsonlocal[updatelist[i]]["f"] = updatejson[updatelist[i]]["f"].ToString();
-                                                }
-                                                else
-                                                {
-                                                    JsonObject jsonsubdata = new JsonObject();
-                                                    jsonsubdata.Add("f", updatejson[updatelist[i]]["f"].ToString());
-                                                    jsonlocal.Add(updatelist[i], jsonsubdata);
-                                                }
-                                                JsonApi.SaveJsonToFile(jsonlocal, MainWindow.binpath + @"\json\version.json");
-                                            }
-                                        }
-                                    }
-                                    PCall(LanguageApi.FindRes("updateIsNewest"));
-                                    if (needupdatecore)
-                                    {
-                                        PCall(LanguageApi.FindRes("updateCoreExe"));
-                                        var messageboxresult = MessageBoxApi.Show(LanguageApi.FindRes("updateCoreExeTipsDesc"), LanguageApi.FindRes("tips"), MessageWindow.MessageBoxButton.YesNo);
-                                        if (messageboxresult == MessageWindow.MessageResult.Yes)
-                                        {
-                                            Process.Start(MainWindow.binpath + @"\vsguiupdater.exe");
-                                        }
-                                        else
-                                        {
-                                            PCall(LanguageApi.FindRes("updateCoreExeWait"));
-                                        }
-                                    }
-                                }
-                                try
-                                {
-                                    CommonApi.DeleteEmptyDirectories(MainWindow.binpath + @"\update\");
-                                }
-                                catch (Exception)
-                                {
+                                PCall(LanguageApi.FindRes("p033"));
 
-                                }
                             }
                             else
                             {
@@ -155,6 +91,61 @@ namespace VSGUI.API
             //下载模块列表json
             //逐一判断模块的本地版本与最新版本（并支持设置模块是否开启），如果相同不更新模块，不同则弹出更新提示窗，下载该模块最新压缩包，检查下载文件无误后解压
             //更新编码器配置（如果有设置）
+        }
+
+        private static void UpdateLocal7z(Action<string> PCall)
+        {
+            //更新开始
+            if (QueueApi.runningQueueCount > 0)
+            {
+                PCall(LanguageApi.FindRes("updateButJobIsRuning"));
+            }
+            else
+            {
+                string ds = ".update.7z";
+                var jsonlocal = JsonApi.ReadJsonObjectFromFile(MainWindow.binpath + @"\json\version.json");
+                string[] update7zFileLists = CommonApi.GetAllFileInFolder(MainWindow.binpath + @"\update\");
+                for (int i = 0; i < update7zFileLists.Length; i++)
+                {
+                    if (update7zFileLists[i].Substring(1) == "VSGUI.exe" + ds)
+                    {
+                        continue;
+                    }
+                    PCall(LanguageApi.FindRes("updateUpdating") + (i + 1) + @"/" + update7zFileLists.Length);
+                    string filepath = update7zFileLists[i];
+                    string rpath = filepath.Replace(MainWindow.binpath + @"\update", "").Replace(ds, "");
+                    if (File.Exists(filepath))
+                    {
+                        string unzippath = Directory.GetCurrentDirectory() + rpath;
+                        ProcessApi.RunSyncProcess(MainWindow.binpath, @"7z.exe -y x " + @"""" + filepath + @"""" + @" -o" + @"""" + Path.GetDirectoryName(unzippath) + @"""");
+                        File.Delete(filepath);
+                        if (Directory.GetFiles(Path.GetDirectoryName(filepath)).Length == 0 && Directory.GetDirectories(Path.GetDirectoryName(filepath)).Length == 0)
+                        {
+                            Directory.Delete(Path.GetDirectoryName(filepath));
+                        }
+                        if (jsonlocal.ContainsKey(rpath))
+                        {
+                            jsonlocal[rpath]["f"] = CalculateMD5(unzippath);
+                        }
+                        else
+                        {
+                            JsonObject jsonsubdata = new JsonObject();
+                            jsonsubdata.Add("f", CalculateMD5(unzippath));
+                            jsonlocal.Add(rpath, jsonsubdata);
+                        }
+                        JsonApi.SaveJsonToFile(jsonlocal, MainWindow.binpath + @"\json\version.json");
+                    }
+                }
+                PCall(LanguageApi.FindRes("updateIsNewest"));
+            }
+            try
+            {
+                CommonApi.DeleteEmptyDirectories(MainWindow.binpath + @"\update\");
+            }
+            catch (Exception)
+            {
+
+            }
         }
 
         /// <summary>
@@ -266,7 +257,7 @@ namespace VSGUI.API
             }
         }
 
-        private static async Task DownloadUpdateFile(string rurl,string proxy)
+        private static async Task DownloadUpdateFile(string rurl, string proxy)
         {
             string ziprpath = rurl + @".update.7z";
             string filepath = MainWindow.binpath + @"\update\" + ziprpath.Substring(1);
@@ -358,7 +349,28 @@ namespace VSGUI.API
                 }
                 else
                 {
-                    updatelist.Add(item.Key);
+                    if (File.Exists(Directory.GetCurrentDirectory() + item.Key))
+                    {
+                        string localmd5 = CalculateMD5(Directory.GetCurrentDirectory() + item.Key);
+                        if (item.Value["f"].ToString() == localmd5)
+                        {
+                            JsonObject jsonsubdata = new JsonObject
+                            {
+                                { "f", localmd5 }
+                            };
+                            jsonlocal.Add(item.Key, jsonsubdata);
+                            JsonApi.SaveJsonToFile(jsonlocal, MainWindow.binpath + @"\json\version.json");
+                        }
+
+                        else
+                        {
+                            updatelist.Add(item.Key);
+                        }
+                    }
+                    else
+                    {
+                        updatelist.Add(item.Key);
+                    }
                 }
             }
             return (string[])updatelist.ToArray(typeof(string));

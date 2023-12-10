@@ -68,7 +68,7 @@ namespace VSGUI.API
 
             static void ffmpegDemux(string inputpath, Action<string> DataReceivedCall, Action<string> ExitedCall)
             {
-                string clipath = MainWindow.binpath + @"\tools\ffmpeg\";
+                string clipath = MainWindow.binpath + @"\encoder\ffmpeg\";
                 string defaultcommon = @"ffmpeg.exe" + " -hide_banner -y ";
                 string info = ProcessApi.RunSyncProcess(clipath, defaultcommon + "-i " + "\"" + inputpath + "\"");
                 var x = Regex.Matches(info, @"Stream #(\d+:\d+).*?: (.*?): (.*?)\s");
