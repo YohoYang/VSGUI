@@ -425,17 +425,8 @@ namespace VSGUI
             {
                 obj.Add("encodername", encodertypebox.Text);
             }
-            if (encoderpathbox.Text.Contains(':'))
-            {
-                //绝对
-                obj.Add("encoderpath", encoderpathbox.Text);
-            }
-            else
-            {
-                //相对
-                string pathtext = System.IO.Directory.GetCurrentDirectory() + encoderpathbox.Text;
-                obj.Add("encoderpath", pathtext);
-            }
+            //保存时不用管是不是相对路径
+            obj.Add("encoderpath", encoderpathbox.Text);
             obj.Add("pipeinputformat", pipeinputformatbox.Text);
             obj.Add("outputformat", outputformatbox.Text);
             obj.Add("parameter", parameterbox.Text);
