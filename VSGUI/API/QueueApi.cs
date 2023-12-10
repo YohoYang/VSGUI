@@ -126,6 +126,12 @@ namespace VSGUI.API
                 {
                     encoderpath = "\"" + thisJobj["encoderpath"].ToString().Trim() + "\"" + " ";
                 }
+                //相对路径处理
+                if (!encoderpath.Contains(':'))
+                {
+                    encoderpath = Directory.GetCurrentDirectory() + encoderpath;
+                }
+
                 string encoderpipeinputformat;
                 if (!thisJobj.ContainsKey("pipeinputformat"))
                 {
@@ -928,7 +934,7 @@ namespace VSGUI.API
                     {
                         isError = true;
                     }
-                   
+
                 }
 
                 ////eac3to检测延迟
