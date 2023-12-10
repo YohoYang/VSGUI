@@ -683,14 +683,14 @@
                 </Grid>
             </TabItem>
         </TabControl>
-        <Border x:Name="updateBorder" Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Center" BorderThickness="1" BorderBrush="#FFE0E0E0" Background="Red" Padding="5">
+        <Border x:Name="updateBorder" Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Center" BorderThickness="1" BorderBrush="#FFE0E0E0" Margin="-5,0,-5,-3" Padding="0,3,0,3">
             <Grid Margin="10,0">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
                 <TextBlock Grid.Column="0" x:Name="queueinfotext" Text=""/>
-                <TextBlock Grid.Column="1" x:Name="updateinfotext" Text="" HorizontalAlignment="Right"/>
+                <TextBlock Grid.Column="1" x:Name="updateinfotext" Text="测试测试" HorizontalAlignment="Right"/>
             </Grid>
         </Border>
     </Grid>
