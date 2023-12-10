@@ -71,7 +71,14 @@ namespace VSGUI.API
                                     PCall(LanguageApi.FindRes("updateDownloading") + (i + 1) + @"/" + updatelist.Length);
                                     await DownloadUpdateFile(updatelist[i], proxy);
                                 }
-                                PCall(LanguageApi.FindRes("p033"));
+                                if (updatelist.Length > 0)
+                                {
+                                    PCall(LanguageApi.FindRes("p033"));
+                                }
+                                else
+                                {
+                                    PCall(LanguageApi.FindRes("updateIsNewest"));
+                                }
 
                             }
                             else
