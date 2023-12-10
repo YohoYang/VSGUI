@@ -57,9 +57,25 @@ namespace VSGUI.API
 
         public static string GetEncoderName(string type, int encoderid)
         {
+            if (type == "mux")
+            {
+                return "mux";
+            }
             var encoderJson = GetEncoderJson();
             JsonObject thisJobj = encoderJson[type][encoderid].AsObject();
-            return thisJobj["encodername"].ToString();
+            string txt = thisJobj["encodername"].ToString();
+            if (txt == "c")
+            {
+                txt = Path.GetFileName(GetEncoderPath(type, encoderid));
+            }
+            return txt;
+        }
+
+        public static string GetEncoderPath(string type, int encoderid)
+        {
+            var encoderJson = GetEncoderJson();
+            JsonObject thisJobj = encoderJson[type][encoderid].AsObject();
+            return thisJobj["encoderpath"].ToString();
         }
 
         public static string GetName(string type, int encoderid)

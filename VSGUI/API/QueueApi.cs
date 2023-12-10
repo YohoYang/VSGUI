@@ -60,7 +60,7 @@ namespace VSGUI.API
                 {
                     Index = queueidstr,
                     Type = jsona[i]["type"].ToString(),
-                    EncoderToolTip = EncoderApi.GetName(jsona[i]["type"].ToString(), int.Parse(jsona[i]["encoderid"].ToString())),
+                    EncoderToolTip = EncoderApi.GetEncoderName(jsona[i]["type"].ToString(), int.Parse(jsona[i]["encoderid"].ToString())) + " - " + EncoderApi.GetName(jsona[i]["type"].ToString(), int.Parse(jsona[i]["encoderid"].ToString())),
                     InputFilename = fileinput,
                     InputFilepath = jsona[i]["input"].ToString(),
                     OutputFilename = Path.GetFileName(jsona[i]["output"].ToString()),
@@ -267,27 +267,47 @@ namespace VSGUI.API
             if (GetQueueListitem(queueid, "type").ToString() != "mux")
             {
                 string encoderName = EncoderApi.GetEncoderName(GetQueueListitem(queueid, "type").ToString(), int.Parse(GetQueueListitem(queueid, "encoderid").ToString()));
+                string encoderPath = EncoderApi.GetEncoderPath(GetQueueListitem(queueid, "type").ToString(), int.Parse(GetQueueListitem(queueid, "encoderid").ToString()));
                 //x264 及 x265 及 nvenc 进度
-                if (encoderName == "x264" || encoderName == "x265" || encoderName == "nvenc")
+                if (GetQueueListitem(queueid, "type").ToString() == "video")
                 {
-
-                    var p = @"(\d+)[ ]{1,}frames:|(\d+.\d+)[ ]{1,}fps,";
-                    var x = Regex.Matches(message, p);
-                    if (x.Count >= 2)
+                    string p = "";
+                    if (encoderName == "c")
                     {
-                        int progressedFrames = int.Parse(x[0].Groups[1].ToString());
-                        int totalFrames = int.Parse(GetQueueListitem(queueid, "totalFrames"));
-                        float speed = float.Parse(x[1].Groups[2].ToString());
-                        int remainSeconds = (int)((totalFrames - progressedFrames) / speed);
+                        encoderName = Path.GetFileNameWithoutExtension(encoderPath).ToLower();
+                    }
 
-                        int pvalue = progressedFrames * 100 / totalFrames;
-                        if (pvalue == 0) pvalue += 1;
-                        SetQueueListitem(queueid, "processvalue", pvalue.ToString());
-                        SetQueueListitem(queueid, "statustext", speed + "fps  -" + CommonApi.FormatSecondsToTimeStr(remainSeconds));
+                    if (encoderName == "x264" || encoderName == "x265" || encoderName == "nvenc")
+                    {
+                        p = @"(\d+)[ ]{1,}frames:|(\d+.\d+)[ ]{1,}fps,";
+                    }
+                    else if (encoderName == "ffmpeg")
+                    {
+                        p = @"frame=[ ]{1,}(\d+)| fps=(\d+.\d+)";
+                    }
+                    if (p != "")
+                    {
+                        var x = Regex.Matches(message, p);
+                        if (x.Count >= 2)
+                        {
+                            int progressedFrames = int.Parse(x[0].Groups[1].ToString());
+                            int totalFrames = int.Parse(GetQueueListitem(queueid, "totalFrames"));
+                            float speed = float.Parse(x[1].Groups[2].ToString());
+                            int remainSeconds = (int)((totalFrames - progressedFrames) / speed);
+
+                            int pvalue = progressedFrames * 100 / totalFrames;
+                            if (pvalue == 0) pvalue += 1;
+                            SetQueueListitem(queueid, "processvalue", pvalue.ToString());
+                            SetQueueListitem(queueid, "statustext", speed + "fps  -" + CommonApi.FormatSecondsToTimeStr(remainSeconds));
+                        }
+                    }
+                    else
+                    {
+                        SetQueueListitem(queueid, "statustext", message);
                     }
                 }
-                //qaac 及 flac进度
-                else if (encoderName == "qaac" || encoderName == "flac")
+                //audio
+                else if (GetQueueListitem(queueid, "type").ToString() == "audio")
                 {
                     var p = @"(\d+.\d+)[ ]seconds[ ]\[(\d+)%\]";
                     var x = Regex.Matches(message, p);
