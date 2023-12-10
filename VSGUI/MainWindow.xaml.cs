@@ -25,7 +25,7 @@ namespace VSGUI
     {
         public static string binpath = Directory.GetCurrentDirectory() + @"\bin";
         private bool forcedStop = false;
-        private string coreversion = "v1.0.2";
+        private string coreversion = "v1.0.3";
         public static string logBoxStr = "";
         private string[] videoMultiInputLists, audioMultiInputLists;
 
@@ -540,8 +540,11 @@ namespace VSGUI
                             }
                             else
                             {
-                                this.audioinputbox.Text = "";
-                                this.audiooutputbox.Text = "";
+                                if (!(Path.GetExtension(this.audioinputbox.Text) == ".avs"))
+                                {
+                                    this.audioinputbox.Text = "";
+                                    this.audiooutputbox.Text = "";
+                                }
                             }
                         });
                     }

@@ -175,7 +175,7 @@
     <system:String x:Key="p019">用于设置压制参数，各编码器的设置参数类型不同</system:String>
     <system:String x:Key="p020">只支持放入vpy脚本，1个或多个文件</system:String>
     <system:String x:Key="p021">vpy脚本读取后会自动生成，也可以手动修改</system:String>
-    <system:String x:Key="p022">放入视频或单独音频，1个或多个文件，放入视频时自动选择第1音轨并读取延迟</system:String>
+    <system:String x:Key="p022">放入视频或单独音频或avs脚本，1个或多个文件，放入视频时自动选择第1音轨并读取延迟</system:String>
     <system:String x:Key="p023">音频输入读取后将自动生成，也可以手动修改</system:String>
     <system:String x:Key="p024">可选。仅支持xml/txt特定章节文件</system:String>
     <system:String x:Key="p025">个输入…</system:String>

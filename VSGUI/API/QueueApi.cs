@@ -120,16 +120,18 @@ namespace VSGUI.API
                 string encoderpath;
                 if (!thisJobj.ContainsKey("encoderpath"))
                 {
-                    encoderpath = "\"" + GetDefaultEncoderP(type, pEncoderName, "encoderpath") + "\"" + " ";
+                    encoderpath = "\"" + Directory.GetCurrentDirectory() + GetDefaultEncoderP(type, pEncoderName, "encoderpath") + "\"" + " ";
                 }
                 else
                 {
-                    encoderpath = "\"" + thisJobj["encoderpath"].ToString().Trim() + "\"" + " ";
-                }
-                //相对路径处理
-                if (!encoderpath.Contains(':'))
-                {
-                    encoderpath = Directory.GetCurrentDirectory() + encoderpath;
+                    if (thisJobj["encoderpath"].ToString().Trim().Contains(':'))
+                    {
+                        encoderpath = "\"" + thisJobj["encoderpath"].ToString().Trim() + "\"" + " ";
+                    }
+                    else
+                    {
+                        encoderpath = "\"" + Directory.GetCurrentDirectory() + thisJobj["encoderpath"].ToString().Trim() + "\"" + " ";
+                    }
                 }
 
                 string encoderpipeinputformat;

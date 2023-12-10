@@ -175,7 +175,7 @@
     <system:String x:Key="p019">Used to set suppression parameters, the setting parameter types of each encoder are different</system:String>
     <system:String x:Key="p020">Only supports placing vpy scripts, 1 or more files</system:String>
     <system:String x:Key="p021">The vpy script will be automatically generated after reading, and can also be modified manually</system:String>
-    <system:String x:Key="p022">Put in video or separate audio, 1 or more files, automatically select the first audio track and read the delay when placing the video</system:String>
+    <system:String x:Key="p022">Put in video or separate audio or avs file, 1 or more files, automatically select the first audio track and read the delay when placing the video</system:String>
     <system:String x:Key="p023">The audio input will be automatically generated after reading, and can also be modified manually</system:String>
     <system:String x:Key="p024">Optional. Only supports xml/txt specific chapter files</system:String>
     <system:String x:Key="p025">Inputs...</system:String>
