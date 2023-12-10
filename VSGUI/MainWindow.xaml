@@ -683,7 +683,7 @@
                 </Grid>
             </TabItem>
         </TabControl>
-        <Border x:Name="updateBorder" Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Center" BorderThickness="1" BorderBrush="#FFE0E0E0">
+        <Border x:Name="updateBorder" Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Center" BorderThickness="1" BorderBrush="#FFE0E0E0" Background="Red" Padding="5">
             <Grid Margin="10,0">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
