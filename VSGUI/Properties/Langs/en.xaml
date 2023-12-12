@@ -187,5 +187,7 @@
     <system:String x:Key="p031">Go to advanced suppression</system:String>
     <system:String x:Key="p032">[xxx:xxx]+[xxx:xxx]</system:String>
     <system:String x:Key="p033">The update has been downloaded and will be updated after the next restart</system:String>
+    <system:String x:Key="p034">Other settings</system:String>
+    <system:String x:Key="p035">Video deinterlacing</system:String>
     
 </ResourceDictionary>

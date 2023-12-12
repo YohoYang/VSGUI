@@ -30,7 +30,7 @@
                             </hc:ButtonGroup>
                         </WrapPanel>
                         <!--简易压制-->
-                        <StackPanel x:Name="simpleEncodePanel" Grid.Row="1" Visibility="Collapsed">
+                        <StackPanel x:Name="simpleEncodePanel" Grid.Row="1" Visibility="Visible">
                             <TextBlock Text="{DynamicResource input}" Margin="5,3,0,6" Foreground="#a3a3a3"/>
                             <Border Style="{StaticResource BorderRegion}">
                                 <hc:UniformSpacingPanel Spacing="6" Orientation="Vertical">
@@ -140,6 +140,15 @@
                                             <ComboBoxItem Content="mkv"/>
                                         </ComboBox>
                                     </Grid>
+                                    <!--其他设置-->
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="120"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Grid.Column="0" VerticalAlignment="Center" Text="{DynamicResource p034}" Margin="0,0,6,0"/>
+                                        <CheckBox x:Name="tfmCheckBox" Grid.Column="1" Content="{DynamicResource p035}" MinHeight="30"/>
+                                    </Grid>
                                 </hc:UniformSpacingPanel>
                             </Border>
                             <TextBlock Text="{DynamicResource output}" Margin="5,10,0,6" Foreground="#a3a3a3"/>
@@ -172,7 +181,7 @@
                             </Border>
                         </StackPanel>
                         <!--手动压制-->
-                        <StackPanel x:Name="advancedEncodePanel" Grid.Row="1" Visibility="Visible">
+                        <StackPanel x:Name="advancedEncodePanel" Grid.Row="1" Visibility="Collapsed">
                             <!--视频区-->
                             <TextBlock Text="{DynamicResource video}" Margin="5,3,0,6" Foreground="#a3a3a3"/>
                             <Border x:Name="videoborder" Style="{StaticResource BorderRegion}" AllowDrop="True" PreviewDrop="Border_Drop">

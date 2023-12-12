@@ -192,7 +192,7 @@ namespace VSGUI.API
             return returnStr;
         }
 
-        public static void AddQueueList(string type, int encoderid, string[] input, string output, string chapinput = "", string group = "", string deletefile = "", string resolution = "", string subtitle = "", string audiocuttext = "", string audiofpstext = "", string audiodelaytext = "")
+        public static void AddQueueList(string type, int encoderid, string[] input, string output, string chapinput = "", string group = "", string deletefile = "", string resolution = "", string subtitle = "", string audiocuttext = "", string audiofpstext = "", string audiodelaytext = "", string tfmenable = "")
         {
             JsonArray queueJobj = GetQueueList();
             int newid;
@@ -256,6 +256,7 @@ namespace VSGUI.API
             newqueue.Add("audiocuttext", audiocuttext);
             newqueue.Add("audiofpstext", audiofpstext);
             newqueue.Add("audiodelaytext", audiodelaytext);
+            newqueue.Add("tfmenable", tfmenable);
 
             queueJobj.Add(newqueue);
 
@@ -600,7 +601,14 @@ namespace VSGUI.API
             {
                 if (item["queueid"].ToString() == queueid)
                 {
-                    return item[key].ToString();
+                    if (item[key] != null)
+                    {
+                        return item[key].ToString();
+                    }
+                    else
+                    {
+                        return null;
+                    }
                 }
             }
             return null;
@@ -670,9 +678,15 @@ namespace VSGUI.API
             //生成文件 v0.2.1
             if (GetQueueListitem(queueid, "type") == "video")
             {
+                //简易压制用
                 if (Path.GetExtension(GetQueueListitem(queueid, "input")) != ".vpy")
                 {
-                    string script = VideoApi.MakeVideoScript(GetQueueListitem(queueid, "input"), GetQueueListitem(queueid, "resolution"), GetQueueListitem(queueid, "subtitle"));
+                    bool tfmEnable = false;
+                    if (GetQueueListitem(queueid, "tfmenable") != null && GetQueueListitem(queueid, "tfmenable") == "true")
+                    {
+                        tfmEnable = true;
+                    }
+                    string script = VideoApi.MakeVideoScript(GetQueueListitem(queueid, "input"), GetQueueListitem(queueid, "resolution"), GetQueueListitem(queueid, "subtitle"), tfmEnable);
                     string scriptpath = CommonApi.GetAppTempPath() + "Job_" + queueid + ".vpy";
                     string command = ProcessCommandStr(int.Parse(queueid), "video", int.Parse(GetQueueListitem(queueid, "encoderid")), new string[] { GetQueueListitem(queueid, "input") }, "", GetQueueListitem(queueid, "output"), scriptpath, out string temp1, out string temp2);
                     SetQueueListitem(queueid, "script", script);

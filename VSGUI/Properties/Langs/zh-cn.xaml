@@ -187,5 +187,7 @@
     <system:String x:Key="p031">转到高级压制</system:String>
     <system:String x:Key="p032">[xxx:xxx]+[xxx:xxx]</system:String>
     <system:String x:Key="p033">更新已下载完成，下次重新启动后更新</system:String>
+    <system:String x:Key="p034">其他设置</system:String>
+    <system:String x:Key="p035">视频反交错</system:String>
 
 </ResourceDictionary>

@@ -11,12 +11,12 @@ namespace VSGUI.API
 {
     internal class VideoApi
     {
-        public static string MakeVideoScript(string videoinputpath, string resolution, string subpath)
+        public static string MakeVideoScript(string videoinputpath, string resolution, string subpath, bool tfmEnable=false)
         {
             //输入视频信息检测
             int sourceWidth = 0;
             int sourceHeight = 0;
-            bool tfm = false;
+            //bool tfm = false;
             if (!string.IsNullOrEmpty(videoinputpath) && File.Exists(videoinputpath))
             {
                 string result = ProcessApi.RunSyncProcess(MainWindow.binpath + @"\encoder\ffmpeg\", @"ffmpeg.exe" + " -hide_banner -y -i " + "\"" + videoinputpath + "\"");
@@ -37,10 +37,10 @@ namespace VSGUI.API
                         {
                             sourceWidth = (int)Math.Round((sourceWidth * (double.Parse(sarInfo[0].Groups[1].ToString()) / double.Parse(sarInfo[0].Groups[2].ToString()))) / 2, MidpointRounding.AwayFromZero) * 2;
                         }
-                        if (!result.Contains("progressive"))
-                        {
-                            tfm = true;
-                        }
+                        //if (!result.Contains("progressive"))
+                        //{
+                        //    tfm = true;
+                        //}
                     }
                 }
                 else
@@ -55,7 +55,7 @@ namespace VSGUI.API
             scriptstr += @"videosrc = r" + "\"" + videoinputpath + "\"" + "\r\n";
             scriptstr += @"video = core.lsmas.LWLibavSource(videosrc)" + "\r\n";
             scriptstr += "\r\n";
-            if (tfm)
+            if (tfmEnable)
             {
                 scriptstr += @"video = core.tivtc.TFM(video, order=-1, mode=1, PP=5, slow=2, chroma=False)" + "\r\n";
                 scriptstr += @"video = core.tivtc.TDecimate(video, mode=1, cycle=5)" + "\r\n";

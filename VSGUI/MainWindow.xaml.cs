@@ -25,7 +25,7 @@ namespace VSGUI
     {
         public static string binpath = Directory.GetCurrentDirectory() + @"\bin";
         private bool forcedStop = false;
-        private string coreversion = "v1.0.3";
+        private string coreversion = "v1.0.4";
         public static string logBoxStr = "";
         private string[] videoMultiInputLists, audioMultiInputLists;
 
@@ -1006,12 +1006,17 @@ namespace VSGUI
                     }
                 }
             }
+            string tfmEnable = "false";
+            if (tfmCheckBox.IsChecked == true)
+            {
+                tfmEnable = "true";
+            }
 
             //生成groud名
             string groupname = CommonApi.GetNewSeed();
             string tempvideopath = Path.GetDirectoryName(simplevideooutputbox.Text) + @"\" + groupname + "_v" + EncoderApi.GetEncoderSuffix("video", simplevideoencoderbox.SelectedIndex);
             string tempaudiopath = Path.GetDirectoryName(simplevideooutputbox.Text) + @"\" + groupname + "_a" + EncoderApi.GetEncoderSuffix("audio", simpleaudioencoderbox.SelectedIndex);
-            QueueApi.AddQueueList("video", simplevideoencoderbox.SelectedIndex, new string[] { simplevideoinputbox.Text }, tempvideopath, resolution: simpleresolutionbox.Text.ToUpper(), subtitle: simpleasspathinputbox.Text, group: groupname);
+            QueueApi.AddQueueList("video", simplevideoencoderbox.SelectedIndex, new string[] { simplevideoinputbox.Text }, tempvideopath, resolution: simpleresolutionbox.Text.ToUpper(), subtitle: simpleasspathinputbox.Text, group: groupname, tfmenable: tfmEnable);
             QueueApi.AddQueueList("audio", simpleaudioencoderbox.SelectedIndex, new string[] { simpleaudioinputbox.Text }, tempaudiopath, deletefile: simpleaudioinputbox.Text + ".lwi", group: groupname);
             //再添加一个混流任务
             QueueApi.AddQueueList("mux", 0, new string[] { tempvideopath, tempaudiopath }, Path.GetDirectoryName(simplevideooutputbox.Text) + @"\" + Path.GetFileNameWithoutExtension(simplevideooutputbox.Text) + @"_mux." + simplemuxsuffixbox.Text.ToLower(), chapinput: simplecapinputbox.Text, deletefile: tempvideopath + "|" + tempaudiopath, group: groupname);
@@ -1760,7 +1765,12 @@ namespace VSGUI
             {
                 return;
             }
-            string script = VideoApi.MakeVideoScript(simplevideoinputbox.Text, simpleresolutionbox.Text.ToUpper(), simpleasspathinputbox.Text);
+            bool tfmEnable = false;
+            if (tfmCheckBox.IsChecked == true)
+            {
+                tfmEnable = true;
+            }
+            string script = VideoApi.MakeVideoScript(simplevideoinputbox.Text, simpleresolutionbox.Text.ToUpper(), simpleasspathinputbox.Text, tfmEnable);
             if (script == null)
             {
                 MessageBoxApi.Show("DEBUG ERROR: 视频信息读取错误，麻烦提供视频文件协助调试", LanguageApi.FindRes("error"));
