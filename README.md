@@ -17,7 +17,7 @@ A video encode GUI like MeGUI for VapourSynth.
 
 - 基于Vapoursynth（处理视频）和Avisynth（处理音频）；
 - 集成所需所有环境，开箱即用，不需要安装配置环境；
-- 支持简易压制，拖入视频自动生成vpy脚本并压制视频和音频，并自动封装（支持自动识别简单的反交错等）；
+- 支持简易压制，拖入视频自动生成vpy脚本并压制视频和音频，并自动封装（可自行设置是否需要反交错等）；
 - 支持高级压制，手动书写Vapoursynth脚本，并分别处理视频和音频流压制；支持批量添加任务；
 - 支持自定义编码器，理论上支持所有编码器编码；
 - 集成[VSREPO GUI](https://github.com/theChaosCoder/VSRepoGUI "VSREPO GUI")，可以简便的选择并下载自己所需的滤镜库；
