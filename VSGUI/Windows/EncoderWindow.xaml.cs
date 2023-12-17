@@ -284,6 +284,18 @@ namespace VSGUI
             return "";
         }
 
+        public static string GetEncoderPathByCode(string type,string name)
+        {
+            for (int i = 0; i < encoders.GetLength(0); i++)
+            {
+                if (encoders[i, 0].Equals(type) && encoders[i, 1].Equals(name))
+                {
+                    return encoders[i, 3];
+                }
+            }
+            return "";
+        }
+
         private string GetEncoderPipeinputformat(string encodername)
         {
 

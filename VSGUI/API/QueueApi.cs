@@ -120,7 +120,7 @@ namespace VSGUI.API
                 string encoderpath;
                 if (!thisJobj.ContainsKey("encoderpath"))
                 {
-                    encoderpath = "\"" + Directory.GetCurrentDirectory() + GetDefaultEncoderP(type, pEncoderName, "encoderpath") + "\"" + " ";
+                    encoderpath = "\"" + GetDefaultEncoderP(type, pEncoderName, "encoderpath") + "\"" + " ";
                 }
                 else
                 {
@@ -800,52 +800,25 @@ namespace VSGUI.API
                             //获取fps
                             fpstextboxText = x[1].Groups[2].Value;
                             //cut检测
-                            string autoGenCutConfig = IniApi.IniReadValue("AutoGenerateCut");
-                            if (autoGenCutConfig == "") autoGenCutConfig = "true";
-                            if (bool.Parse(autoGenCutConfig))
+                            try
                             {
-                                //获取vpy脚本及每行内容
-                                string vpyfilestr = File.ReadAllText(inputpath);
-                                string[] vpyfilestrlist = vpyfilestr.Replace("\r\n", "\n").Split("\n");
-                                //获取最终输出
-                                string finaloutVar = "";
-                                var xo0 = Regex.Matches(vpyfilestr, @"(.*?)\.set_output");
-                                if (xo0.Count > 0)
+                                string autoGenCutConfig = IniApi.IniReadValue("AutoGenerateCut");
+                                if (autoGenCutConfig == "") autoGenCutConfig = "true";
+                                if (bool.Parse(autoGenCutConfig))
                                 {
-                                    finaloutVar = xo0[0].Groups[1].Value;
-                                }
-                                //创建键值对
-                                Dictionary<string, string> cutmap = new Dictionary<string, string>();
-                                //定义最终str
-                                string finalcutstr = "";
-                                //错误标记
-                                bool isCutError = false;
-                                //遍历每一行
-                                foreach (var listitem in vpyfilestrlist)
-                                {
-                                    //判断非注释
-                                    if (!listitem.TrimStart().StartsWith("#"))
+                                    //改成简单版本的判断
+                                    string vpyfilestr = File.ReadAllText(inputpath);
+                                    string[] vpyfilestrlist = vpyfilestr.Replace("\r\n", "\n").Split("\n");
+                                    string finalcutstr = "";
+                                    foreach (string listitem in vpyfilestrlist)
                                     {
-                                        //获取被赋值变量
-                                        string assigned = "";
-                                        var x0 = Regex.Matches(listitem, @"(.*?)\s*?=");
-                                        if (x0.Count > 0)
+                                        if (!listitem.TrimStart().StartsWith("#"))
                                         {
-                                            if (x0[0].Groups.Count > 0)
+                                            var x1 = Regex.Matches(listitem, @".*?\.std\.Trim\((.*?),(.*?)\)|([0-9a-zA-Z]*?)\[(\d+(?:\:|\,|\s)*\d+)\]");
+                                            string linecutstr = "";
+                                            if (x1.Count > 0)
                                             {
-                                                assigned = x0[0].Groups[1].Value;
-                                            }
-                                        }
-                                        //获取裁剪参数
-                                        var x1 = Regex.Matches(listitem, @".*?\.std\.Trim\((.*?),(.*?)\)|([0-9a-zA-Z]*?)\[(\d+(?:\:|\,|\s)*\d+)\]");
-                                        string linecutstr = "";
-                                        if (x1.Count > 0)
-                                        {
-                                            for (int i = 0; i < x1.Count; i++)
-                                            {
-                                                string assign = x1[i].Groups[1].Value;
-                                                if (assign == "") assign = x1[i].Groups[3].Value;
-                                                if (assigned == assign) // ?最简单的保护，如果是复合变量直接放弃
+                                                for (int i = 0; i < x1.Count; i++)
                                                 {
                                                     string cutmessagestr = x1[i].Groups[2].Value;
                                                     if (cutmessagestr == "") cutmessagestr = x1[i].Groups[4].Value;
@@ -856,32 +829,103 @@ namespace VSGUI.API
                                                         linecutstr += "+";
                                                     }
                                                 }
-                                                else
+                                                if (finalcutstr != "")
                                                 {
-                                                    isCutError = true;
+                                                    finalcutstr += "&";
                                                 }
-                                            }
-                                            //处理变量map
-                                            if (cutmap.ContainsKey(assigned))
-                                            {
-                                                cutmap[assigned] = cutmap[assigned] + @"&" + linecutstr;
-                                            }
-                                            else
-                                            {
-                                                cutmap.Add(assigned, linecutstr);
+                                                finalcutstr += linecutstr;
                                             }
                                         }
                                     }
+                                    cuttextboxText = finalcutstr;
+                                    if (finalcutstr != "")
+                                    {
+                                        cutischeckedIsChecked = true;
+                                    }
+
+                                    ////获取vpy脚本及每行内容
+                                    //string vpyfilestr = File.ReadAllText(inputpath);
+                                    //string[] vpyfilestrlist = vpyfilestr.Replace("\r\n", "\n").Split("\n");
+                                    ////获取最终输出
+                                    //string finaloutVar = "";
+                                    //var xo0 = Regex.Matches(vpyfilestr, @"(.*?)\.set_output");
+                                    //if (xo0.Count > 0)
+                                    //{
+                                    //    finaloutVar = xo0[0].Groups[1].Value;
+                                    //}
+                                    ////创建键值对
+                                    //Dictionary<string, string> cutmap = new Dictionary<string, string>();
+                                    ////定义最终str
+                                    //string finalcutstr = "";
+                                    ////错误标记
+                                    //bool isCutError = false;
+                                    ////遍历每一行
+                                    //foreach (var listitem in vpyfilestrlist)
+                                    //{
+                                    //    //判断非注释
+                                    //    if (!listitem.TrimStart().StartsWith("#"))
+                                    //    {
+                                    //        //获取被赋值变量
+                                    //        string assigned = "";
+                                    //        var x0 = Regex.Matches(listitem, @"(.*?)\s*?=");
+                                    //        if (x0.Count > 0)
+                                    //        {
+                                    //            if (x0[0].Groups.Count > 0)
+                                    //            {
+                                    //                assigned = x0[0].Groups[1].Value;
+                                    //            }
+                                    //        }
+                                    //        //获取裁剪参数
+                                    //        var x1 = Regex.Matches(listitem, @".*?\.std\.Trim\((.*?),(.*?)\)|([0-9a-zA-Z]*?)\[(\d+(?:\:|\,|\s)*\d+)\]");
+                                    //        string linecutstr = "";
+                                    //        if (x1.Count > 0)
+                                    //        {
+                                    //            for (int i = 0; i < x1.Count; i++)
+                                    //            {
+                                    //                string assign = x1[i].Groups[1].Value;
+                                    //                if (assign == "") assign = x1[i].Groups[3].Value;
+                                    //                if (assigned == assign) // ?最简单的保护，如果是复合变量直接放弃
+                                    //                {
+                                    //                    string cutmessagestr = x1[i].Groups[2].Value;
+                                    //                    if (cutmessagestr == "") cutmessagestr = x1[i].Groups[4].Value;
+                                    //                    string[] cutmessagelist = cutmessagestr.Replace(":", ",").Replace(" ", "").Replace("(", "").Replace(")", "").Replace("[", "").Replace("]", "").Split(",");//获得cut的前后帧
+                                    //                    linecutstr += "[" + cutmessagelist[0] + ":" + cutmessagelist[1] + "]";
+                                    //                    if (i != x1.Count - 1)
+                                    //                    {
+                                    //                        linecutstr += "+";
+                                    //                    }
+                                    //                }
+                                    //                else
+                                    //                {
+                                    //                    isCutError = true;
+                                    //                }
+                                    //            }
+                                    //            //处理变量map
+                                    //            if (cutmap.ContainsKey(assigned))
+                                    //            {
+                                    //                cutmap[assigned] = cutmap[assigned] + @"&" + linecutstr;
+                                    //            }
+                                    //            else
+                                    //            {
+                                    //                cutmap.Add(assigned, linecutstr);
+                                    //            }
+                                    //        }
+                                    //    }
+                                    //}
+                                    //if (!isCutError && cutmap.Count > 0)
+                                    //{
+                                    //    finalcutstr = cutmap[finaloutVar];
+                                    //}
+                                    //cuttextboxText = finalcutstr;
+                                    //if (finalcutstr != "")
+                                    //{
+                                    //    cutischeckedIsChecked = true;
+                                    //}
                                 }
-                                if (!isCutError && cutmap.Count > 0)
-                                {
-                                    finalcutstr = cutmap[finaloutVar];
-                                }
-                                cuttextboxText = finalcutstr;
-                                if (finalcutstr != "")
-                                {
-                                    cutischeckedIsChecked = true;
-                                }
+                            }
+                            catch (Exception)
+                            {
+                                //cut判断失败
                             }
                         }
                         else

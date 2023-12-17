@@ -133,7 +133,7 @@
     <system:String x:Key="nomoreprompts">No More Prompts</system:String>
     <system:String x:Key="netEncoderProtectDesc">The profile is NetEncoder. Editing is not allowed.</system:String>
     <system:String x:Key="autoGenerateCut">When entering the vpy script, automatically read the Cuts information</system:String>
-    <system:String x:Key="autoGenerateCutDesc">In advanced Encode mode, when inputting a vpy script, the clip script is automatically read from the script and filled in the audio information area (only single variable is supported).</system:String>
+    <system:String x:Key="autoGenerateCutDesc">In advanced Encode mode, when inputting a vpy script, the clip script is automatically read from the script and filled in the audio information area (Complex scripts are not supported).</system:String>
     <system:String x:Key="queueDeleteCacheTipsDesc">The following temporary files exist in the task. Do you want to delete them?</system:String>
     <system:String x:Key="notInstalled">Not Installed</system:String>
     <system:String x:Key="useSystemEnvironment">Use system environment</system:String>

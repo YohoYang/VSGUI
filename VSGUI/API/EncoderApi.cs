@@ -75,7 +75,15 @@ namespace VSGUI.API
         {
             var encoderJson = GetEncoderJson();
             JsonObject thisJobj = encoderJson[type][encoderid].AsObject();
-            return thisJobj["encoderpath"].ToString();
+            if (thisJobj.ContainsKey("encoderpath"))
+            {
+                return thisJobj["encoderpath"].ToString();
+            }
+            else
+            {
+                string codepath = EncoderWindow.GetEncoderPathByCode(type, GetEncoderName(type, encoderid));
+                return codepath;
+            }
         }
 
         public static string GetName(string type, int encoderid)
