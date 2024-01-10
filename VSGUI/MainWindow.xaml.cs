@@ -25,7 +25,7 @@ namespace VSGUI
     {
         public static string binpath = Directory.GetCurrentDirectory() + @"\bin";
         private bool forcedStop = false;
-        private string coreversion = "v1.0.5";
+        private string coreversion = "v1.0.6";
         public static string logBoxStr = "";
         private string[] videoMultiInputLists, audioMultiInputLists;
 
@@ -1820,31 +1820,6 @@ namespace VSGUI
             }
         }
 
-        private void SimpleOpenEditorButton_Click(object sender, RoutedEventArgs e)
-        {
-            if (simplevideoinputbox.Text == "")
-            {
-                return;
-            }
-            bool tfmEnable = false;
-            if (tfmCheckBox.IsChecked == true)
-            {
-                tfmEnable = true;
-            }
-            bool xyvsfilterEnable = false;
-            if (xyvsfilterCheckBox.IsChecked == true)
-            {
-                xyvsfilterEnable = true;
-            }
-            string script = VideoApi.MakeVideoScript(simplevideoinputbox.Text, simpleresolutionbox.Text.ToUpper(), simpleasspathinputbox.Text, tfmEnable: tfmEnable, xyvsfilterEnable: xyvsfilterEnable);
-            if (script == null)
-            {
-                MessageBoxApi.Show("DEBUG ERROR: 视频信息读取错误，麻烦提供视频文件协助调试", LanguageApi.FindRes("error"));
-                script = "";
-            }
-            VideoApi.PreviewTempVpy(script);
-        }
-
         private void VSGUITextBlock_MouseDown(object sender, MouseButtonEventArgs e)
         {
             Process.Start("explorer", "https://github.com/YohoYang/VSGUI");
@@ -1919,11 +1894,6 @@ namespace VSGUI
             IniApi.IniWriteValue("proxyurl", this.proxyUrl.Text);
         }
 
-        private void converToAdvanced_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
-
         private void xyvsfilterCheckBox_Checked(object sender, RoutedEventArgs e)
         {
             if (this.xyvsfilterCheckBox.IsChecked == true)
@@ -1933,6 +1903,55 @@ namespace VSGUI
             else
             {
                 IniApi.IniWriteValue("xyvsfilterEnable", "false");
+            }
+        }
+        private string GetSimplePreviewVpyScript()
+        {
+            if (simplevideoinputbox.Text == "")
+            {
+                return "";
+            }
+            bool tfmEnable = false;
+            if (tfmCheckBox.IsChecked == true)
+            {
+                tfmEnable = true;
+            }
+            bool xyvsfilterEnable = false;
+            if (xyvsfilterCheckBox.IsChecked == true)
+            {
+                xyvsfilterEnable = true;
+            }
+            string script = VideoApi.MakeVideoScript(simplevideoinputbox.Text, simpleresolutionbox.Text.ToUpper(), simpleasspathinputbox.Text, tfmEnable: tfmEnable, xyvsfilterEnable: xyvsfilterEnable);
+            return script;
+        }
+
+        private void SimpleOpenEditorButton_Click(object sender, RoutedEventArgs e)
+        {
+            string script = GetSimplePreviewVpyScript();
+            if (script == null)
+            {
+                MessageBoxApi.Show("DEBUG ERROR: 视频信息读取错误，麻烦提供视频文件协助调试", LanguageApi.FindRes("error"));
+                script = "";
+            }
+            VideoApi.PreviewTempVpy(script);
+        }
+
+        private void ExportVpyToDesktop_Click(object sender, RoutedEventArgs e)
+        {
+            string script = GetSimplePreviewVpyScript();
+            if (script == null)
+            {
+                MessageBoxApi.Show("DEBUG ERROR: 视频信息读取错误，麻烦提供视频文件协助调试", LanguageApi.FindRes("error"));
+                script = "";
+            }
+            string outputPath = Path.GetDirectoryName(simplevideoinputbox.Text) + @"\" + Path.GetFileNameWithoutExtension(simplevideoinputbox.Text) + ".vpy";
+            try
+            {
+                File.WriteAllText(outputPath, script);
+            }
+            catch (Exception)
+            {
+
             }
         }
 

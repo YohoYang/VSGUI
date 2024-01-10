@@ -184,7 +184,7 @@
     <system:String x:Key="p028">Use mkvtoolnix for packaging</system:String>
     <system:String x:Key="p029">Update using agent</system:String>
     <system:String x:Key="p030">The format is socks5://127.0.0.1:1234. If left blank, the system settings will be used</system:String>
-    <system:String x:Key="p031">Go to advanced suppression</system:String>
+    <system:String x:Key="p031">Export vpy to video path</system:String>
     <system:String x:Key="p032">[xxx:xxx]+[xxx:xxx]</system:String>
     <system:String x:Key="p033">The update has been downloaded and will be updated after the next restart</system:String>
     <system:String x:Key="p034">Other settings</system:String>

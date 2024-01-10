@@ -175,8 +175,8 @@
                                             <ColumnDefinition Width="auto"/>
                                         </Grid.ColumnDefinitions>
                                         <DockPanel Grid.Column="1">
-                                            <Button x:Name="converToAdvanced" Content="{DynamicResource p031}" Margin="4,0,0,0" Click="converToAdvanced_Click" Visibility="Collapsed"/>
-                                            <Button x:Name="simplePreviewBtn" Content="{DynamicResource EncodePreview}" Margin="4,0,0,0" ToolTipService.InitialShowDelay='0' ToolTip="{DynamicResource simpleEncodePreviewTipsDesc}" Click="SimpleOpenEditorButton_Click"/>
+                                            <Button x:Name="ExportVpyToDesktop" Content="{DynamicResource p031}" Margin="4,0,0,0" Click="ExportVpyToDesktop_Click"/>
+                                            <Button x:Name="simplePreviewBtn" Content="{DynamicResource EncodePreview}" Margin="4,0,0,0" ToolTipService.InitialShowDelay='0' ToolTip="{DynamicResource simpleEncodePreviewTipsDesc}" Padding="20,6,20,6" Click="SimpleOpenEditorButton_Click"/>
                                             <Button x:Name="simpleAddQueueBtn" Content="{DynamicResource addqueue}" Style="{StaticResource ButtonPrimary}" Margin="6,0,0,0" Click="SimpleAutoEncodeButton_Click" Padding="20,6,20,6"/>
                                         </DockPanel>
                                     </Grid>
