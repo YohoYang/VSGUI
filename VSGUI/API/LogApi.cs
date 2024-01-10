@@ -11,13 +11,20 @@ namespace VSGUI.API
     {
         public static void WriteLog(string logstr)
         {
-            string isEnableLog = IniApi.IniReadValue("EnableLog");
-            if (isEnableLog == "true")
+            try
             {
-                string logpath = Directory.GetCurrentDirectory() + @"\log";
-                Directory.CreateDirectory(logpath);
-                string logFileName = "run_" + DateTime.Now.ToString("yyyy-MM-dd") + ".txt";
-                File.AppendAllText(logpath + @"\" + logFileName, logstr);
+                string isEnableLog = IniApi.IniReadValue("EnableLog");
+                if (isEnableLog == "true")
+                {
+                    string logpath = Directory.GetCurrentDirectory() + @"\log";
+                    Directory.CreateDirectory(logpath);
+                    string logFileName = "run_" + DateTime.Now.ToString("yyyy-MM-dd") + ".txt";
+                    File.AppendAllText(logpath + @"\" + logFileName, logstr);
+                }
+            }
+            catch (Exception)
+            {
+
             }
         }
 
