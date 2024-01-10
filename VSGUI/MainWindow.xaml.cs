@@ -269,6 +269,43 @@ namespace VSGUI
         private void TextBox_PreviewDrop(object sender, DragEventArgs e)
         {
             string[] filename = (string[])e.Data.GetData(DataFormats.FileDrop);
+            if (((TextBox)sender).Name == "simpleasspathinputbox")
+            {
+                string localstr = "";
+                if (this.simpleasspathinputbox.Text != "")
+                {
+                    localstr = this.simpleasspathinputbox.Text;
+                }
+
+                if (filename.Length > 1)
+                {
+                    if (localstr != "")
+                    {
+                        localstr += "|";
+                    }
+                    string assinputStr = "";
+                    for (int k = 0; k < filename.Length; k++)
+                    {
+                        assinputStr += filename[k];
+                        if (k != filename.Length - 1)
+                        {
+                            assinputStr += "|";
+                        }
+                    }
+
+                    localstr += assinputStr;
+                }
+                else
+                {
+                    if (localstr != "")
+                    {
+                        localstr += "|";
+                    }
+                    localstr += filename[0];
+                }
+                this.simpleasspathinputbox.Text = localstr;
+                return;
+            }
             ((TextBox)sender).Text = filename[0];
             if (((TextBox)sender).Name == "simplevideoinputbox")
             {
@@ -288,18 +325,6 @@ namespace VSGUI
                     {
                         ((TextBox)sender).Text = "";
                     }
-                }
-            }
-            else if (((TextBox)sender).Name == "simpleasspathinputbox")
-            {
-                if (filename.Length > 1)
-                {
-                    string assinputStr = "";
-                    foreach (var item in filename)
-                    {
-                        assinputStr += item + "|";
-                    }
-                    this.simpleasspathinputbox.Text = assinputStr;
                 }
             }
         }
@@ -431,6 +456,43 @@ namespace VSGUI
             {
                 return;
             }
+            if (controlname == "simpleasspathinputbox")
+            {
+                string localstr = "";
+                if (this.simpleasspathinputbox.Text != "")
+                {
+                    localstr = this.simpleasspathinputbox.Text;
+                }
+
+                if (files.Length > 1)
+                {
+                    if (localstr != "")
+                    {
+                        localstr += "|";
+                    }
+                    string assinputStr = "";
+                    for (int k = 0; k < files.Length; k++)
+                    {
+                        assinputStr += files[k];
+                        if (k != files.Length - 1)
+                        {
+                            assinputStr += "|";
+                        }
+                    }
+
+                    localstr += assinputStr;
+                }
+                else
+                {
+                    if (localstr != "")
+                    {
+                        localstr += "|";
+                    }
+                    localstr += files[0];
+                }
+                this.simpleasspathinputbox.Text = localstr;
+                return;
+            }
             if (files.Length > 1)
             {
                 //多文件输入
@@ -441,18 +503,6 @@ namespace VSGUI
                 else if (controlname == "audioinputbox")
                 {
                     MultiInputUpdate(2, files);
-                }
-                else if (controlname == "simpleasspathinputbox")
-                {
-                    if (files.Length > 1)
-                    {
-                        string assinputStr = "";
-                        foreach (var item in files)
-                        {
-                            assinputStr += item + "|";
-                        }
-                        this.simpleasspathinputbox.Text = assinputStr;
-                    }
                 }
             }
             else
