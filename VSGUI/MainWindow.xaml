@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:VSGUI"
         xmlns:hc="https://handyorg.github.io/handycontrol"
         mc:Ignorable="d"
-        Title="VSGUI" Height="650" Width="700" MinHeight="650" MinWidth="700"
+        Title="VSGUI" Height="660" Width="700" MinHeight="650" MinWidth="700"
         x:Name="windowcontrol"
         Closing="Window_Closing" Closed="Window_Closed">
 
@@ -147,7 +147,10 @@
                                             <ColumnDefinition Width="*"/>
                                         </Grid.ColumnDefinitions>
                                         <TextBlock Grid.Column="0" VerticalAlignment="Center" Text="{DynamicResource p034}" Margin="0,0,6,0"/>
-                                        <CheckBox x:Name="tfmCheckBox" Grid.Column="1" Content="{DynamicResource p035}" MinHeight="30"/>
+                                        <DockPanel Grid.Column="1">
+                                            <CheckBox x:Name="tfmCheckBox" Content="{DynamicResource p035}" MinHeight="30"/>
+                                            <CheckBox x:Name="xyvsfilterCheckBox" Content="{DynamicResource p036}" ToolTipService.InitialShowDelay='100' ToolTip="{DynamicResource p037}" MinHeight="30" Margin="15,0,0,0" Checked="xyvsfilterCheckBox_Checked" Unchecked="xyvsfilterCheckBox_Checked"/>
+                                        </DockPanel>
                                     </Grid>
                                 </hc:UniformSpacingPanel>
                             </Border>

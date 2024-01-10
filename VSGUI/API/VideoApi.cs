@@ -11,7 +11,7 @@ namespace VSGUI.API
 {
     internal class VideoApi
     {
-        public static string MakeVideoScript(string videoinputpath, string resolution, string subpath, bool tfmEnable=false)
+        public static string MakeVideoScript(string videoinputpath, string resolution, string subpath, bool tfmEnable = false, bool xyvsfilterEnable = false)
         {
             //输入视频信息检测
             int sourceWidth = 0;
@@ -86,7 +86,14 @@ namespace VSGUI.API
                             }
                             else
                             {
-                                scriptstr += @"video = core.assrender.TextSub(video, file=r" + "\"" + item + "\"" + ")" + "\r\n";
+                                if (xyvsfilterEnable)
+                                {
+                                    scriptstr += @"video = core.xyvsf.TextSub(video, file=r" + "\"" + item + "\"" + ")" + "\r\n";
+                                }
+                                else
+                                {
+                                    scriptstr += @"video = core.assrender.TextSub(video, file=r" + "\"" + item + "\"" + ")" + "\r\n";
+                                }
                             }
                         }
                     }

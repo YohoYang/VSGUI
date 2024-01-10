@@ -192,7 +192,7 @@ namespace VSGUI.API
             return returnStr;
         }
 
-        public static void AddQueueList(string type, int encoderid, string[] input, string output, string chapinput = "", string group = "", string deletefile = "", string resolution = "", string subtitle = "", string audiocuttext = "", string audiofpstext = "", string audiodelaytext = "", string tfmenable = "")
+        public static void AddQueueList(string type, int encoderid, string[] input, string output, string chapinput = "", string group = "", string deletefile = "", string resolution = "", string subtitle = "", string audiocuttext = "", string audiofpstext = "", string audiodelaytext = "", string tfmenable = "", string xyvsfilterenable = "")
         {
             JsonArray queueJobj = GetQueueList();
             int newid;
@@ -257,6 +257,7 @@ namespace VSGUI.API
             newqueue.Add("audiofpstext", audiofpstext);
             newqueue.Add("audiodelaytext", audiodelaytext);
             newqueue.Add("tfmenable", tfmenable);
+            newqueue.Add("xyvsfilterenable", xyvsfilterenable);
 
             queueJobj.Add(newqueue);
 
@@ -686,7 +687,12 @@ namespace VSGUI.API
                     {
                         tfmEnable = true;
                     }
-                    string script = VideoApi.MakeVideoScript(GetQueueListitem(queueid, "input"), GetQueueListitem(queueid, "resolution"), GetQueueListitem(queueid, "subtitle"), tfmEnable);
+                    bool xyvsfilterEnable = false;
+                    if (GetQueueListitem(queueid, "xyvsfilterenable") != null && GetQueueListitem(queueid, "xyvsfilterenable") == "true")
+                    {
+                        xyvsfilterEnable = true;
+                    }
+                    string script = VideoApi.MakeVideoScript(GetQueueListitem(queueid, "input"), GetQueueListitem(queueid, "resolution"), GetQueueListitem(queueid, "subtitle"), tfmEnable: tfmEnable, xyvsfilterEnable: xyvsfilterEnable);
                     string scriptpath = CommonApi.GetAppTempPath() + "Job_" + queueid + ".vpy";
                     string command = ProcessCommandStr(int.Parse(queueid), "video", int.Parse(GetQueueListitem(queueid, "encoderid")), new string[] { GetQueueListitem(queueid, "input") }, "", GetQueueListitem(queueid, "output"), scriptpath, out string temp1, out string temp2);
                     SetQueueListitem(queueid, "script", script);

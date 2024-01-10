@@ -164,6 +164,12 @@ namespace VSGUI
             {
                 proxyUrl.Text = IniApi.IniReadValue("proxyurl");
             }
+            //xyvsfilter开关
+            if (IniApi.IniReadValue("xyvsfilterEnable") == "true")
+            {
+                this.xyvsfilterCheckBox.IsChecked = true;
+            }
+
         }
 
         /// <summary>
@@ -1011,12 +1017,17 @@ namespace VSGUI
             {
                 tfmEnable = "true";
             }
+            string xyvsfilterEnable = "false";
+            if (xyvsfilterCheckBox.IsChecked == true)
+            {
+                xyvsfilterEnable = "true";
+            }
 
             //生成groud名
             string groupname = CommonApi.GetNewSeed();
             string tempvideopath = Path.GetDirectoryName(simplevideooutputbox.Text) + @"\" + groupname + "_v" + EncoderApi.GetEncoderSuffix("video", simplevideoencoderbox.SelectedIndex);
             string tempaudiopath = Path.GetDirectoryName(simplevideooutputbox.Text) + @"\" + groupname + "_a" + EncoderApi.GetEncoderSuffix("audio", simpleaudioencoderbox.SelectedIndex);
-            QueueApi.AddQueueList("video", simplevideoencoderbox.SelectedIndex, new string[] { simplevideoinputbox.Text }, tempvideopath, resolution: simpleresolutionbox.Text.ToUpper(), subtitle: simpleasspathinputbox.Text, group: groupname, tfmenable: tfmEnable);
+            QueueApi.AddQueueList("video", simplevideoencoderbox.SelectedIndex, new string[] { simplevideoinputbox.Text }, tempvideopath, resolution: simpleresolutionbox.Text.ToUpper(), subtitle: simpleasspathinputbox.Text, group: groupname, tfmenable: tfmEnable, xyvsfilterenable: xyvsfilterEnable);
             QueueApi.AddQueueList("audio", simpleaudioencoderbox.SelectedIndex, new string[] { simpleaudioinputbox.Text }, tempaudiopath, deletefile: simpleaudioinputbox.Text + ".lwi", group: groupname);
             //再添加一个混流任务
             QueueApi.AddQueueList("mux", 0, new string[] { tempvideopath, tempaudiopath }, Path.GetDirectoryName(simplevideooutputbox.Text) + @"\" + Path.GetFileNameWithoutExtension(simplevideooutputbox.Text) + @"_mux." + simplemuxsuffixbox.Text.ToLower(), chapinput: simplecapinputbox.Text, deletefile: tempvideopath + "|" + tempaudiopath, group: groupname);
@@ -1770,7 +1781,12 @@ namespace VSGUI
             {
                 tfmEnable = true;
             }
-            string script = VideoApi.MakeVideoScript(simplevideoinputbox.Text, simpleresolutionbox.Text.ToUpper(), simpleasspathinputbox.Text, tfmEnable);
+            bool xyvsfilterEnable = false;
+            if (xyvsfilterCheckBox.IsChecked == true)
+            {
+                xyvsfilterEnable = true;
+            }
+            string script = VideoApi.MakeVideoScript(simplevideoinputbox.Text, simpleresolutionbox.Text.ToUpper(), simpleasspathinputbox.Text, tfmEnable: tfmEnable, xyvsfilterEnable: xyvsfilterEnable);
             if (script == null)
             {
                 MessageBoxApi.Show("DEBUG ERROR: 视频信息读取错误，麻烦提供视频文件协助调试", LanguageApi.FindRes("error"));
@@ -1856,6 +1872,18 @@ namespace VSGUI
         private void converToAdvanced_Click(object sender, RoutedEventArgs e)
         {
 
+        }
+
+        private void xyvsfilterCheckBox_Checked(object sender, RoutedEventArgs e)
+        {
+            if (this.xyvsfilterCheckBox.IsChecked == true)
+            {
+                IniApi.IniWriteValue("xyvsfilterEnable", "true");
+            }
+            else
+            {
+                IniApi.IniWriteValue("xyvsfilterEnable", "false");
+            }
         }
 
         private void inputPbSucc_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
