@@ -46,11 +46,16 @@ namespace VSGUI
         private void Init()
         {
             tempObject = EncoderApi.GetEncoderJsonObject();
+            string tab = IniApi.IniReadValue("encodeTab");
             if (ltype == "video")
             {
                 encoderbox.ItemsSource = EncoderApi.GetEncoderProfiles(tempObject, "video");
                 encodertypebox.ItemsSource = GetEncodersType();
                 string getconfig = IniApi.IniReadValue("videoencoderboxSelectedIndex");
+                if (tab=="simple")
+                {
+                    getconfig = IniApi.IniReadValue("simplevideoencoderboxSelectedIndex");
+                }
                 if (getconfig == "") getconfig = "0";
                 encoderbox.SelectedIndex = int.Parse(getconfig);
                 normalizebox.Visibility = Visibility.Collapsed;
@@ -61,6 +66,10 @@ namespace VSGUI
                 encoderbox.ItemsSource = EncoderApi.GetEncoderProfiles(tempObject, "audio");
                 encodertypebox.ItemsSource = GetEncodersType();
                 string getconfig = IniApi.IniReadValue("audioencoderboxSelectedIndex");
+                if (tab == "simple")
+                {
+                    getconfig = IniApi.IniReadValue("simpleaudioencoderboxSelectedIndex");
+                }
                 if (getconfig == "") getconfig = "0";
                 encoderbox.SelectedIndex = int.Parse(getconfig);
                 this.encoderwin.Title = LanguageApi.FindRes("p011");
