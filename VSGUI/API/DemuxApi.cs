@@ -79,10 +79,11 @@ namespace VSGUI.API
                     {
                         if (x[i].Groups[2].Value == "Video" || x[i].Groups[2].Value == "Audio" || x[i].Groups[2].Value == "Subtitle")
                         {
-                            commonParameter += " -map " + x[i].Groups[1].Value + " -c copy " + "\"" + Path.GetDirectoryName(inputpath) + @"\" + Path.GetFileNameWithoutExtension(inputpath) + " - " + x[i].Groups[1].Value.Substring(x[i].Groups[1].Value.IndexOf(":") + 1) + "." + x[i].Groups[3].Value + "\"";
+                            commonParameter += " -map " + x[i].Groups[1].Value + " -c copy " + "\"" + Path.GetDirectoryName(inputpath) + @"\" + Path.GetFileNameWithoutExtension(inputpath) + @"\" + Path.GetFileNameWithoutExtension(inputpath) + " - " + x[i].Groups[1].Value.Substring(x[i].Groups[1].Value.IndexOf(":") + 1) + "." + x[i].Groups[3].Value + "\"";
                         }
                     }
                     string fullcommon = defaultcommon + "-i " + "\"" + inputpath + "\"" + commonParameter;
+                    Directory.CreateDirectory(Path.GetDirectoryName(inputpath) + @"\" + Path.GetFileNameWithoutExtension(inputpath) + @"\");
                     ProcessApi.RunProcess(clipath, fullcommon, DataReceived, Exited, Pided);
                     void DataReceived(string data, bool processIsExited)
                     {
@@ -178,10 +179,10 @@ namespace VSGUI.API
                         if (x[i].Groups[2].Value == "TrueHD/AC3")
                         {
                             string thdOutFileName = outFileName.Replace(spext, "thd");
-                            commonParameter += " " + x[i].Groups[1].Value + ":" + "\"" + thdOutFileName + "\"";
+                            commonParameter += " " + x[i].Groups[1].Value + ":" + "\"" + Path.GetDirectoryName(inputpath) + @"\" + Path.GetFileNameWithoutExtension(inputpath) + @"\" + Path.GetFileName(thdOutFileName) + "\"";
                         }
                         //正常添加字符串
-                        commonParameter += " " + x[i].Groups[1].Value + ":" + "\"" + outFileName + "\"";
+                        commonParameter += " " + x[i].Groups[1].Value + ":" + "\""  + Path.GetDirectoryName(inputpath) + @"\" + Path.GetFileNameWithoutExtension(inputpath) + @"\" +Path.GetFileName(outFileName) + "\"";
                     }
                     common = @"eac3to.exe" + " " + "\"" + inputpath + "\"" + commonParameter + " -progressnumbers -log=nul";
                 }
@@ -190,6 +191,7 @@ namespace VSGUI.API
                     ExitedCall("eac3to" + LanguageApi.FindRes("demux") + LanguageApi.FindRes("error"));
                     return;
                 }
+                Directory.CreateDirectory(Path.GetDirectoryName(inputpath) + @"\" + Path.GetFileNameWithoutExtension(inputpath) + @"\");
                 ProcessApi.RunProcess(clipath, common, DataReceived, Exited, Pided);
                 void DataReceived(string data, bool processIsExited)
                 {
@@ -277,7 +279,7 @@ namespace VSGUI.API
                     string commonParameter = "";
                     for (int i = 0; i < infoindex; i++)
                     {
-                        commonParameter += " " + mkvid[i].ToString() + @":" + "\"" + Path.GetDirectoryName(inputpath) + @"\" + Path.GetFileNameWithoutExtension(inputpath) + " - " + mkvid[i].ToString() + "." + getOutputExt(codecid[i].ToString()) + "\"";
+                        commonParameter += " " + mkvid[i].ToString() + @":" + "\"" + Path.GetDirectoryName(inputpath) + @"\" + Path.GetFileNameWithoutExtension(inputpath) + @"\" + Path.GetFileNameWithoutExtension(inputpath) + " - " + mkvid[i].ToString() + "." + getOutputExt(codecid[i].ToString()) + "\"";
                     }
                     if (xa.Count > 0)
                     {
@@ -285,10 +287,11 @@ namespace VSGUI.API
                         for (int i = 0; i < xa.Count; i++)
                         {
                             int aid = i + 1;
-                            commonParameter += " " + aid + ":" + "\"" + Path.GetDirectoryName(inputpath) + @"\" + xa[i].Groups[1].Value + "\"";
+                            commonParameter += " " + aid + ":" + "\"" + Path.GetDirectoryName(inputpath) + @"\" + Path.GetFileNameWithoutExtension(inputpath) + @"\" + xa[i].Groups[1].Value + "\"";
                         }
                     }
                     string fullcommon = @"mkvextract.exe --ui-language en " + "\"" + inputpath + "\"" + @" tracks " + commonParameter;
+                    Directory.CreateDirectory(Path.GetDirectoryName(inputpath) + @"\" + Path.GetFileNameWithoutExtension(inputpath) + @"\");
                     ProcessApi.RunProcess(clipath, fullcommon, DataReceived, Exited, Pided);
                     void DataReceived(string data, bool processIsExited)
                     {
