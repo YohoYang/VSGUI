@@ -71,30 +71,45 @@ namespace VSGUI.API
                 string clipath = MainWindow.binpath + @"\encoder\ffmpeg\";
                 string defaultcommon = @"ffmpeg.exe" + " -hide_banner -y ";
                 string info = ProcessApi.RunSyncProcess(clipath, defaultcommon + "-i " + "\"" + inputpath + "\"");
-                var x = Regex.Matches(info, @"Stream #(\d+:\d+).*?: (.*?): (.*?)\s");
+                var x = Regex.Matches(info, @"Stream #(\d+:\d+).*?: (.*?): (.*?)[\s|,]");
                 if (x.Count > 0)
                 {
+                    Directory.CreateDirectory(Path.GetDirectoryName(inputpath) + @"\" + Path.GetFileNameWithoutExtension(inputpath) + @"\");
+                    DataReceivedCall(LanguageApi.FindRes("demuxing"));
                     string commonParameter = "";
                     for (int i = 0; i < x.Count; i++)
                     {
                         if (x[i].Groups[2].Value == "Video" || x[i].Groups[2].Value == "Audio" || x[i].Groups[2].Value == "Subtitle")
                         {
-                            commonParameter += " -map " + x[i].Groups[1].Value + " -c copy " + "\"" + Path.GetDirectoryName(inputpath) + @"\" + Path.GetFileNameWithoutExtension(inputpath) + @"\" + Path.GetFileNameWithoutExtension(inputpath) + " - " + x[i].Groups[1].Value.Substring(x[i].Groups[1].Value.IndexOf(":") + 1) + "." + x[i].Groups[3].Value + "\"";
+                            string format = x[i].Groups[3].Value;
+                            if (format == "subrip")
+                            {
+                                format = "srt";
+                            }
+                            commonParameter += " -map " + x[i].Groups[1].Value + " -c copy " + "\"" + Path.GetDirectoryName(inputpath) + @"\" + Path.GetFileNameWithoutExtension(inputpath) + @"\" + Path.GetFileNameWithoutExtension(inputpath) + " - " + x[i].Groups[1].Value.Substring(x[i].Groups[1].Value.IndexOf(":") + 1) + "." + format + "\"";
+                        }
+                        if (commonParameter.Length > 6000)
+                        {
+                            string fullcommonfast = defaultcommon + "-i " + "\"" + inputpath + "\"" + commonParameter;
+                            ProcessApi.RunProcess(clipath, fullcommonfast, DataReceived, Exited1, Pided);
+                            commonParameter = "";
                         }
                     }
                     string fullcommon = defaultcommon + "-i " + "\"" + inputpath + "\"" + commonParameter;
-                    Directory.CreateDirectory(Path.GetDirectoryName(inputpath) + @"\" + Path.GetFileNameWithoutExtension(inputpath) + @"\");
                     ProcessApi.RunProcess(clipath, fullcommon, DataReceived, Exited, Pided);
                     void DataReceived(string data, bool processIsExited)
                     {
-                        if (!string.IsNullOrEmpty(data) && !processIsExited)
-                        {
-                            DataReceivedCall(LanguageApi.FindRes("demuxing"));
-                        }
+                        //if (!string.IsNullOrEmpty(data) && !processIsExited)
+                        //{
+                        //    DataReceivedCall(LanguageApi.FindRes("demuxing"));
+                        //}
                     }
                     void Exited()
                     {
                         ExitedCall("ffmpeg" + LanguageApi.FindRes("demux") + LanguageApi.FindRes("finish"));
+                    }
+                    void Exited1()
+                    {
                     }
                     void Pided(string pid)
                     {
