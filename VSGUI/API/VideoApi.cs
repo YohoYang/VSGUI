@@ -119,7 +119,7 @@ namespace VSGUI.API
                 {
                     CreateNoWindow = true,
                     UseShellExecute = false,
-                    Arguments = vpyPath,
+                    Arguments = "\"" + vpyPath + "\"",
                 }
             };
             proc.Start();
