@@ -182,7 +182,7 @@ namespace VSGUI.API
                             commonParameter += " " + x[i].Groups[1].Value + ":" + "\"" + Path.GetDirectoryName(inputpath) + @"\" + Path.GetFileNameWithoutExtension(inputpath) + @"\" + Path.GetFileName(thdOutFileName) + "\"";
                         }
                         //正常添加字符串
-                        commonParameter += " " + x[i].Groups[1].Value + ":" + "\""  + Path.GetDirectoryName(inputpath) + @"\" + Path.GetFileNameWithoutExtension(inputpath) + @"\" +Path.GetFileName(outFileName) + "\"";
+                        commonParameter += " " + x[i].Groups[1].Value + ":" + "\"" + Path.GetDirectoryName(inputpath) + @"\" + Path.GetFileNameWithoutExtension(inputpath) + @"\" + Path.GetFileName(outFileName) + "\"";
                     }
                     common = @"eac3to.exe" + " " + "\"" + inputpath + "\"" + commonParameter + " -progressnumbers -log=nul";
                 }
@@ -277,32 +277,54 @@ namespace VSGUI.API
                 if (infoindex > 0)
                 {
                     string commonParameter = "";
-                    for (int i = 0; i < infoindex; i++)
-                    {
-                        commonParameter += " " + mkvid[i].ToString() + @":" + "\"" + Path.GetDirectoryName(inputpath) + @"\" + Path.GetFileNameWithoutExtension(inputpath) + @"\" + Path.GetFileNameWithoutExtension(inputpath) + " - " + mkvid[i].ToString() + "." + getOutputExt(codecid[i].ToString()) + "\"";
-                    }
+                    Directory.CreateDirectory(Path.GetDirectoryName(inputpath) + @"\" + Path.GetFileNameWithoutExtension(inputpath) + @"\");
+                    DataReceivedCall(LanguageApi.FindRes("demuxing"));
+                    //先解压附件
                     if (xa.Count > 0)
                     {
-                        commonParameter += " attachments";
+                        commonParameter = " attachments";
                         for (int i = 0; i < xa.Count; i++)
                         {
                             int aid = i + 1;
                             commonParameter += " " + aid + ":" + "\"" + Path.GetDirectoryName(inputpath) + @"\" + Path.GetFileNameWithoutExtension(inputpath) + @"\" + xa[i].Groups[1].Value + "\"";
+                            if (commonParameter.Length > 6000)
+                            {
+                                string fullcommonfast = @"mkvextract.exe --ui-language en " + "\"" + inputpath + "\"" + @" tracks " + commonParameter;
+                                ProcessApi.RunProcess(clipath, fullcommonfast, DataReceived, Exited1, Pided);
+                                commonParameter = " attachments";
+                            }
+                        }
+                        string fullcommon1 = @"mkvextract.exe --ui-language en " + "\"" + inputpath + "\"" + @" tracks " + commonParameter;
+                        ProcessApi.RunProcess(clipath, fullcommon1, DataReceived, Exited1, Pided);
+                    }
+                    //然后解压正常内容
+                    commonParameter = "";
+                    for (int i = 0; i < infoindex; i++)
+                    {
+                        commonParameter += " " + mkvid[i].ToString() + @":" + "\"" + Path.GetDirectoryName(inputpath) + @"\" + Path.GetFileNameWithoutExtension(inputpath) + @"\" + Path.GetFileNameWithoutExtension(inputpath) + " - " + mkvid[i].ToString() + "." + getOutputExt(codecid[i].ToString()) + "\"";
+                        if (commonParameter.Length > 6000)
+                        {
+                            string fullcommonfast = @"mkvextract.exe --ui-language en " + "\"" + inputpath + "\"" + @" tracks " + commonParameter;
+                            ProcessApi.RunProcess(clipath, fullcommonfast, DataReceived, Exited1, Pided);
+                            commonParameter = "";
                         }
                     }
                     string fullcommon = @"mkvextract.exe --ui-language en " + "\"" + inputpath + "\"" + @" tracks " + commonParameter;
-                    Directory.CreateDirectory(Path.GetDirectoryName(inputpath) + @"\" + Path.GetFileNameWithoutExtension(inputpath) + @"\");
                     ProcessApi.RunProcess(clipath, fullcommon, DataReceived, Exited, Pided);
                     void DataReceived(string data, bool processIsExited)
                     {
-                        if (!string.IsNullOrEmpty(data) && !processIsExited)
-                        {
-                            DataReceivedCall(LanguageApi.FindRes("demuxing"));
-                        }
+                        //if (!string.IsNullOrEmpty(data) && !processIsExited)
+                        //{
+                        //    DataReceivedCall(LanguageApi.FindRes("demuxing"));
+                        //}
                     }
                     void Exited()
                     {
                         ExitedCall("mkvextract" + LanguageApi.FindRes("demux") + LanguageApi.FindRes("finish"));
+                    }
+                    void Exited1()
+                    {
+
                     }
                     void Pided(string pid)
                     {
