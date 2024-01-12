@@ -149,7 +149,7 @@
                                         <TextBlock Grid.Column="0" VerticalAlignment="Center" Text="{DynamicResource p034}" Margin="0,0,6,0"/>
                                         <DockPanel Grid.Column="1">
                                             <CheckBox x:Name="tfmCheckBox" Content="{DynamicResource p035}" MinHeight="30"/>
-                                            <CheckBox x:Name="xyvsfilterCheckBox" Content="{DynamicResource p036}" ToolTipService.InitialShowDelay='100' ToolTip="{DynamicResource p037}" MinHeight="30" Margin="15,0,0,0" Checked="xyvsfilterCheckBox_Checked" Unchecked="xyvsfilterCheckBox_Checked"/>
+                                            <CheckBox x:Name="vsfiltermodCheckBox" Content="{DynamicResource p036}" ToolTipService.InitialShowDelay='100' ToolTip="{DynamicResource p037}" MinHeight="30" Margin="15,0,0,0" Checked="vsfiltermodCheckBox_Checked" Unchecked="vsfiltermodCheckBox_Checked"/>
                                         </DockPanel>
                                     </Grid>
                                 </hc:UniformSpacingPanel>

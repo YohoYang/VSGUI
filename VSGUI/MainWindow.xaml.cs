@@ -165,9 +165,9 @@ namespace VSGUI
                 proxyUrl.Text = IniApi.IniReadValue("proxyurl");
             }
             //xyvsfilter开关
-            if (IniApi.IniReadValue("xyvsfilterEnable") == "true")
+            if (IniApi.IniReadValue("vsfiltermodEnable") == "true")
             {
-                this.xyvsfilterCheckBox.IsChecked = true;
+                this.vsfiltermodCheckBox.IsChecked = true;
             }
 
         }
@@ -1068,7 +1068,7 @@ namespace VSGUI
                 tfmEnable = "true";
             }
             string xyvsfilterEnable = "false";
-            if (xyvsfilterCheckBox.IsChecked == true)
+            if (vsfiltermodCheckBox.IsChecked == true)
             {
                 xyvsfilterEnable = "true";
             }
@@ -1894,15 +1894,15 @@ namespace VSGUI
             IniApi.IniWriteValue("proxyurl", this.proxyUrl.Text);
         }
 
-        private void xyvsfilterCheckBox_Checked(object sender, RoutedEventArgs e)
+        private void vsfiltermodCheckBox_Checked(object sender, RoutedEventArgs e)
         {
-            if (this.xyvsfilterCheckBox.IsChecked == true)
+            if (this.vsfiltermodCheckBox.IsChecked == true)
             {
-                IniApi.IniWriteValue("xyvsfilterEnable", "true");
+                IniApi.IniWriteValue("vsfiltermodEnable", "true");
             }
             else
             {
-                IniApi.IniWriteValue("xyvsfilterEnable", "false");
+                IniApi.IniWriteValue("vsfiltermodEnable", "false");
             }
         }
         private string GetSimplePreviewVpyScript()
@@ -1916,12 +1916,12 @@ namespace VSGUI
             {
                 tfmEnable = true;
             }
-            bool xyvsfilterEnable = false;
-            if (xyvsfilterCheckBox.IsChecked == true)
+            bool vsfiltermodEnable = false;
+            if (vsfiltermodCheckBox.IsChecked == true)
             {
-                xyvsfilterEnable = true;
+                vsfiltermodEnable = true;
             }
-            string script = VideoApi.MakeVideoScript(simplevideoinputbox.Text, simpleresolutionbox.Text.ToUpper(), simpleasspathinputbox.Text, tfmEnable: tfmEnable, xyvsfilterEnable: xyvsfilterEnable);
+            string script = VideoApi.MakeVideoScript(simplevideoinputbox.Text, simpleresolutionbox.Text.ToUpper(), simpleasspathinputbox.Text, tfmEnable: tfmEnable, vsfiltermodEnable: vsfiltermodEnable);
             return script;
         }
 

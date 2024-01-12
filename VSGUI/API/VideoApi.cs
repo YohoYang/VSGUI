@@ -11,7 +11,7 @@ namespace VSGUI.API
 {
     internal class VideoApi
     {
-        public static string MakeVideoScript(string videoinputpath, string resolution, string subpath, bool tfmEnable = false, bool xyvsfilterEnable = false)
+        public static string MakeVideoScript(string videoinputpath, string resolution, string subpath, bool tfmEnable = false, bool vsfiltermodEnable = false)
         {
             //输入视频信息检测
             int sourceWidth = 0;
@@ -86,9 +86,9 @@ namespace VSGUI.API
                             }
                             else
                             {
-                                if (xyvsfilterEnable)
+                                if (vsfiltermodEnable)
                                 {
-                                    scriptstr += @"video = core.xyvsf.TextSub(video, file=r" + "\"" + item + "\"" + ")" + "\r\n";
+                                    scriptstr += @"video = core.vsfm.TextSubMod(video, file=r" + "\"" + item + "\"" + ")" + "\r\n";
                                 }
                                 else
                                 {

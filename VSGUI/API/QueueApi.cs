@@ -687,12 +687,12 @@ namespace VSGUI.API
                     {
                         tfmEnable = true;
                     }
-                    bool xyvsfilterEnable = false;
+                    bool vsfiltermodEnable = false;
                     if (GetQueueListitem(queueid, "xyvsfilterenable") != null && GetQueueListitem(queueid, "xyvsfilterenable") == "true")
                     {
-                        xyvsfilterEnable = true;
+                        vsfiltermodEnable = true;
                     }
-                    string script = VideoApi.MakeVideoScript(GetQueueListitem(queueid, "input"), GetQueueListitem(queueid, "resolution"), GetQueueListitem(queueid, "subtitle"), tfmEnable: tfmEnable, xyvsfilterEnable: xyvsfilterEnable);
+                    string script = VideoApi.MakeVideoScript(GetQueueListitem(queueid, "input"), GetQueueListitem(queueid, "resolution"), GetQueueListitem(queueid, "subtitle"), tfmEnable: tfmEnable, vsfiltermodEnable: vsfiltermodEnable);
                     string scriptpath = CommonApi.GetAppTempPath() + "Job_" + queueid + ".vpy";
                     string command = ProcessCommandStr(int.Parse(queueid), "video", int.Parse(GetQueueListitem(queueid, "encoderid")), new string[] { GetQueueListitem(queueid, "input") }, "", GetQueueListitem(queueid, "output"), scriptpath, out string temp1, out string temp2);
                     SetQueueListitem(queueid, "script", script);

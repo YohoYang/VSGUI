@@ -189,7 +189,7 @@
     <system:String x:Key="p033">The update has been downloaded and will be updated after the next restart</system:String>
     <system:String x:Key="p034">Other settings</system:String>
     <system:String x:Key="p035">Video deinterlacing</system:String>
-    <system:String x:Key="p036">Subtitles use xy-VSFilter</system:String>
-    <system:String x:Key="p037">VSGUI uses libass for subtitle rendering by default, but aegisub uses xy-VSFilter for rendering by default, which results in differences in some subtitle effects. Checking this option will switch to using xy-VSFilter. only simple suppression is effective.</system:String>
+    <system:String x:Key="p036">Subtitles use VSFilterMod</system:String>
+    <system:String x:Key="p037">VSGUI uses libass for subtitle rendering by default, but aegisub uses VSFilter for rendering by default, which results in differences in some subtitle effects. Checking this option will switch to using VSFilterMod. only simple suppression is effective.</system:String>
     
 </ResourceDictionary>
