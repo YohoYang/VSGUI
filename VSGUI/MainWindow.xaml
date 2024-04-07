@@ -656,6 +656,24 @@
                                             <ColumnDefinition Width="*"/>
                                             <ColumnDefinition Width="auto"/>
                                         </Grid.ColumnDefinitions>
+                                        <CheckBox x:Name="CustomPyenv" Content="{DynamicResource enableCustomPyenv}" Checked="ConfigCheckBox_Checked" Unchecked="ConfigCheckBox_Checked"></CheckBox>
+                                        <TextBlock x:Name="CustomPyenvDesc" Grid.Column="1" Text=""/>
+                                    </Grid>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        <TextBox x:Name="selectPythonEnvPathbox" Grid.Column="0" PreviewDragOver="TextBox_PreviewDragOver" PreviewDrop="TextBox_PreviewDrop"/>
+                                        <Button x:Name="selectPythonEnvPath" Grid.Column="2" Content="..." Margin="4,0,0,0" Click="SelectPythonEnvPath_Click"/>
+                                    </Grid>
+
+                                    <hc:Divider Margin="0"/>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="auto"/>
+                                        </Grid.ColumnDefinitions>
                                         <CheckBox x:Name="UseSystemEnvironment" Content="{DynamicResource useSystemEnvironment}" Checked="ConfigCheckBox_Checked" Unchecked="ConfigCheckBox_Checked"></CheckBox>
                                         <DockPanel Grid.Column="1" Height="16" VerticalAlignment="Center">
                                             <TextBlock Text="{DynamicResource buildin}" />

@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -13,10 +15,21 @@ namespace VSGUI.API
         {
             string[] versions = new string[4];
             MatchCollection x;
-
-            string sysPyVer = ProcessApi.RunSyncProcess("", @"python.exe --version");
-            string sysVsVer = ProcessApi.RunSyncProcess("", @"vspipe.exe --version");
-
+            string sysPyVer;
+            string sysVsVer;
+            if (CommonApi.CheckCustomPyenvExec() && IniApi.IniReadValue("CustomPyenv") != "false")
+            {
+                string CustomPyenvDir = CommonApi.GetCustomPyenvDir();
+                string pythonExePath = Path.Combine(CustomPyenvDir, "python.exe");
+                string vspipeExePath = Path.Combine(CustomPyenvDir, "vspipe.exe");
+                sysPyVer = ProcessApi.RunSyncProcess("", $"{pythonExePath} --version");
+                sysVsVer = ProcessApi.RunSyncProcess("", $"{vspipeExePath} --version");
+            }
+            else 
+            { 
+            sysPyVer = ProcessApi.RunSyncProcess("", @"python.exe --version");
+            sysVsVer = ProcessApi.RunSyncProcess("", @"vspipe.exe --version");
+            }
             x = Regex.Matches(sysPyVer, @"Python (.*)\s");
             if (x.Count > 0)
             {

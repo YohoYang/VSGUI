@@ -316,5 +316,23 @@ namespace VSGUI.API
             return pstr;
         }
 
+        public static bool CheckCustomPyenvExec()
+        {
+            return File.Exists(IniApi.IniReadValue("pythonEnvPathBox"));
+        }
+
+        public static string GetCustomPyenvDir()
+        {
+            if (CheckCustomPyenvExec())
+            {
+                return System.IO.Path.GetDirectoryName(IniApi.IniReadValue("pythonEnvPathBox"));
+
+            }
+            else
+            {
+                return "";
+            }
+        }
+
     }
 }
