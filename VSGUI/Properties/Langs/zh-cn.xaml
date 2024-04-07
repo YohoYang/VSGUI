@@ -154,6 +154,7 @@
     <system:String x:Key="simpleVideoInputPlaceholder">单文件，将要压制的视频拖入此处，将自动判断并填充音频输入</system:String>
     <system:String x:Key="simpleAudioInputPlaceholder">如果需要使用与原视频不同的音频，可以在拖入视频后将音频拖入此处</system:String>
     <system:String x:Key="simpleSubInputPlaceholder">支持ass/srt/sup，使用|符号分隔多个文件</system:String>
+    <system:String x:Key="enableCustomPyenv">使用自定义Python 环境</system:String>
 
     <system:String x:Key="p001">是否立刻重启资源管理器以马上生效</system:String>
     <system:String x:Key="p002">放入输入文件后会自动填写，也可以手动设置</system:String>
@@ -190,6 +191,6 @@
     <system:String x:Key="p034">其他设置</system:String>
     <system:String x:Key="p035">视频反交错</system:String>
     <system:String x:Key="p036">字幕使用VSFilterMod</system:String>
-    <system:String x:Key="p037">VSGUI默认使用libass来进行字幕渲染，但aegisub默认使用VSFilter进行渲染，这导致部分字幕效果存在差异，勾选此项将切换为使用VSFilterMod，仅简易压制有效。</system:String>
-
+    <system:String x:Key="p037">VSGUI默认使用libass来进行字幕渲染，但Aegisub默认使用VSFilter进行渲染，这导致部分字幕效果存在差异，勾选此项将切换为使用VSFilterMod，仅简易压制有效。</system:String>
+    <system:String x:Key="p038">找不到 vsedit-previewer.exe</system:String>
 </ResourceDictionary>

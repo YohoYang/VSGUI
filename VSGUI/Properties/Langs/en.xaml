@@ -154,7 +154,8 @@
     <system:String x:Key="simpleVideoInputPlaceholder">Single file, Drag the video to be suppressed here, it will automatically judge and fill the audio input</system:String>
     <system:String x:Key="simpleAudioInputPlaceholder">If you need to use a different audio from the original video, you can drag the audio here after dragging the video</system:String>
     <system:String x:Key="simpleSubInputPlaceholder">support ass/srt/sup, use the | symbol to separate multiple files</system:String>
-
+    <system:String x:Key="enableCustomPyenv">Use custom Python Environment</system:String>
+    
     <system:String x:Key="p001">Whether to restart the resource manager immediately to take effect immediately</system:String>
     <system:String x:Key="p002">It will be filled in automatically after you put it into the input file, or you can set it manually.</system:String>
     <system:String x:Key="p003">An unexpected error occurred</system:String>
@@ -191,5 +192,6 @@
     <system:String x:Key="p035">Video deinterlacing</system:String>
     <system:String x:Key="p036">Subtitles use VSFilterMod</system:String>
     <system:String x:Key="p037">VSGUI uses libass for subtitle rendering by default, but aegisub uses VSFilter for rendering by default, which results in differences in some subtitle effects. Checking this option will switch to using VSFilterMod. only simple suppression is effective.</system:String>
-    
+    <system:String x:Key="p038">Cannot find vsedit-previewer.exe.</system:String>
+
 </ResourceDictionary>

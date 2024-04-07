@@ -1,4 +1,5 @@
 ﻿using HandyControl.Data;
+using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -49,6 +50,9 @@ namespace VSGUI
 
             windowcontrol.Title = windowcontrol.Title + " " + coreversion;
             coreversionshowtextblock.Text = coreversion;
+
+            this.selectPythonEnvPathbox.IsEnabled = false;
+            this.selectPythonEnvPath.IsEnabled = false;
 
             //检测更新
             string proxyurl = "";
@@ -169,6 +173,29 @@ namespace VSGUI
             {
                 this.vsfiltermodCheckBox.IsChecked = true;
             }
+            // 使用自定义Python环境开关
+            if (IniApi.IniReadValue("pythonEnvPathBox") != "")
+            {
+                if (CommonApi.CheckCustomPyenvExec())
+                    {
+                    this.selectPythonEnvPathbox.Text = IniApi.IniReadValue("pythonEnvPathBox");
+                    this.selectPythonEnvPathbox.IsEnabled = false;
+                    this.selectPythonEnvPath.IsEnabled = true;
+                }
+            }
+            else
+            {
+                this.selectPythonEnvPathbox.IsEnabled = true;
+                this.selectPythonEnvPath.IsEnabled = true;
+            }
+            // 使用系统环境开关
+            if (CommonApi.CheckVSEditorInstall() == 2 && IniApi.IniReadValue("UseSystemEnvironment") == "true")
+            {
+                this.UseSystemEnvironment.IsEnabled = true;
+                this.UseSystemEnvironment.IsChecked = true;
+                MessageBoxApi.Show(LanguageApi.FindRes("useSystemEnvironmentWarningVsEditor"), LanguageApi.FindRes("tips"));
+            }
+
 
         }
 
@@ -529,6 +556,27 @@ namespace VSGUI
         }
 
         /// <summary>
+        /// Python 环境
+        /// </summary>
+        private void SelectPythonEnvPath_Click(object sender, RoutedEventArgs e)
+        {
+            UseNetEncoderJsonDesc.Foreground = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Colors.Black);
+            UseNetEncoderJsonDesc.Text = LanguageApi.FindRes("netEncoderUpdating");
+
+            string controlname = ((Button)sender).Name + "box";
+            var toTextBox = (TextBox)this.FindName(controlname);
+            toTextBox.IsEnabled = true;
+            string[] files = CallOpenFileDialog("Python Executable|python.exe");
+            if (files != null)
+            {
+                toTextBox.Text = files[0];
+                IniApi.IniWriteValue("pythonEnvPathBox", files[0]);
+                UpdateVersion();
+            }
+        }
+
+
+        /// <summary>
         /// 视频拖入后处理
         /// </summary>
         private void VideoInputUpdate()
@@ -570,6 +618,7 @@ namespace VSGUI
 
 
         }
+
 
         /// <summary>
         /// 音频拖入后处理
@@ -1148,7 +1197,14 @@ namespace VSGUI
                     string clipath = QueueApi.GetQueueListitem(queueid, "clipath");
                     if (QueueApi.GetQueueListitem(queueid, "type") == "video" && IniApi.IniReadValue("UseSystemEnvironment") == "true")
                     {
-                        clipath = "";
+                        if (IniApi.IniReadValue("CustomPyenv") == "true")
+                        {
+                            clipath = CommonApi.GetCustomPyenvDir();
+                        }
+                        else
+                        {
+                            clipath = "";
+                        }
                     }
                     ProcessApi.RunProcess(clipath, QueueApi.GetQueueListitem(queueid, "command"), DataReceived, Exited, Pided);
 
@@ -1487,6 +1543,12 @@ namespace VSGUI
                 {
                     logTextbox.Visibility = Visibility.Visible;
                 }
+                if (((CheckBox)sender).Name.ToString() == "CustomPyenv")
+                {
+                    this.selectPythonEnvPathbox.IsEnabled = true;
+                    this.selectPythonEnvPath.IsEnabled = true;
+                    UpdateVersion();
+                }
             }
             else
             {
@@ -1495,6 +1557,12 @@ namespace VSGUI
                 if (((CheckBox)sender).Name.ToString() == "EnableQueueLog")
                 {
                     logTextbox.Visibility = Visibility.Collapsed;
+                }
+                if (((CheckBox)sender).Name.ToString() == "CustomPyenv")
+                {
+                    this.selectPythonEnvPathbox.IsEnabled = false;
+                    this.selectPythonEnvPath.IsEnabled = false;
+                    UpdateVersion();
                 }
             }
         }
@@ -1571,11 +1639,28 @@ namespace VSGUI
             }
             if (videoinputbox.Text != "" && Path.GetExtension(videoinputbox.Text).ToLower() == ".vpy")
             {
-                Process.Start(binpath + @"\vs\vsedit.exe", videoinputbox.Text);
+
+                if (CommonApi.GetCustomPyenvDir() != "" && this.UseSystemEnvironment.IsChecked == true)
+                {
+                    Process.Start(CommonApi.GetCustomPyenvDir() + @"\vsedit.exe", videoinputbox.Text);
+                }
+
+                else
+                {
+                    Process.Start(binpath + @"\vs\vsedit.exe", videoinputbox.Text);
+                }
             }
             else
             {
-                Process.Start(binpath + @"\vs\vsedit.exe");
+                if (CommonApi.GetCustomPyenvDir() != "" && this.UseSystemEnvironment.IsChecked == true)
+                {
+                    Process.Start(CommonApi.GetCustomPyenvDir() + @"\vsedit.exe");
+                }
+
+                else
+                {
+                    Process.Start(binpath + @"\vs\vsedit.exe");
+                }
             }
         }
 
@@ -1702,6 +1787,9 @@ namespace VSGUI
                         {
                             UseSystemEnvironment.IsEnabled = false;
                             UseSystemEnvironment.IsChecked = false;
+                        }
+                        else { 
+                            UseSystemEnvironment.IsEnabled = true;
                         }
                         if (CommonApi.CheckVSEditorInstall() == 2 && IniApi.IniReadValue("UseSystemEnvironment") == "true")
                         {
@@ -1832,13 +1920,36 @@ namespace VSGUI
 
         private void OpenFiltersButton_Click(object sender, RoutedEventArgs e)
         {
+            if (CommonApi.GetCustomPyenvDir() != "" && this.CustomPyenv.IsChecked == true)
+            {
+                if (!Directory.Exists(CommonApi.GetCustomPyenvDir() + @"\vapoursynth64\plugins"))
+                    {
+                    Directory.CreateDirectory(CommonApi.GetCustomPyenvDir() + @"\vapoursynth64\plugins");
+                    }
+
+                System.Diagnostics.Process.Start("explorer.exe", CommonApi.GetCustomPyenvDir() + @"\vapoursynth64\plugins");
+            }
+
+            else { 
+
             Directory.CreateDirectory(binpath + @"\vs\vapoursynth64\plugins");
             System.Diagnostics.Process.Start("explorer.exe", binpath + @"\vs\vapoursynth64\plugins");
+
+            }
         }
         private void OpenScriptsButton_Click(object sender, RoutedEventArgs e)
         {
-            Directory.CreateDirectory(binpath + @"\vs\python\libs");
-            System.Diagnostics.Process.Start("explorer.exe", binpath + @"\vs\python\libs");
+
+            if (CommonApi.GetCustomPyenvDir() != "" && this.CustomPyenv.IsChecked == true)
+            {
+                System.Diagnostics.Process.Start("explorer.exe", CommonApi.GetCustomPyenvDir() + @"\vapoursynth64");
+            }
+
+            else
+            {
+                Directory.CreateDirectory(binpath + @"\vs\python\libs");
+                System.Diagnostics.Process.Start("explorer.exe", binpath + @"\vs\python\libs");
+            }
         }
 
 
