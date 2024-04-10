@@ -211,10 +211,10 @@ namespace VSGUI.API
         }
 
         /// <summary>
-        /// 检查注册表，看是否已绑定vseditor
+        /// 检查注册表，看是否已绑定内建的vseditor。 返回2为已绑定
         /// </summary>
         /// <returns></returns>
-        public static int CheckVSEditorInstall()
+        public static int CheckBuildinVSEditorInstall()
         {
             int count = 0;
             try
@@ -314,24 +314,6 @@ namespace VSGUI.API
             string pstr = MainWindow.binpath + @"\temp\";
             Directory.CreateDirectory(pstr);
             return pstr;
-        }
-
-        public static bool CheckCustomPyenvExec()
-        {
-            return File.Exists(IniApi.IniReadValue("pythonEnvPathBox"));
-        }
-
-        public static string GetCustomPyenvDir()
-        {
-            if (CheckCustomPyenvExec())
-            {
-                return System.IO.Path.GetDirectoryName(IniApi.IniReadValue("pythonEnvPathBox"));
-
-            }
-            else
-            {
-                return "";
-            }
         }
 
     }

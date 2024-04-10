@@ -113,28 +113,17 @@ namespace VSGUI.API
 
         public static void OpenPreviewWindows(string vpyPath)
         {
-            string EmbedVSPExec = MainWindow.binpath + @"\vs\vsedit-previewer.exe";
-            string customVSPExec = CommonApi.GetCustomPyenvDir() + @"\vsedit-previewer.exe";
-            string VSPExec;
-            if (CommonApi.CheckCustomPyenvExec() && Convert.ToBoolean(IniApi.IniReadValue("UseSystemEnvironment")))
-            {
-                VSPExec = customVSPExec;
-            }
-            else
-            {
-                VSPExec = EmbedVSPExec;
-            }
-
+            string previewPath = MainWindow.envpath + @"\vsedit-previewer.exe";
             Process proc = new Process
             {
-                StartInfo = new ProcessStartInfo(VSPExec)
+                StartInfo = new ProcessStartInfo(previewPath)
                 {
                     CreateNoWindow = true,
                     UseShellExecute = false,
                     Arguments = "\"" + vpyPath + "\"",
                 }
             };
-            if (File.Exists(VSPExec))
+            if (File.Exists(previewPath))
             {
                 proc.Start();
             }

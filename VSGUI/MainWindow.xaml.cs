@@ -25,8 +25,9 @@ namespace VSGUI
     public partial class MainWindow
     {
         public static string binpath = Directory.GetCurrentDirectory() + @"\bin";
+        public static string envpath = null;
         private bool forcedStop = false;
-        private string coreversion = "v1.0.7";
+        private string coreversion = "v1.0.8";
         public static string logBoxStr = "";
         private string[] videoMultiInputLists, audioMultiInputLists;
 
@@ -51,9 +52,6 @@ namespace VSGUI
             windowcontrol.Title = windowcontrol.Title + " " + coreversion;
             coreversionshowtextblock.Text = coreversion;
 
-            this.selectPythonEnvPathbox.IsEnabled = false;
-            this.selectPythonEnvPath.IsEnabled = false;
-
             //检测更新
             string proxyurl = "";
             if (IniApi.IniReadValue("proxyurl") != "")
@@ -75,7 +73,7 @@ namespace VSGUI
             UpdateVseditorButtonStatus();
 
             //获取py和vs版本的情况
-            UpdateVersion();
+            UpdateEnvVersion();
         }
 
         /// <summary>
@@ -173,30 +171,7 @@ namespace VSGUI
             {
                 this.vsfiltermodCheckBox.IsChecked = true;
             }
-            // 使用自定义Python环境开关
-            if (IniApi.IniReadValue("pythonEnvPathBox") != "")
-            {
-                if (CommonApi.CheckCustomPyenvExec())
-                    {
-                    this.selectPythonEnvPathbox.Text = IniApi.IniReadValue("pythonEnvPathBox");
-                    this.selectPythonEnvPathbox.IsEnabled = false;
-                    this.selectPythonEnvPath.IsEnabled = true;
-                }
-            }
-            else
-            {
-                this.selectPythonEnvPathbox.IsEnabled = true;
-                this.selectPythonEnvPath.IsEnabled = true;
-            }
-            // 使用系统环境开关
-            if (CommonApi.CheckVSEditorInstall() == 2 && IniApi.IniReadValue("UseSystemEnvironment") == "true")
-            {
-                this.UseSystemEnvironment.IsEnabled = true;
-                this.UseSystemEnvironment.IsChecked = true;
-                MessageBoxApi.Show(LanguageApi.FindRes("useSystemEnvironmentWarningVsEditor"), LanguageApi.FindRes("tips"));
-            }
-
-
+            // 环境选项恢复移动到环境检测后
         }
 
         /// <summary>
@@ -556,22 +531,15 @@ namespace VSGUI
         }
 
         /// <summary>
-        /// Python 环境
+        /// Python 环境按钮选择
         /// </summary>
-        private void SelectPythonEnvPath_Click(object sender, RoutedEventArgs e)
+        private void SelectCustomEnvPath_Click(object sender, RoutedEventArgs e)
         {
-            UseNetEncoderJsonDesc.Foreground = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Colors.Black);
-            UseNetEncoderJsonDesc.Text = LanguageApi.FindRes("netEncoderUpdating");
-
-            string controlname = ((Button)sender).Name + "box";
-            var toTextBox = (TextBox)this.FindName(controlname);
-            toTextBox.IsEnabled = true;
             string[] files = CallOpenFileDialog("Python Executable|python.exe");
             if (files != null)
             {
-                toTextBox.Text = files[0];
-                IniApi.IniWriteValue("pythonEnvPathBox", files[0]);
-                UpdateVersion();
+                IniApi.IniWriteValue("customEnvPath", System.IO.Path.GetDirectoryName(files[0]) + @"\");
+                UpdateEnvVersion();
             }
         }
 
@@ -1194,17 +1162,12 @@ namespace VSGUI
                     //写入totalframes
                     QueueApi.UpdateTotalframes(queueid);
 
+                    //处理环境path
                     string clipath = QueueApi.GetQueueListitem(queueid, "clipath");
-                    if (QueueApi.GetQueueListitem(queueid, "type") == "video" && IniApi.IniReadValue("UseSystemEnvironment") == "true")
+                    if (QueueApi.GetQueueListitem(queueid, "type") == "video")
                     {
-                        if (IniApi.IniReadValue("CustomPyenv") == "true")
-                        {
-                            clipath = CommonApi.GetCustomPyenvDir();
-                        }
-                        else
-                        {
-                            clipath = "";
-                        }
+                        //使用实时的配置
+                        clipath = envpath;
                     }
                     ProcessApi.RunProcess(clipath, QueueApi.GetQueueListitem(queueid, "command"), DataReceived, Exited, Pided);
 
@@ -1543,12 +1506,6 @@ namespace VSGUI
                 {
                     logTextbox.Visibility = Visibility.Visible;
                 }
-                if (((CheckBox)sender).Name.ToString() == "CustomPyenv")
-                {
-                    this.selectPythonEnvPathbox.IsEnabled = true;
-                    this.selectPythonEnvPath.IsEnabled = true;
-                    UpdateVersion();
-                }
             }
             else
             {
@@ -1557,12 +1514,6 @@ namespace VSGUI
                 if (((CheckBox)sender).Name.ToString() == "EnableQueueLog")
                 {
                     logTextbox.Visibility = Visibility.Collapsed;
-                }
-                if (((CheckBox)sender).Name.ToString() == "CustomPyenv")
-                {
-                    this.selectPythonEnvPathbox.IsEnabled = false;
-                    this.selectPythonEnvPath.IsEnabled = false;
-                    UpdateVersion();
                 }
             }
         }
@@ -1624,7 +1575,7 @@ namespace VSGUI
         {
             if (IniApi.IniReadValue("InstallVseditPrompted") != "true")
             {
-                if (CommonApi.CheckVSEditorInstall() < 2)
+                if (CommonApi.CheckBuildinVSEditorInstall() < 2)
                 {
                     var messageboxresult = MessageBoxApi.Show(LanguageApi.FindRes("vpyEditorAssociationTipsDesc"), LanguageApi.FindRes("tips"), MessageWindow.MessageBoxButton.YesNoNomore);
                     if (messageboxresult == MessageWindow.MessageResult.Yes)
@@ -1637,31 +1588,21 @@ namespace VSGUI
                     }
                 }
             }
+
+            string filepath = "";
             if (videoinputbox.Text != "" && Path.GetExtension(videoinputbox.Text).ToLower() == ".vpy")
             {
-
-                if (CommonApi.GetCustomPyenvDir() != "" && this.UseSystemEnvironment.IsChecked == true)
-                {
-                    Process.Start(CommonApi.GetCustomPyenvDir() + @"\vsedit.exe", videoinputbox.Text);
-                }
-
-                else
-                {
-                    Process.Start(binpath + @"\vs\vsedit.exe", videoinputbox.Text);
-                }
+                filepath = videoinputbox.Text;
+            }
+            if (envpath != null && EnvApi.checkEnvEditorNow())
+            {
+                Process.Start(envpath + @"\vsedit.exe", filepath);
             }
             else
             {
-                if (CommonApi.GetCustomPyenvDir() != "" && this.UseSystemEnvironment.IsChecked == true)
-                {
-                    Process.Start(CommonApi.GetCustomPyenvDir() + @"\vsedit.exe");
-                }
-
-                else
-                {
-                    Process.Start(binpath + @"\vs\vsedit.exe");
-                }
+                MessageBoxApi.Show(LanguageApi.FindRes("p045"), LanguageApi.FindRes("tips"));
             }
+
         }
 
         /// <summary>
@@ -1756,7 +1697,7 @@ namespace VSGUI
 
         private void UpdateVseditorButtonStatus()
         {
-            if (CommonApi.CheckVSEditorInstall() == 2)
+            if (CommonApi.CheckBuildinVSEditorInstall() == 2)
             {
                 installvseditorbutton.Visibility = Visibility.Collapsed;
                 uninstallvseditorbutton.Visibility = Visibility.Visible;
@@ -1770,42 +1711,117 @@ namespace VSGUI
             }
         }
 
-        private void UpdateVersion()
+        private void UpdateEnvVersion()
         {
+            //还原自定义环境设置
+            if (IniApi.IniReadValue("CustomEnvPath") != "")
+            {
+                if (Directory.Exists(IniApi.IniReadValue("CustomEnvPath")) && File.Exists(IniApi.IniReadValue("CustomEnvPath") + @"\python.exe") && File.Exists(IniApi.IniReadValue("CustomEnvPath") + @"\VSPipe.exe"))
+                {
+                    this.CustomEnvPathBox.Text = IniApi.IniReadValue("CustomEnvPath");
+                }
+            }
+            string customEnvPath = "";
+            if (this.CustomEnvPathBox.Text != "")
+            {
+                this.CustomEnvPathboxTips.Visibility = Visibility.Collapsed;
+                customEnvPath = this.CustomEnvPathBox.Text;
+            }
+
             new Thread(
                 () =>
                 {
-                    string[] versionList = VersionApi.GetVersion();
-                    bool isSysEnvironmentReady = false;
-                    if (versionList[2] != null && versionList[3] != null)
+                    //检查内置环境
+                    CheckEnvProcess(binpath + @"\vs\", buildinEnvRadio, buildinpyvertext, buildinvsvertext);
+
+                    //检查系统环境
+                    CheckEnvProcess("", systemEnvRadio, systempyvertext, systemvsvertext);
+
+                    //检查自定义环境
+                    CheckEnvProcess(customEnvPath, customEnvRadio, custompyvertext, customvsvertext);
+
+                    if (CommonApi.CheckBuildinVSEditorInstall() == 2 && IniApi.IniReadValue("EnvironmentType") != "0")
                     {
-                        isSysEnvironmentReady = true;
+                        MessageBoxApi.Show(LanguageApi.FindRes("useSystemEnvironmentWarningVsEditor"), LanguageApi.FindRes("tips"));
                     }
                     Dispatcher.Invoke(() =>
                     {
-                        if (isSysEnvironmentReady == false)
+                        //尝试还原环境设置
+                        if (IniApi.IniReadValue("EnvironmentType") == "" || IniApi.IniReadValue("EnvironmentType") == "0")
                         {
-                            UseSystemEnvironment.IsEnabled = false;
-                            UseSystemEnvironment.IsChecked = false;
+                            //未设置过，使用内置
+                            UseBuildEnv();
                         }
-                        else { 
-                            UseSystemEnvironment.IsEnabled = true;
-                        }
-                        if (CommonApi.CheckVSEditorInstall() == 2 && IniApi.IniReadValue("UseSystemEnvironment") == "true")
+                        else
                         {
-                            MessageBoxApi.Show(LanguageApi.FindRes("useSystemEnvironmentWarningVsEditor"), LanguageApi.FindRes("tips"));
+                            if (IniApi.IniReadValue("EnvironmentType") == "1") //1是系统
+                            {
+                                if (this.systemEnvRadio.IsEnabled == true)
+                                {
+                                    this.systemEnvRadio.IsChecked = true;
+                                    envpath = "";
+                                }
+                                else
+                                {
+                                    UseBuildEnv();
+                                }
+                            }
+                            else if (IniApi.IniReadValue("EnvironmentType") == "2") //2是自定义
+                            {
+                                if (this.customEnvRadio.IsEnabled == true)
+                                {
+                                    this.customEnvRadio.IsChecked = true;
+                                    envpath = this.CustomEnvPathBox.Text;
+                                }
+                                else
+                                {
+                                    UseBuildEnv();
+                                }
+                            }
                         }
-                        buildinpyvertext.Text = versionList[0];
-                        if (versionList[0] == null) buildinpyvertext.Text = LanguageApi.FindRes("notInstalled");
-                        buildinvsvertext.Text = versionList[1];
-                        if (versionList[1] == null) buildinvsvertext.Text = LanguageApi.FindRes("notInstalled");
-                        systempyvertext.Text = versionList[2];
-                        if (versionList[2] == null) systempyvertext.Text = LanguageApi.FindRes("notInstalled");
-                        systemvsvertext.Text = versionList[3];
-                        if (versionList[3] == null) systemvsvertext.Text = LanguageApi.FindRes("notInstalled");
                     });
+                }).Start();
+
+            void CheckEnvProcess(string path, RadioButton radioButton, TextBlock pyVerTextBlock, TextBlock vsVerTextBlock)
+            {
+
+                string[] versionList = EnvApi.getEnvVersion(path);
+                bool isEnvironmentReady = false;
+                if (versionList[0] != null && versionList[1] != null)
+                {
+                    isEnvironmentReady = true;
                 }
-                ).Start();
+                Dispatcher.Invoke(() =>
+                {
+                    if (isEnvironmentReady == false)
+                    {
+                        radioButton.IsEnabled = false;
+                        radioButton.IsChecked = false;
+                    }
+                    else
+                    {
+                        radioButton.IsEnabled = true;
+                    }
+                    pyVerTextBlock.Text = versionList[0];
+                    if (versionList[0] == null) pyVerTextBlock.Text = LanguageApi.FindRes("notInstalled");
+                    vsVerTextBlock.Text = versionList[1];
+                    if (versionList[1] == null) vsVerTextBlock.Text = LanguageApi.FindRes("notInstalled");
+                });
+
+            }
+
+            void UseBuildEnv()
+            {
+                if (this.buildinEnvRadio.IsEnabled == true)
+                {
+                    this.buildinEnvRadio.IsChecked = true;
+                    envpath = binpath + @"\vs\";
+                }
+                else
+                {
+                    MessageBoxApi.Show(LanguageApi.FindRes("p044"), LanguageApi.FindRes("tips"));
+                }
+            }
         }
 
         private void StartVsrepoButton_Click(object sender, RoutedEventArgs e)
@@ -1920,35 +1936,77 @@ namespace VSGUI
 
         private void OpenFiltersButton_Click(object sender, RoutedEventArgs e)
         {
-            if (CommonApi.GetCustomPyenvDir() != "" && this.CustomPyenv.IsChecked == true)
+            if (this.systemEnvRadio.IsChecked == true)//系统环境打开user
             {
-                if (!Directory.Exists(CommonApi.GetCustomPyenvDir() + @"\vapoursynth64\plugins"))
-                    {
-                    Directory.CreateDirectory(CommonApi.GetCustomPyenvDir() + @"\vapoursynth64\plugins");
-                    }
-
-                System.Diagnostics.Process.Start("explorer.exe", CommonApi.GetCustomPyenvDir() + @"\vapoursynth64\plugins");
+                if (Directory.Exists(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"\VapourSynth\plugins64"))
+                {
+                    System.Diagnostics.Process.Start("explorer.exe", Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"\VapourSynth\plugins64");
+                }
+                else if (Directory.Exists(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"\VapourSynth\plugins32"))//补一个找32位
+                {
+                    System.Diagnostics.Process.Start("explorer.exe", Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"\VapourSynth\plugins32");
+                }
+                else
+                {
+                    MessageBoxApi.Show(LanguageApi.FindRes("p046"), LanguageApi.FindRes("tips"));
+                }
             }
-
-            else { 
-
-            Directory.CreateDirectory(binpath + @"\vs\vapoursynth64\plugins");
-            System.Diagnostics.Process.Start("explorer.exe", binpath + @"\vs\vapoursynth64\plugins");
-
+            else
+            {
+                if (Directory.Exists(envpath + @"vs-plugins"))//R66起新路径
+                {
+                    System.Diagnostics.Process.Start("explorer.exe", envpath + @"vs-plugins");
+                }
+                else if (Directory.Exists(envpath + @"vapoursynth64\plugins"))//R65前老路径
+                {
+                    System.Diagnostics.Process.Start("explorer.exe", envpath + @"vapoursynth64\plugins");
+                }
+                else if (Directory.Exists(envpath + @"vapoursynth32\plugins"))//R65前老路径,补一个找32位
+                {
+                    System.Diagnostics.Process.Start("explorer.exe", envpath + @"vapoursynth32\plugins");
+                }
+                else
+                {
+                    MessageBoxApi.Show(LanguageApi.FindRes("p046"), LanguageApi.FindRes("tips"));
+                }
             }
         }
         private void OpenScriptsButton_Click(object sender, RoutedEventArgs e)
         {
-
-            if (CommonApi.GetCustomPyenvDir() != "" && this.CustomPyenv.IsChecked == true)
+            //内建环境，找固定目录
+            if (this.buildinEnvRadio.IsChecked == true)
             {
-                System.Diagnostics.Process.Start("explorer.exe", CommonApi.GetCustomPyenvDir() + @"\vapoursynth64");
+                if (Directory.Exists(envpath + @"vs-scripts"))//R66起新路径
+                {
+                    System.Diagnostics.Process.Start("explorer.exe", envpath + @"vs-scripts");
+                }
+                else if (Directory.Exists(envpath + @"python\libs"))//R65前老路径
+                {
+                    System.Diagnostics.Process.Start("explorer.exe", envpath + @"python\libs");
+                }
             }
 
-            else
+            //系统环境，弹提示
+            if (this.systemEnvRadio.IsChecked == true)
             {
-                Directory.CreateDirectory(binpath + @"\vs\python\libs");
-                System.Diagnostics.Process.Start("explorer.exe", binpath + @"\vs\python\libs");
+                MessageBoxApi.Show(LanguageApi.FindRes("p047"), LanguageApi.FindRes("tips"));
+            }
+
+            //自定义环境，尝试几个可能目录，最后回落根目录
+            if (this.customEnvRadio.IsChecked == true)
+            {
+                if (Directory.Exists(envpath + @"vs-scripts"))//R66起新路径
+                {
+                    System.Diagnostics.Process.Start("explorer.exe", envpath + @"vs-scripts");
+                }
+                else if (Directory.Exists(envpath + @"Scripts"))
+                {
+                    System.Diagnostics.Process.Start("explorer.exe", envpath + @"Scripts");
+                }
+                else
+                {
+                    System.Diagnostics.Process.Start("explorer.exe", envpath);
+                }
             }
         }
 
@@ -2064,6 +2122,26 @@ namespace VSGUI
             {
 
             }
+        }
+
+        private void envRadio_Checked(object sender, RoutedEventArgs e)
+        {
+            if (((RadioButton)sender).Name.ToString() == "buildinEnvRadio")
+            {
+                IniApi.IniWriteValue("EnvironmentType", "0");
+                envpath = binpath + @"\vs\";
+            }
+            else if (((RadioButton)sender).Name.ToString() == "systemEnvRadio")
+            {
+                IniApi.IniWriteValue("EnvironmentType", "1");
+                envpath = "";
+            }
+            else if (((RadioButton)sender).Name.ToString() == "customEnvRadio")
+            {
+                IniApi.IniWriteValue("EnvironmentType", "2");
+                envpath = this.CustomEnvPathBox.Text;
+            }
+
         }
 
         private void inputPbSucc_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)

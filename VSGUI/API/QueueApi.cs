@@ -96,19 +96,8 @@ namespace VSGUI.API
                 //根据类型处理参数
                 if (type == "video")
                 {
-                    string EmbedVSPipe = MainWindow.binpath + @"\vs\";
-                    string customVSPipe = CommonApi.GetCustomPyenvDir();
-
-                    if (CommonApi.CheckCustomPyenvExec() && Convert.ToBoolean(IniApi.IniReadValue("UseSystemEnvironment")))
-                    {
-                        clipath = customVSPipe;
-                    }
-                    else
-                    {
-                        clipath = EmbedVSPipe;
-                    }
-
                     //clipath = MainWindow.binpath + @"\vs\";
+                    clipath = "";//video可不存这个参数，都按实时的设置来
                     pipecommon = @"VSPipe.exe" + " -c y4m ";
                     pipeconnect = " - | ";
                 }
@@ -464,18 +453,6 @@ namespace VSGUI.API
             if (GetQueueListitem(queueid, "type") == "video")
             {
                 string vpypath;
-                string EmbedVSPipe = MainWindow.binpath + @"\vs\";
-                string customVSPipe = CommonApi.GetCustomPyenvDir();
-                string VSPExec;
-
-                if (CommonApi.CheckCustomPyenvExec() && Convert.ToBoolean(IniApi.IniReadValue("UseSystemEnvironment")))
-                {
-                    VSPExec = customVSPipe;
-                }
-                else
-                {
-                    VSPExec = EmbedVSPipe;
-                }
 
                 if (Path.GetExtension(GetQueueListitem(queueid, "input")) == ".vpy")
                 {
@@ -485,7 +462,8 @@ namespace VSGUI.API
                 {
                     vpypath = GetQueueListitem(queueid, "scriptfilepath");
                 }
-                string result = ProcessApi.RunSyncProcess(VSPExec, "VSPipe.exe" + " --info " + "\"" + vpypath + "\"");
+
+                string result = ProcessApi.RunSyncProcess(MainWindow.envpath, "VSPipe.exe" + " --info " + "\"" + vpypath + "\"");
                 if (result != null)
                 {
                     var x = Regex.Matches(result, @"Frames: (\d+)|(\d+.\d+) fps");
@@ -823,19 +801,7 @@ namespace VSGUI.API
                 string inputsuffix = Path.GetExtension(inputpath).ToLower();
                 if (inputsuffix == ".vpy")
                 {
-                    string EmbedVSPipe = MainWindow.binpath + @"\vs\";
-                    string customVSPipe = CommonApi.GetCustomPyenvDir();
-                    string VSPExec;
-
-                    if (CommonApi.CheckCustomPyenvExec() && Convert.ToBoolean(IniApi.IniReadValue("UseSystemEnvironment")))
-                    {
-                        VSPExec = customVSPipe;
-                    }
-                    else
-                    {
-                        VSPExec = EmbedVSPipe;
-                    }
-                    string result = ProcessApi.RunSyncProcess(VSPExec, @"VSPipe.exe" + " --info " + "\"" + inputpath + "\"");
+                    string result = ProcessApi.RunSyncProcess(MainWindow.envpath, @"VSPipe.exe" + " --info " + "\"" + inputpath + "\"");
 
                     if (result != null)
                     {

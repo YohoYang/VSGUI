@@ -136,8 +136,6 @@
     <system:String x:Key="autoGenerateCutDesc">在高级压制模式下，输入vpy脚本时，自动从脚本中读取剪辑脚本，并填写到音频信息区（不支持复杂脚本）。</system:String>
     <system:String x:Key="queueDeleteCacheTipsDesc">任务存在如下临时文件，是否删除？</system:String>
     <system:String x:Key="notInstalled">未安装</system:String>
-    <system:String x:Key="useSystemEnvironment">使用系统环境</system:String>
-    <system:String x:Key="useSystemEnvironmentDesc">使用系统中的Python及Vapoursynth替代软件内置环境。需要在检测到已安装时才能启用。</system:String>
     <system:String x:Key="system">系统</system:String>
     <system:String x:Key="buildin">内置</system:String>
     <system:String x:Key="enableLog">启用文件日志</system:String>
@@ -192,5 +190,15 @@
     <system:String x:Key="p035">视频反交错</system:String>
     <system:String x:Key="p036">字幕使用VSFilterMod</system:String>
     <system:String x:Key="p037">VSGUI默认使用libass来进行字幕渲染，但Aegisub默认使用VSFilter进行渲染，这导致部分字幕效果存在差异，勾选此项将切换为使用VSFilterMod，仅简易压制有效。</system:String>
-    <system:String x:Key="p038">找不到 vsedit-previewer.exe</system:String>
+    <system:String x:Key="p038">未在当前选择环境找到vsedit-previewer.exe</system:String>
+    <system:String x:Key="p039">使用非内置环境</system:String>
+    <system:String x:Key="p040">环境选择</system:String>
+    <system:String x:Key="p041">选择压制使用的环境</system:String>
+    <system:String x:Key="p042">Python环境路径</system:String>
+    <system:String x:Key="p043">点击右侧按钮选择Python路径，Vs需安装在同目录</system:String>
+    <system:String x:Key="p044">未找到内置Python及Vs环境</system:String>
+    <system:String x:Key="p045">未在当前选择环境找到vsedit.exe</system:String>
+    <system:String x:Key="p046">未找到可识别的plugins路径</system:String>
+    <system:String x:Key="p047">系统环境暂不支持打开脚本路径</system:String>
+
 </ResourceDictionary>
