@@ -1742,14 +1742,17 @@ namespace VSGUI
 
                     if (CommonApi.CheckBuildinVSEditorInstall() == 2 && IniApi.IniReadValue("EnvironmentType") != "0")
                     {
-                        MessageBoxApi.Show(LanguageApi.FindRes("useSystemEnvironmentWarningVsEditor"), LanguageApi.FindRes("tips"));
+                        if (!(IniApi.IniReadValue("EnvironmentType") == ""))
+                        {
+                            MessageBoxApi.Show(LanguageApi.FindRes("useSystemEnvironmentWarningVsEditor"), LanguageApi.FindRes("tips"));
+                        }
                     }
                     Dispatcher.Invoke(() =>
                     {
                         //尝试还原环境设置
                         if (IniApi.IniReadValue("EnvironmentType") == "" || IniApi.IniReadValue("EnvironmentType") == "0")
                         {
-                            //未设置过，使用内置
+                            //未设置过或使用内置
                             UseBuildEnv();
                         }
                         else
