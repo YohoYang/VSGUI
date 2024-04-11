@@ -704,6 +704,10 @@ namespace VSGUI.API
                     if (!GetQueueListitem(queueid, "deletefile").Contains(scriptpath)) SetQueueListitem(queueid, "deletefile", GetQueueListitem(queueid, "deletefile") + "|" + scriptpath);
                     SetQueueListitem(queueid, "command", command);
                 }
+                else
+                {
+                    return true;
+                }
             }
             else if (GetQueueListitem(queueid, "type") == "audio")
             {
@@ -722,6 +726,10 @@ namespace VSGUI.API
                     if (!GetQueueListitem(queueid, "deletefile").Contains(scriptpath)) SetQueueListitem(queueid, "deletefile", GetQueueListitem(queueid, "deletefile") + "|" + scriptpath);
                     SetQueueListitem(queueid, "command", command);
                 }
+                else
+                {
+                    return true;
+                }
             }
             else if (GetQueueListitem(queueid, "type") == "mux")
             {
@@ -739,6 +747,7 @@ namespace VSGUI.API
                         }
                     }
                 }
+                return true;
             }
 
             //写入script文件
@@ -747,10 +756,7 @@ namespace VSGUI.API
                 File.WriteAllText(GetQueueListitem(queueid, "scriptfilepath"), GetQueueListitem(queueid, "script"));
                 return true;
             }
-            else
-            {
-                return false;
-            }
+            return false;
         }
 
         /// <summary>

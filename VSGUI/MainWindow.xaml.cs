@@ -1175,8 +1175,9 @@ namespace VSGUI
                     if (!scriptSucc)
                     {
                         QueueApi.SetQueueListitem(queueid, "status", "error");
-                        QueueApi.SetQueueListitem(queueid, "statustext", LanguageApi.FindRes("p048"));
+                        QueueApi.SetQueueListitem(queueid, "statustext", LanguageApi.FindRes("error") + ": " + LanguageApi.FindRes("p048"));
                         UpdateQueueList(notBtn: true);
+                        QueueApi.SaveQueueList();
                         return;
                     }
                     //写入totalframes
@@ -1593,18 +1594,24 @@ namespace VSGUI
         /// <param name="e"></param>
         private void OpenEditorButton_Click(object sender, RoutedEventArgs e)
         {
+            //判断是否不再提示编辑器安装提示
             if (IniApi.IniReadValue("InstallVseditPrompted") != "true")
             {
+                //判断是否未安装
                 if (CommonApi.CheckBuildinVSEditorInstall() < 2)
                 {
-                    var messageboxresult = MessageBoxApi.Show(LanguageApi.FindRes("vpyEditorAssociationTipsDesc"), LanguageApi.FindRes("tips"), MessageWindow.MessageBoxButton.YesNoNomore);
-                    if (messageboxresult == MessageWindow.MessageResult.Yes)
+                    //判断是否内置环境，非内置环境不提示
+                    if (this.buildinEnvRadio.IsChecked == true)
                     {
-                        installVsEditorDo();
-                    }
-                    else if (messageboxresult == MessageWindow.MessageResult.NoMore)
-                    {
-                        IniApi.IniWriteValue("InstallVseditPrompted", "true");
+                        var messageboxresult = MessageBoxApi.Show(LanguageApi.FindRes("vpyEditorAssociationTipsDesc"), LanguageApi.FindRes("tips"), MessageWindow.MessageBoxButton.YesNoNomore);
+                        if (messageboxresult == MessageWindow.MessageResult.Yes)
+                        {
+                            installVsEditorDo();
+                        }
+                        else if (messageboxresult == MessageWindow.MessageResult.NoMore)
+                        {
+                            IniApi.IniWriteValue("InstallVseditPrompted", "true");
+                        }
                     }
                 }
             }
@@ -1774,12 +1781,9 @@ namespace VSGUI
                     //检查自定义环境
                     CheckEnvProcess(customEnvPath, customEnvRadio, custompyvertext, customvsvertext);
 
-                    if (CommonApi.CheckBuildinVSEditorInstall() == 2 && IniApi.IniReadValue("EnvironmentType") != "0")
+                    if (CommonApi.CheckBuildinVSEditorInstall() == 2 && IniApi.IniReadValue("EnvironmentType") != "0" && IniApi.IniReadValue("EnvironmentType") != "")
                     {
-                        if (!(IniApi.IniReadValue("EnvironmentType") == ""))
-                        {
-                            MessageBoxApi.Show(LanguageApi.FindRes("useSystemEnvironmentWarningVsEditor"), LanguageApi.FindRes("tips"));
-                        }
+                        MessageBoxApi.Show(LanguageApi.FindRes("useSystemEnvironmentWarningVsEditor"), LanguageApi.FindRes("tips"));
                     }
                     Dispatcher.Invoke(() =>
                     {
