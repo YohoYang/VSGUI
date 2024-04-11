@@ -2015,16 +2015,12 @@ namespace VSGUI
                 MessageBoxApi.Show(LanguageApi.FindRes("p047"), LanguageApi.FindRes("tips"));
             }
 
-            //自定义环境，尝试几个可能目录，最后回落根目录
+            //自定义环境，回落根目录
             if (this.customEnvRadio.IsChecked == true)
             {
-                if (Directory.Exists(envpath + @"vs-scripts"))//R66起新路径
+                if (Directory.Exists(envpath + @"vs-scripts"))//R66起新官方默认路径
                 {
                     System.Diagnostics.Process.Start("explorer.exe", envpath + @"vs-scripts");
-                }
-                else if (Directory.Exists(envpath + @"Scripts"))
-                {
-                    System.Diagnostics.Process.Start("explorer.exe", envpath + @"Scripts");
                 }
                 else
                 {
