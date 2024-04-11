@@ -53,6 +53,9 @@ namespace VSGUI.API
                     script += @"LWLibavAudioSource(""" + inputstr + @""")" + "\r\n";
                     if (delayint != 0) script += @"DelayAudio(" + delayint.ToString() + @"/1000.0)" + "\r\n";
                 }
+
+                //需要在此处增加对cut文本的格式检测，仅能存在数字
+
                 string[] cutblock = cutstr.Split("&");
                 foreach (var block in cutblock)
                 {

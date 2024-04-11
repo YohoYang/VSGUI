@@ -834,7 +834,14 @@ namespace VSGUI.API
                                                     string cutmessagestr = x1[i].Groups[2].Value;
                                                     if (cutmessagestr == "") cutmessagestr = x1[i].Groups[4].Value;
                                                     string[] cutmessagelist = cutmessagestr.Replace(":", ",").Replace(" ", "").Replace("(", "").Replace(")", "").Replace("[", "").Replace("]", "").Split(",");//获得cut的前后帧
-                                                    linecutstr += "[" + cutmessagelist[0] + ":" + cutmessagelist[1] + "]";
+                                                    if (int.TryParse(cutmessagelist[0], out int numstart) && int.TryParse(cutmessagelist[0], out int numend))
+                                                    {
+                                                        linecutstr += "[" + numstart + ":" + numend + "]";
+                                                    }
+                                                    else
+                                                    {
+                                                        continue;
+                                                    }
                                                     if (i != x1.Count - 1)
                                                     {
                                                         linecutstr += "+";
