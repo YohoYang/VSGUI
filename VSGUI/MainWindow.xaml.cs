@@ -1849,10 +1849,18 @@ namespace VSGUI
 
         private void StartVsrepoButton_Click(object sender, RoutedEventArgs e)
         {
-            var startInfo = new ProcessStartInfo();
-            startInfo.FileName = binpath + @"\vs\VSRepoGUI.exe";
-            startInfo.WorkingDirectory = binpath + @"\vs\";
-            Process.Start(startInfo);
+            //增加环境处理
+            if (File.Exists(Path.Combine(envpath, @"VSRepoGUI.exe")))
+            {
+                var startInfo = new ProcessStartInfo();
+                startInfo.FileName = Path.Combine(envpath, @"VSRepoGUI.exe");
+                startInfo.WorkingDirectory = envpath;
+                Process.Start(startInfo);
+            }
+            else
+            {
+                MessageBoxApi.Show(LanguageApi.FindRes("p049"), LanguageApi.FindRes("tips"));
+            }
             //Process.Start(binpath + @"\vs\VSRepoGUI.exe");
         }
 

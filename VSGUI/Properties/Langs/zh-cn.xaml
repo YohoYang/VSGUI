@@ -201,5 +201,6 @@
     <system:String x:Key="p046">未找到可识别的plugins路径</system:String>
     <system:String x:Key="p047">系统环境暂不支持打开脚本路径</system:String>
     <system:String x:Key="p048">生成脚本错误</system:String>
+    <system:String x:Key="p049">未在当前选择环境找到VSRepoGUI.exe</system:String>
 
 </ResourceDictionary>
