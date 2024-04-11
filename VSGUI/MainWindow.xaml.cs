@@ -1614,7 +1614,7 @@ namespace VSGUI
             {
                 filepath = videoinputbox.Text;
             }
-            if (envpath != null && EnvApi.checkEnvEditorNow())
+            if (envpath != null && EnvApi.checkEnvEditorNow() == 1)
             {
                 Process.Start(envpath + @"\vsedit.exe", filepath);
             }
@@ -1684,24 +1684,38 @@ namespace VSGUI
 
         private void InstallVseditorButton_Click(object sender, RoutedEventArgs e)
         {
-            installVsEditorDo();
+            if (this.buildinEnvRadio.IsChecked == true)
+            {
+                installVsEditorDo();
+            }
+            else
+            {
+                MessageBoxApi.Show(LanguageApi.FindRes("p050"), LanguageApi.FindRes("tips"));
+            }
         }
 
         private void installVsEditorDo()
         {
-            string cmdstr = "@echo off\r\n>nul 2>&1 \"%SYSTEMROOT%\\system32\\cacls.exe\" \"%SYSTEMROOT%\\system32\\config\\system\"\r\nif '%errorlevel%' NEQ '0' (\r\ngoto UACPrompt\r\n) else ( goto gotAdmin )\r\n:UACPrompt\r\necho Set UAC = CreateObject^(\"Shell.Application\"^) > \"%temp%\\getadmin.vbs\"\r\necho UAC.ShellExecute \"%~s0\", \"\", \"\", \"runas\", 1 >> \"%temp%\\getadmin.vbs\"\r\n\"%temp%\\getadmin.vbs\"\r\nexit /B\r\n:gotAdmin\r\nset local=%~dp0\r\nset localexe=\"\\\"%local%vsedit.exe\\\" \\\"%%1\\\"\"\r\necho ※Please run as admin\r\necho.\r\necho set vpy open mode\r\nreg add \"HKEY_CLASSES_ROOT\\.vpy\" /v \"\" /d \"vpy_auto_file\" /f\r\necho.\r\necho set vsedit path\r\nreg add \"HKEY_CLASSES_ROOT\\vpy_auto_file\\shell\\open\\command\" /v \"\" /d %localexe% /f\r\necho.";
-            File.WriteAllText(binpath + @"\vs\installvseditor.bat", cmdstr);
-            Process.Start(binpath + @"\vs\installvseditor.bat");
-            Thread.Sleep(1000);
-
-            var messageboxresult = MessageBoxApi.Show(LanguageApi.FindRes("p001"), LanguageApi.FindRes("tips"), MessageWindow.MessageBoxButton.YesNo);
-            if (messageboxresult == MessageWindow.MessageResult.Yes)
+            if (File.Exists(Path.Combine(envpath, @"vsedit.exe")))
             {
-                CommonApi.KillProcess("explorer");
-                Process.Start("explorer.exe");
+                string cmdstr = "@echo off\r\n>nul 2>&1 \"%SYSTEMROOT%\\system32\\cacls.exe\" \"%SYSTEMROOT%\\system32\\config\\system\"\r\nif '%errorlevel%' NEQ '0' (\r\ngoto UACPrompt\r\n) else ( goto gotAdmin )\r\n:UACPrompt\r\necho Set UAC = CreateObject^(\"Shell.Application\"^) > \"%temp%\\getadmin.vbs\"\r\necho UAC.ShellExecute \"%~s0\", \"\", \"\", \"runas\", 1 >> \"%temp%\\getadmin.vbs\"\r\n\"%temp%\\getadmin.vbs\"\r\nexit /B\r\n:gotAdmin\r\nset local=%~dp0\r\nset localexe=\"\\\"%local%vsedit.exe\\\" \\\"%%1\\\"\"\r\necho ※Please run as admin\r\necho.\r\necho set vpy open mode\r\nreg add \"HKEY_CLASSES_ROOT\\.vpy\" /v \"\" /d \"vpy_auto_file\" /f\r\necho.\r\necho set vsedit path\r\nreg add \"HKEY_CLASSES_ROOT\\vpy_auto_file\\shell\\open\\command\" /v \"\" /d %localexe% /f\r\necho.";
+                File.WriteAllText(binpath + @"\vs\installvseditor.bat", cmdstr);
+                Process.Start(binpath + @"\vs\installvseditor.bat");
+                Thread.Sleep(1000);
+
+                var messageboxresult = MessageBoxApi.Show(LanguageApi.FindRes("p001"), LanguageApi.FindRes("tips"), MessageWindow.MessageBoxButton.YesNo);
+                if (messageboxresult == MessageWindow.MessageResult.Yes)
+                {
+                    CommonApi.KillProcess("explorer");
+                    Process.Start("explorer.exe");
+                }
+                CommonApi.TryDeleteFile(binpath + @"\vs\installvseditor.bat");
+                UpdateVseditorButtonStatus();
             }
-            CommonApi.TryDeleteFile(binpath + @"\vs\installvseditor.bat");
-            UpdateVseditorButtonStatus();
+            else
+            {
+                MessageBoxApi.Show(LanguageApi.FindRes("p045"), LanguageApi.FindRes("tips"));
+            }
         }
 
         private void UnInstallVseditorButton_Click(object sender, RoutedEventArgs e)

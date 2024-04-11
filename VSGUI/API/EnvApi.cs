@@ -50,13 +50,13 @@ namespace VSGUI.API
             return versions;
         }
 
-        public static bool checkEnvEditorNow()
+        public static int checkEnvEditorNow()
         {
             string envpath = MainWindow.envpath;
             if (envpath == "")//系统环境
             {
-                //坏了，系统的editor怎么找呢，这种情况下应该是直接安装editor了
-                return false;
+                //坏了，系统的editor不好找，直接弹提示
+                return 2;
             }
             else
             {
@@ -66,11 +66,11 @@ namespace VSGUI.API
                 }
                 if (File.Exists(envpath + @"vsedit.exe"))
                 {
-                    return true;
+                    return 1;
                 }
                 else
                 {
-                    return false;
+                    return 0;
                 }
             }
         }
