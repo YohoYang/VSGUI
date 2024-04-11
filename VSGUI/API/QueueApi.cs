@@ -657,7 +657,7 @@ namespace VSGUI.API
         /// 创建脚本文件
         /// </summary>
         /// <param name="queueid"></param>
-        public static void MakeScriptFile(string queueid)
+        public static bool MakeScriptFile(string queueid)
         {
             //判断是否需要复制必要文件
             bool needCopyFile = true;
@@ -709,7 +709,12 @@ namespace VSGUI.API
             {
                 if (Path.GetExtension(GetQueueListitem(queueid, "input")) != ".avs")
                 {
-                    string script = AudioApi.MakeAudioScript(int.Parse(GetQueueListitem(queueid, "encoderid")), GetQueueListitem(queueid, "audiocuttext"), GetQueueListitem(queueid, "audiofpstext"), GetQueueListitem(queueid, "input"), GetQueueListitem(queueid, "audiodelaytext"));
+                    bool makeAudioScriptError = false;
+                    string script = AudioApi.MakeAudioScript(int.Parse(GetQueueListitem(queueid, "encoderid")), GetQueueListitem(queueid, "audiocuttext"), GetQueueListitem(queueid, "audiofpstext"), GetQueueListitem(queueid, "input"), GetQueueListitem(queueid, "audiodelaytext"), out makeAudioScriptError);
+                    if (makeAudioScriptError)
+                    {
+                        return false;
+                    }
                     string scriptpath = CommonApi.GetAppTempPath() + "Job_" + queueid + ".avs";
                     string command = ProcessCommandStr(int.Parse(queueid), "audio", int.Parse(GetQueueListitem(queueid, "encoderid")), new string[] { GetQueueListitem(queueid, "input") }, "", GetQueueListitem(queueid, "output"), scriptpath, out string temp1, out string temp2);
                     SetQueueListitem(queueid, "script", script);
@@ -740,6 +745,11 @@ namespace VSGUI.API
             if (GetQueueListitem(queueid, "scriptfilepath") != "")
             {
                 File.WriteAllText(GetQueueListitem(queueid, "scriptfilepath"), GetQueueListitem(queueid, "script"));
+                return true;
+            }
+            else
+            {
+                return false;
             }
         }
 
@@ -834,7 +844,7 @@ namespace VSGUI.API
                                                     string cutmessagestr = x1[i].Groups[2].Value;
                                                     if (cutmessagestr == "") cutmessagestr = x1[i].Groups[4].Value;
                                                     string[] cutmessagelist = cutmessagestr.Replace(":", ",").Replace(" ", "").Replace("(", "").Replace(")", "").Replace("[", "").Replace("]", "").Split(",");//获得cut的前后帧
-                                                    if (int.TryParse(cutmessagelist[0], out int numstart) && int.TryParse(cutmessagelist[0], out int numend))
+                                                    if (int.TryParse(cutmessagelist[0], out int numstart) && int.TryParse(cutmessagelist[1], out int numend))
                                                     {
                                                         linecutstr += "[" + numstart + ":" + numend + "]";
                                                     }

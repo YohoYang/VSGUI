@@ -9,20 +9,28 @@ namespace VSGUI.API
 {
     internal class AudioApi
     {
-        public static string MakeAudioScript(int audioencoderid, string cutstr, string fpsstr, string inputstr, string delay)
+        public static string MakeAudioScript(int audioencoderid, string cutstr, string fpsstr, string inputstr, string delay, out bool makeError)
         {
+            makeError = false;
             string inputext = Path.GetExtension(inputstr).ToLower();
             if (delay == "") delay = "0";
             //批量输入的参数
-            int delayint;
-            if (delay == "auto")
+            int delayint = 0;
+            try
             {
-                QueueApi.AudioFileInputCheck(inputstr, out string audiodelayboxText, out bool isError);
-                delayint = int.Parse(audiodelayboxText);
+                if (delay == "auto")
+                {
+                    QueueApi.AudioFileInputCheck(inputstr, out string audiodelayboxText, out bool isError);
+                    delayint = int.Parse(audiodelayboxText);
+                }
+                else
+                {
+                    delayint = int.Parse(delay);
+                }
             }
-            else
+            catch (Exception)
             {
-                delayint = int.Parse(delay);
+                makeError = true;
             }
 
             bool isNormalize = EncoderApi.GetNormalize("audio", audioencoderid);
@@ -54,39 +62,44 @@ namespace VSGUI.API
                     if (delayint != 0) script += @"DelayAudio(" + delayint.ToString() + @"/1000.0)" + "\r\n";
                 }
 
-                //需要在此处增加对cut文本的格式检测，仅能存在数字
-
-                string[] cutblock = cutstr.Split("&");
-                foreach (var block in cutblock)
+                if (!CheckCutStrIsError(cutstr))
                 {
-                    string[] cutliststr = block.Split("+");
-                    for (int i = 0; i < cutliststr.Length; i++)
+                    string[] cutblock = cutstr.Split("&");
+                    foreach (var block in cutblock)
                     {
-                        cutliststr[i] = cutliststr[i].Replace(",", ":").Replace("[", "").Replace("]", "");
-                    }
-                    script += @"__film = last" + "\r\n";
-                    script += @"__just_audio = __film" + "\r\n";
-                    script += @"__blank = BlankClip(length=" + int.Parse(cutliststr[cutliststr.Length - 1].Split(":")[1].ToString()) + 1 + ", fps=" + fpsstr + ")" + "\r\n";
-                    script += @"__film = AudioDub(__blank, __film)" + "\r\n";
-                    for (int i = 0; i < cutliststr.Length; i++)
-                    {
-                        int startf = int.Parse(cutliststr[i].Split(":")[0].ToString());
-                        int endf = int.Parse(cutliststr[i].Split(":")[1].ToString());
-                        script += @"__t" + i + @" = __film.trim(" + startf + ", " + endf + ")" + "\r\n";
-                    }
-                    for (int i = 0; i < cutliststr.Length; i++)
-                    {
-                        script += @"__t" + i;
-                        if (i != cutliststr.Length - 1)
+                        string[] cutliststr = block.Split("+");
+                        for (int i = 0; i < cutliststr.Length; i++)
                         {
-                            script += " ++ ";
+                            cutliststr[i] = cutliststr[i].Replace(",", ":").Replace("[", "").Replace("]", "");
                         }
-                        else
+                        script += @"__film = last" + "\r\n";
+                        script += @"__just_audio = __film" + "\r\n";
+                        script += @"__blank = BlankClip(length=" + int.Parse(cutliststr[cutliststr.Length - 1].Split(":")[1].ToString()) + 1 + ", fps=" + fpsstr + ")" + "\r\n";
+                        script += @"__film = AudioDub(__blank, __film)" + "\r\n";
+                        for (int i = 0; i < cutliststr.Length; i++)
                         {
-                            script += " \r\n";
+                            int startf = int.Parse(cutliststr[i].Split(":")[0].ToString());
+                            int endf = int.Parse(cutliststr[i].Split(":")[1].ToString());
+                            script += @"__t" + i + @" = __film.trim(" + startf + ", " + endf + ")" + "\r\n";
                         }
+                        for (int i = 0; i < cutliststr.Length; i++)
+                        {
+                            script += @"__t" + i;
+                            if (i != cutliststr.Length - 1)
+                            {
+                                script += " ++ ";
+                            }
+                            else
+                            {
+                                script += " \r\n";
+                            }
+                        }
+                        script += @"AudioDubEx(__just_audio, last)" + "\r\n";
                     }
-                    script += @"AudioDubEx(__just_audio, last)" + "\r\n";
+                }
+                else
+                {
+                    makeError = true;
                 }
                 script += NormalizeStr + "\r\n";
                 script += @"return last";

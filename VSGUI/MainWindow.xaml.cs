@@ -949,6 +949,7 @@ namespace VSGUI
         /// <param name="e"></param>
         private void AutoEncodeButton_Click(object sender, RoutedEventArgs e)
         {
+            //视频检测
             if (videoinputbox.Text == "")
             {
                 MessageBoxApi.Show(LanguageApi.FindRes("videoInputIsEmpty"), LanguageApi.FindRes("error"));
@@ -964,6 +965,7 @@ namespace VSGUI
                 MessageBoxApi.Show(LanguageApi.FindRes("noEncoderProfilesSelected"), LanguageApi.FindRes("error"));
                 return;
             }
+            //音频检测
             if (audioinputbox.Text == "")
             {
                 MessageBoxApi.Show(LanguageApi.FindRes("audioInputIsEmpty"), LanguageApi.FindRes("error"));
@@ -984,6 +986,17 @@ namespace VSGUI
                 MessageBoxApi.Show(LanguageApi.FindRes("delayFormatError"), LanguageApi.FindRes("error"));
                 return;
             }
+            if (cutischecked.IsChecked == true && AudioApi.CheckCutStrIsError(cuttextbox.Text))
+            {
+                MessageBoxApi.Show(LanguageApi.FindRes("cutstrFormatError"), LanguageApi.FindRes("error"));
+                return;
+            }
+            if (cutischecked.IsChecked == true && fpstextbox.Text == "")
+            {
+                MessageBoxApi.Show(LanguageApi.FindRes("fpsstrFormatError"), LanguageApi.FindRes("error"));
+                return;
+            }
+            //章节检测
             if (capinputbox.Text != "")
             {
                 if (!File.Exists(capinputbox.Text))
@@ -1158,7 +1171,14 @@ namespace VSGUI
                     //特殊格式文件特殊处理
                     QueueApi.SpecialFormatPreProcess(queueid);
                     //判断是否需要生成文件
-                    QueueApi.MakeScriptFile(queueid);
+                    bool scriptSucc = QueueApi.MakeScriptFile(queueid);
+                    if (!scriptSucc)
+                    {
+                        QueueApi.SetQueueListitem(queueid, "status", "error");
+                        QueueApi.SetQueueListitem(queueid, "statustext", LanguageApi.FindRes("p048"));
+                        UpdateQueueList(notBtn: true);
+                        return;
+                    }
                     //写入totalframes
                     QueueApi.UpdateTotalframes(queueid);
 
