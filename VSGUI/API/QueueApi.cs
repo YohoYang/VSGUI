@@ -28,7 +28,7 @@ namespace VSGUI.API
             for (int i = 0; i < jsona.Count; i++)
             {
                 Visibility pVisibility = Visibility.Visible;
-                if (int.Parse(jsona[i]["processvalue"].ToString()) == 0)
+                if (jsona[i]["processvalue"].ToString() == "0")
                 {
                     pVisibility = Visibility.Collapsed;
                 }
@@ -296,8 +296,8 @@ namespace VSGUI.API
                         var x = Regex.Matches(message, p);
                         if (x.Count >= 2)
                         {
-                            int progressedFrames = int.Parse(x[0].Groups[1].ToString());
-                            int totalFrames = int.Parse(GetQueueListitem(queueid, "totalFrames"));
+                            int.TryParse(x[0].Groups[1].ToString(), out int progressedFrames);
+                            int.TryParse(GetQueueListitem(queueid, "totalFrames"), out int totalFrames);
                             float speed = float.Parse(x[1].Groups[2].ToString());
                             int remainSeconds = (int)((totalFrames - progressedFrames) / speed);
 
@@ -319,7 +319,7 @@ namespace VSGUI.API
                     var x = Regex.Matches(message, p);
                     if (x.Count >= 1)
                     {
-                        int pvalue = int.Parse(x[0].Groups[2].ToString());
+                        int.TryParse(x[0].Groups[2].ToString(), out int pvalue);
                         if (pvalue == 0) pvalue += 1;
                         SetQueueListitem(queueid, "processvalue", pvalue.ToString());
                         SetQueueListitem(queueid, "statustext", "+" + CommonApi.FormatSecondsToTimeStr((long)Math.Floor(double.Parse(x[0].Groups[1].ToString()))));
@@ -391,7 +391,8 @@ namespace VSGUI.API
                 {
                     QueueApi.SetQueueListitem(queueid, "status", "finish");
                     QueueApi.SetQueueListitem(queueid, "endtime", new DateTimeOffset(DateTime.UtcNow).ToUnixTimeSeconds().ToString());
-                    string timeConsuming = CommonApi.FormatSecondsToTimeStr(int.Parse(QueueApi.GetQueueListitem(queueid, "endtime")) - int.Parse(QueueApi.GetQueueListitem(queueid, "starttime")));
+                    int.TryParse(QueueApi.GetQueueListitem(queueid, "starttime"), out int _starttime);
+                    string timeConsuming = CommonApi.FormatSecondsToTimeStr(new DateTimeOffset(DateTime.UtcNow).ToUnixTimeSeconds() - _starttime);
                     if (QueueApi.GetQueueListitem(queueid, "type") == "video")
                     {
                         if (QueueApi.GetQueueListitem(queueid, "totalFrames") != "")
