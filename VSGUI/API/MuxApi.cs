@@ -12,7 +12,7 @@ namespace VSGUI.API
 {
     internal class MuxApi
     {
-        public static string ProcessMuxCommandStr(string[] input, string chapinput, string output, int queueid, out string clipath)
+        public static string ProcessMuxCommandStr(string[] input, string subinput, string chapinput, string output, int queueid, out string clipath)
         {
             if (Path.GetExtension(output.Replace("\"", "")).ToLower() == ".mp4")
             {
@@ -66,6 +66,10 @@ namespace VSGUI.API
                         addstr += " " + "\"" + item + "\"";
                     }
                 }
+                if (subinput != "")
+                {
+                    addstr += @" --language 0:und --default-track-flag 0:no ^""^(^"" ^""" + subinput + @"^"" ^""^)^"" ";
+                }
                 if (chapinput != "")
                 {
                     addstr += " --chapters" + " " + "\"" + chapinput + "\"";
@@ -78,7 +82,7 @@ namespace VSGUI.API
         }
 
 
-        public static void StartSMux(string[] input, string chapinput, string outputsuffix, Action<string> DataReceivedCall, Action<string> ExitedCall)
+        public static void StartSMux(string[] input, string subinput, string chapinput, string outputsuffix, Action<string> DataReceivedCall, Action<string> ExitedCall)
         {
             string datarecevied = "";
             string output = Path.GetDirectoryName(input[0]) + @"\" + Path.GetFileNameWithoutExtension(input[0]) + @"_mux." + outputsuffix.ToLower();
@@ -97,7 +101,7 @@ namespace VSGUI.API
                     }
                 }
             }
-            string common = ProcessMuxCommandStr(input, chapterTempPath, output, -1, out string clipath);
+            string common = ProcessMuxCommandStr(input, subinput, chapterTempPath, output, -1, out string clipath);
 
             ProcessApi.RunProcess(clipath, common, DataReceived, Exited, Pided);
             void DataReceived(string data, bool processIsExited)

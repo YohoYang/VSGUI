@@ -471,6 +471,16 @@
                                         <TextBox x:Name="smuxaudioinputbox" Grid.Column="1" PreviewDragOver="TextBox_PreviewDragOver" PreviewDrop="TextBox_PreviewDrop"/>
                                         <Button x:Name="smuxaudioinput" Grid.Column="2" Content="..." Margin="4,0,0,0" Click="OpenFileSelect_Click"/>
                                     </Grid>
+                                    <Grid x:Name="subinputbox">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="120"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Grid.Column="0" VerticalAlignment="Center" Text="{DynamicResource p051}"/>
+                                        <TextBox x:Name="smuxsubinputbox" Grid.Column="1" PreviewDragOver="TextBox_PreviewDragOver" PreviewDrop="TextBox_PreviewDrop"/>
+                                        <Button x:Name="smuxsubinput" Grid.Column="2" Content="..." Margin="4,0,0,0" Click="OpenFileSelect_Click"/>
+                                    </Grid>
                                     <Grid>
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="120"/>
@@ -486,7 +496,7 @@
                                         <Button Content="{DynamicResource p028}" Click="MkvtoolnixButton_Click" HorizontalAlignment="Left"/>
                                         <DockPanel HorizontalAlignment="Right">
                                             <TextBlock x:Name="smuxinfotext" Text="" Margin="0,0,6,0" VerticalAlignment="Center"/>
-                                            <ComboBox x:Name="smuxsuffixbox" MinWidth="60" SelectedIndex="0" Margin="6,0,0,0">
+                                            <ComboBox x:Name="smuxsuffixbox" MinWidth="60" SelectedIndex="0" Margin="6,0,0,0" SelectionChanged="smuxsuffixbox_SelectionChanged">
                                                 <ComboBoxItem Content="mp4"/>
                                                 <ComboBoxItem Content="mkv"/>
                                             </ComboBox>

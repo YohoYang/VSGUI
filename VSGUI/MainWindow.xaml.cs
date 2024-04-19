@@ -1480,6 +1480,14 @@ namespace VSGUI
                 MessageBoxApi.Show(LanguageApi.FindRes("audioInputIsEmpty"), LanguageApi.FindRes("error"));
                 return;
             }
+            if (smuxsubinputbox.Text != "")
+            {
+                if (!File.Exists(smuxsubinputbox.Text))
+                {
+                    MessageBoxApi.Show(LanguageApi.FindRes("chapterFileDoesNotExist"), LanguageApi.FindRes("error"));
+                    return;
+                }
+            }
             if (smuxchapterinputbox.Text != "")
             {
                 if (!File.Exists(smuxchapterinputbox.Text))
@@ -1494,7 +1502,7 @@ namespace VSGUI
                 }
             }
             smuxStartButton.IsEnabled = false;
-            MuxApi.StartSMux(new string[] { smuxvideoinputbox.Text, smuxaudioinputbox.Text }, smuxchapterinputbox.Text, smuxsuffixbox.Text.ToLower(), WhenDataReceived, WhenExited);
+            MuxApi.StartSMux(new string[] { smuxvideoinputbox.Text, smuxaudioinputbox.Text }, smuxsubinputbox.Text, smuxchapterinputbox.Text, smuxsuffixbox.Text.ToLower(), WhenDataReceived, WhenExited);
             void WhenDataReceived(string message)
             {
                 Dispatcher.Invoke(() =>
@@ -2187,6 +2195,24 @@ namespace VSGUI
                 envpath = this.CustomEnvPathBox.Text;
             }
 
+        }
+
+
+        /// <summary>
+        /// 切换混流格式设置时变化
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void smuxsuffixbox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (this.smuxsuffixbox.SelectedIndex == 0)
+            {
+                this.subinputbox.Visibility = Visibility.Collapsed;
+            }
+            else
+            {
+                this.subinputbox.Visibility = Visibility.Visible;
+            }
         }
 
         private void inputPbSucc_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
