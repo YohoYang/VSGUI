@@ -120,12 +120,13 @@ namespace VSGUI.API
         /// </summary>
         /// <param name="common"></param>
         /// <returns></returns>
-        public static string RunSyncProcess(string clipath, string common, Encoding? outputEncoding = null, bool disableTime = false)
+        public static string RunSyncProcess(string clipath, string common, Encoding? outputEncoding = null)
         {
             if (outputEncoding == null)
             {
                 outputEncoding = Encoding.UTF8;
             }
+            string logOutputStr = "";
             tempOutputStr = "";
 
             var stdOutBuffer = new StringBuilder();
@@ -144,12 +145,10 @@ namespace VSGUI.API
             var stdErr = stdErrBuffer.ToString();
 
             tempOutputStr = stdOut + stdErr;
-            string dateStr = "";
-            if (!disableTime)
-            {
-                dateStr = "[" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "]\r\n";
-            }
-            tempOutputStr = dateStr + tempOutputStr;
+            logOutputStr = stdOut + stdErr;
+            string dateStr = "[" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "]\r\n";
+
+            logOutputStr = dateStr + logOutputStr;
             //MainWindow.logBoxStr += tempOutputStr;
 
             //Debug.WriteLine(tempOutputStr);
@@ -196,7 +195,7 @@ namespace VSGUI.API
 
             //proc.WaitForExit();
 
-            LogApi.WriteLog(tempOutputStr);
+            LogApi.WriteLog(logOutputStr);
             return tempOutputStr;
         }
 

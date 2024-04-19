@@ -63,7 +63,7 @@ namespace VSGUI.API
                     script += @"LWLibavAudioSource(""" + inputstr + @""")" + "\r\n";
                     if (delayint != 0) script += @"DelayAudio(" + delayint.ToString() + @"/1000.0)" + "\r\n";
                     //读取并处理音频时长
-                    string result = ProcessApi.RunSyncProcess(MainWindow.binpath + @"\tools\mediainfo\", @"MediaInfo.exe" + @" --Inform=""Audio;\n%Duration%"" " + "\"" + inputstr + "\"", disableTime: true);
+                    string result = ProcessApi.RunSyncProcess(MainWindow.binpath + @"\tools\mediainfo\", @"MediaInfo.exe" + @" --Inform=""Audio;\n%Duration%"" " + "\"" + inputstr + "\"");
                     if (result != null)
                     {
                         var x = Regex.Matches(result, @"\d.*");
