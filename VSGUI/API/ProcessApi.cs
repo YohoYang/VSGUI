@@ -120,7 +120,7 @@ namespace VSGUI.API
         /// </summary>
         /// <param name="common"></param>
         /// <returns></returns>
-        public static string RunSyncProcess(string clipath, string common, Encoding? outputEncoding = null)
+        public static string RunSyncProcess(string clipath, string common, Encoding? outputEncoding = null, bool disableTime = false)
         {
             if (outputEncoding == null)
             {
@@ -144,8 +144,11 @@ namespace VSGUI.API
             var stdErr = stdErrBuffer.ToString();
 
             tempOutputStr = stdOut + stdErr;
-
-            string dateStr = "[" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "]\r\n";
+            string dateStr = "";
+            if (!disableTime)
+            {
+                dateStr = "[" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "]\r\n";
+            }
             tempOutputStr = dateStr + tempOutputStr;
             //MainWindow.logBoxStr += tempOutputStr;
 

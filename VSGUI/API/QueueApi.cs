@@ -842,7 +842,7 @@ namespace VSGUI.API
                                     {
                                         if (!listitem.TrimStart().StartsWith("#"))
                                         {
-                                            var x1 = Regex.Matches(listitem, @".*?\.std\.Trim\((.*?),(.*?)\)|([0-9a-zA-Z]*?)\[(\d+(?:\:|\,|\s)*\d+)\]");
+                                            var x1 = Regex.Matches(listitem, @".*?\.std\.Trim\((.*?),(.*?)\)|([0-9a-zA-Z]*?)\[(\d+(?:\:|\,|\s)*.+)\]");
                                             string linecutstr = "";
                                             if (x1.Count > 0)
                                             {
@@ -851,13 +851,27 @@ namespace VSGUI.API
                                                     string cutmessagestr = x1[i].Groups[2].Value;
                                                     if (cutmessagestr == "") cutmessagestr = x1[i].Groups[4].Value;
                                                     string[] cutmessagelist = cutmessagestr.Replace(":", ",").Replace(" ", "").Replace("(", "").Replace(")", "").Replace("[", "").Replace("]", "").Split(",");//获得cut的前后帧
-                                                    if (int.TryParse(cutmessagelist[0], out int numstart) && int.TryParse(cutmessagelist[1], out int numend))
+                                                    if (cutmessagelist.Length >= 2 && cutmessagelist[1] != "")
                                                     {
-                                                        linecutstr += "[" + numstart + ":" + numend + "]";
+                                                        if (int.TryParse(cutmessagelist[0], out int numstart) && int.TryParse(cutmessagelist[1], out int numend))
+                                                        {
+                                                            linecutstr += "[" + numstart + ":" + numend + "]";
+                                                        }
+                                                        else
+                                                        {
+                                                            continue;
+                                                        }
                                                     }
                                                     else
                                                     {
-                                                        continue;
+                                                        if (int.TryParse(cutmessagelist[0], out int numstart))
+                                                        {
+                                                            linecutstr += "[" + numstart + ":" + 0 + "]";
+                                                        }
+                                                        else
+                                                        {
+                                                            continue;
+                                                        }
                                                     }
                                                     if (i != x1.Count - 1)
                                                     {

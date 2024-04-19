@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace VSGUI.API
@@ -47,9 +48,10 @@ namespace VSGUI.API
             }
             if (cutstr != "" && fpsstr != "")
             {
+                int audioFramesCount = 0;
                 if (isVideoinput)
                 {
-                    //情况1
+                    //情况1：输入的是视频
                     script += @"__v = LWLibavVideoSource(""" + inputstr + @""")" + "\r\n";
                     script += @"__a = LWLibavAudioSource(""" + inputstr + @""")" + "\r\n";
                     if (delayint != 0) script += @"__a = DelayAudio(__a," + delayint.ToString() + @"/1000.0)" + "\r\n";
@@ -57,29 +59,52 @@ namespace VSGUI.API
                 }
                 else
                 {
-                    //情况2
+                    //情况2：输入的是纯音频
                     script += @"LWLibavAudioSource(""" + inputstr + @""")" + "\r\n";
                     if (delayint != 0) script += @"DelayAudio(" + delayint.ToString() + @"/1000.0)" + "\r\n";
+                    //读取并处理音频时长
+                    string result = ProcessApi.RunSyncProcess(MainWindow.binpath + @"\tools\mediainfo\", @"MediaInfo.exe" + @" --Inform=""Audio;\n%Duration%"" " + "\"" + inputstr + "\"", disableTime: true);
+                    if (result != null)
+                    {
+                        var x = Regex.Matches(result, @"\d.*");
+                        if (x.Count >= 1)
+                        {
+                            //就取第一个
+                            int.TryParse(x[0].Value.Trim(), out int audioDuration);
+                            double.TryParse(fpsstr, out double fpsdouble);
+                            audioFramesCount = (int)Math.Round(((double)audioDuration / 1000 * fpsdouble), MidpointRounding.AwayFromZero) + 1;
+                        }
+                    }
                 }
 
                 if (!CheckCutStrIsError(cutstr))
                 {
+                    //先分离&的多次切割
                     string[] cutblock = cutstr.Split("&");
                     foreach (var block in cutblock)
                     {
+                        //再分离+的拼接
                         string[] cutliststr = block.Split("+");
                         for (int i = 0; i < cutliststr.Length; i++)
                         {
                             cutliststr[i] = cutliststr[i].Replace(",", ":").Replace("[", "").Replace("]", "");
                         }
                         script += @"__film = last" + "\r\n";
-                        script += @"__just_audio = __film" + "\r\n";
-                        script += @"__blank = BlankClip(length=" + int.Parse(cutliststr[cutliststr.Length - 1].Split(":")[1].ToString()) + 1 + ", fps=" + fpsstr + ")" + "\r\n";
-                        script += @"__film = AudioDub(__blank, __film)" + "\r\n";
+                        if (!isVideoinput)
+                        {
+                            //如果非视频输入，则需要增加这些参数
+                            script += @"__just_audio = __film" + "\r\n";
+                            script += @"__blank = BlankClip(length=" + audioFramesCount + ", fps=" + fpsstr + ")" + "\r\n";
+                            script += @"__film = AudioDub(__blank, __film)" + "\r\n";
+                        }
                         for (int i = 0; i < cutliststr.Length; i++)
                         {
                             int startf = int.Parse(cutliststr[i].Split(":")[0].ToString());
                             int endf = int.Parse(cutliststr[i].Split(":")[1].ToString());
+                            if (!isVideoinput && endf == 0)
+                            {
+                                endf = audioFramesCount;
+                            }
                             script += @"__t" + i + @" = __film.trim(" + startf + ", " + endf + ")" + "\r\n";
                         }
                         for (int i = 0; i < cutliststr.Length; i++)
@@ -94,7 +119,11 @@ namespace VSGUI.API
                                 script += " \r\n";
                             }
                         }
-                        script += @"AudioDubEx(__just_audio, last)" + "\r\n";
+                        if (!isVideoinput)
+                        {
+                            //如果非视频输入，则需要增加这些参数
+                            script += @"AudioDubEx(__just_audio, last)" + "\r\n";
+                        }
                     }
                 }
                 else

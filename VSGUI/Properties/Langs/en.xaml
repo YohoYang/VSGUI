@@ -19,7 +19,7 @@
     <system:String x:Key="audio">Audio</system:String>
     <system:String x:Key="audioinputtooltip">Supports direct insertion of video files, will read the first audio track and intelligently handle situations such as dynamic frame rate, and automatically input the frame rate. But you can also destream and put the audio separately after delay.</system:String>
     <system:String x:Key="cut">Cut</system:String>
-    <system:String x:Key="cuttooltip">Each cut uses the format of [xxx:xxx] by frames, use + to connect to indicate the same set of cuts, and use &amp; to connect to indicate the re-cut after the previous set of cuts .</system:String>
+    <system:String x:Key="cuttooltip">Each cut uses the format of [xxx:xxx] by frames, use + to connect to indicate the same set of cuts, and use &amp; to connect to indicate the re-cut after the previous set of cuts .If the end is 0, it means cutting to the end.</system:String>
     <system:String x:Key="delay">Delay</system:String>
     <system:String x:Key="mux">Mux</system:String>
     <system:String x:Key="chapterfile">Chapter file</system:String>

@@ -19,7 +19,7 @@
     <system:String x:Key="audio">音频</system:String>
     <system:String x:Key="audioinputtooltip">支持直接放入视频文件，将读取第一音轨并智能处理如动态帧率等情况，并且自动输入帧率。但也可以解流处理延迟后单独放入音频。</system:String>
     <system:String x:Key="cut">剪切</system:String>
-    <system:String x:Key="cuttooltip">每一个剪切使用[xxx:xxx]的格式（xxx为帧数），使用+连接表示同一组剪切，使用&amp;连接表示在上一组剪切后的再剪切。</system:String>
+    <system:String x:Key="cuttooltip">每一个剪切使用[xxx:xxx]的格式（xxx为帧数），使用+连接表示同一组剪切，使用&amp;连接表示在上一组剪切后的再剪切。如果结束为0，则表示剪切至结束。</system:String>
     <system:String x:Key="delay">延迟</system:String>
     <system:String x:Key="mux">封装</system:String>
     <system:String x:Key="chapterfile">章节文件</system:String>
