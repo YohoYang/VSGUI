@@ -86,7 +86,18 @@ namespace VSGUI.API
         {
             string datarecevied = "";
             string output = Path.GetDirectoryName(input[0]) + @"\" + Path.GetFileNameWithoutExtension(input[0]) + @"_mux." + outputsuffix.ToLower();
-            CommonApi.TryDeleteFile(output);
+            if (File.Exists(output))
+            {
+                try
+                {
+                    File.Delete(output);
+                }
+                catch (Exception)
+                {
+                    ExitedCall(LanguageApi.FindRes("mux") + LanguageApi.FindRes("error") + ": " + LanguageApi.FindRes("p052"));
+                    return;
+                }
+            }
 
             string chapterTempPath = chapinput;
             ChapterApi chapter = new ChapterApi();

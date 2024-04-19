@@ -204,5 +204,6 @@
     <system:String x:Key="p049">未在当前选择环境找到VSRepoGUI.exe</system:String>
     <system:String x:Key="p050">非内建环境不支持一键设置VsEditor关联</system:String>
     <system:String x:Key="p051">字幕输入</system:String>
+    <system:String x:Key="p052">封装输出目标已存在且无法覆盖</system:String>
 
 </ResourceDictionary>

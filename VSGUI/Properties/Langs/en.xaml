@@ -204,5 +204,6 @@
     <system:String x:Key="p049">VSRepoGUI.exe was not found in the current selection environment</system:String>
     <system:String x:Key="p050">Non-built-in environments do not support one-click setting of VsEditor association</system:String>
     <system:String x:Key="p051">Subtitle input</system:String>
+    <system:String x:Key="p052">The package output target already exists and cannot be overwritten</system:String>
 
 </ResourceDictionary>
