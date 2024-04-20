@@ -48,7 +48,6 @@ namespace VSGUI.API
             }
             if (cutstr != "" && fpsstr != "")
             {
-                int audioFramesCount = 0;
                 if (isVideoinput)
                 {
                     //情况1：输入的是视频
@@ -62,18 +61,19 @@ namespace VSGUI.API
                     //情况2：输入的是纯音频
                     script += @"LWLibavAudioSource(""" + inputstr + @""")" + "\r\n";
                     if (delayint != 0) script += @"DelayAudio(" + delayint.ToString() + @"/1000.0)" + "\r\n";
-                    //读取并处理音频时长
-                    string result = ProcessApi.RunSyncProcess(MainWindow.binpath + @"\tools\mediainfo\", @"MediaInfo.exe" + @" --Inform=""Audio;\n%Duration%"" " + "\"" + inputstr + "\"");
-                    if (result != null)
+                }
+                int audioFramesCount = 0;
+                //读取并处理音频时长
+                string result = ProcessApi.RunSyncProcess(MainWindow.binpath + @"\tools\mediainfo\", @"MediaInfo.exe" + @" --Inform=""Audio;\n%Duration%"" " + "\"" + inputstr + "\"");
+                if (result != null)
+                {
+                    var x = Regex.Matches(result, @"\d.*");
+                    if (x.Count >= 1)
                     {
-                        var x = Regex.Matches(result, @"\d.*");
-                        if (x.Count >= 1)
-                        {
-                            //就取第一个
-                            int.TryParse(x[0].Value.Trim(), out int audioDuration);
-                            double.TryParse(fpsstr, out double fpsdouble);
-                            audioFramesCount = (int)Math.Round(((double)audioDuration / 1000 * fpsdouble), MidpointRounding.AwayFromZero) + 1;
-                        }
+                        //就取第一个
+                        int.TryParse(x[0].Value.Trim(), out int audioDuration);
+                        double.TryParse(fpsstr, out double fpsdouble);
+                        audioFramesCount = (int)Math.Round(((double)audioDuration / 1000 * fpsdouble), MidpointRounding.AwayFromZero) + 1;
                     }
                 }
 
@@ -90,13 +90,12 @@ namespace VSGUI.API
                             cutliststr[i] = cutliststr[i].Replace(",", ":").Replace("[", "").Replace("]", "");
                         }
                         script += @"__film = last" + "\r\n";
-                        if (!isVideoinput)
-                        {
-                            //如果非视频输入，则需要增加这些参数
-                            script += @"__just_audio = __film" + "\r\n";
-                            script += @"__blank = BlankClip(length=" + audioFramesCount + ", fps=" + fpsstr + ")" + "\r\n";
-                            script += @"__film = AudioDub(__blank, __film)" + "\r\n";
-                        }
+
+                        //如果非视频输入，则需要增加这些参数
+                        script += @"__just_audio = __film" + "\r\n";
+                        script += @"__blank = BlankClip(length=" + audioFramesCount + ", fps=" + fpsstr + ")" + "\r\n";
+                        script += @"__film = AudioDub(__blank, __film)" + "\r\n";
+
                         for (int i = 0; i < cutliststr.Length; i++)
                         {
                             int startf = int.Parse(cutliststr[i].Split(":")[0].ToString());

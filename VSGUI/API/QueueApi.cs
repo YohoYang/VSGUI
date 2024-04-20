@@ -664,9 +664,28 @@ namespace VSGUI.API
             bool needCopyFile = true;
             if (File.Exists(CommonApi.GetAppTempPath() + @"LSMASHSource.dll"))
             {
-                if (UpdateApi.CalculateMD5(MainWindow.binpath + @"\vs\vapoursynth64\plugins\LSMASHSource.dll") == UpdateApi.CalculateMD5(CommonApi.GetAppTempPath() + @"LSMASHSource.dll"))
+                //R66处理
+                if (File.Exists(MainWindow.envpath + @"\vs-plugins\LSMASHSource.dll"))
                 {
-                    needCopyFile = false;
+                    if (UpdateApi.CalculateMD5(MainWindow.envpath + @"\vs-plugins\LSMASHSource.dll") == UpdateApi.CalculateMD5(CommonApi.GetAppTempPath() + @"LSMASHSource.dll"))
+                    {
+                        needCopyFile = false;
+                    }
+                }
+                else if (File.Exists(MainWindow.envpath + @"\vs\vapoursynth64\plugins\LSMASHSource.dll"))
+                {
+                    if (UpdateApi.CalculateMD5(MainWindow.envpath + @"\vs\vapoursynth64\plugins\LSMASHSource.dll") == UpdateApi.CalculateMD5(CommonApi.GetAppTempPath() + @"LSMASHSource.dll"))
+                    {
+                        needCopyFile = false;
+                    }
+                }
+                //回落一个本地环境，第三方环境不一定有这个dll  //本地更新r66环境记得改
+                else if (File.Exists(MainWindow.binpath + @"\vs\vapoursynth64\plugins\LSMASHSource.dll"))
+                {
+                    if (UpdateApi.CalculateMD5(MainWindow.binpath + @"\vs\vapoursynth64\plugins\LSMASHSource.dll") == UpdateApi.CalculateMD5(CommonApi.GetAppTempPath() + @"LSMASHSource.dll"))
+                    {
+                        needCopyFile = false;
+                    }
                 }
             }
             //复制文件
@@ -674,7 +693,19 @@ namespace VSGUI.API
             {
                 try
                 {
-                    File.Copy(MainWindow.binpath + @"\vs\vapoursynth64\plugins\LSMASHSource.dll", CommonApi.GetAppTempPath() + @"LSMASHSource.dll");
+                    //R66需处理
+                    if (File.Exists(MainWindow.envpath + @"\vs-plugins\LSMASHSource.dll"))
+                    {
+                        File.Copy(MainWindow.envpath + @"\vs-plugins\LSMASHSource.dll", CommonApi.GetAppTempPath() + @"LSMASHSource.dll");
+                    }
+                    else if (File.Exists(MainWindow.envpath + @"\vs\vapoursynth64\plugins\LSMASHSource.dll"))
+                    {
+                        File.Copy(MainWindow.envpath + @"\vs\vapoursynth64\plugins\LSMASHSource.dll", CommonApi.GetAppTempPath() + @"LSMASHSource.dll");
+                    }
+                    else if (File.Exists(MainWindow.binpath + @"\vs\vapoursynth64\plugins\LSMASHSource.dll"))
+                    {
+                        File.Copy(MainWindow.binpath + @"\vs\vapoursynth64\plugins\LSMASHSource.dll", CommonApi.GetAppTempPath() + @"LSMASHSource.dll");
+                    }
                 }
                 catch (Exception)
                 {

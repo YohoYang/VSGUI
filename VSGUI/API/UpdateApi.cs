@@ -389,10 +389,17 @@ namespace VSGUI.API
         {
             using (var md5 = MD5.Create())
             {
-                using (var stream = File.OpenRead(filepath))
+                if (File.Exists(filepath))
                 {
-                    var hash = md5.ComputeHash(stream);
-                    return BitConverter.ToString(hash).Replace("-", "").ToLowerInvariant();
+                    using (var stream = File.OpenRead(filepath))
+                    {
+                        var hash = md5.ComputeHash(stream);
+                        return BitConverter.ToString(hash).Replace("-", "").ToLowerInvariant();
+                    }
+                }
+                else
+                {
+                    return "";
                 }
             }
         }
