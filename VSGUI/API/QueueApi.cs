@@ -874,7 +874,7 @@ namespace VSGUI.API
                                     {
                                         if (!listitem.TrimStart().StartsWith("#"))
                                         {
-                                            var x1 = Regex.Matches(listitem, @".*?\.std\.Trim\((.*?),(.*?)\)|([0-9a-zA-Z]*?)\[(\d+(?:\:|\,|\s)*.+)\]");
+                                            var x1 = Regex.Matches(listitem, @".*?\.std\.Trim\((.*?),(.*?)\)|[=|+]\s*(\w+)\[(\d+:\d+)\]|[=|+]\s*(\w+)\[(\d+:)\]"); //1.0.12改进
                                             string linecutstr = "";
                                             if (x1.Count > 0)
                                             {
