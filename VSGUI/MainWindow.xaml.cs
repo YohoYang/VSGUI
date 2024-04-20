@@ -27,7 +27,7 @@ namespace VSGUI
         public static string binpath = Directory.GetCurrentDirectory() + @"\bin";
         public static string envpath = null;
         private bool forcedStop = false;
-        private string coreversion = "v1.0.11";
+        private string coreversion = "v1.0.12";
         public static string logBoxStr = "";
         private string[] videoMultiInputLists, audioMultiInputLists;
 
