@@ -115,7 +115,7 @@ namespace VSGUI.API
             string common = ProcessMuxCommandStr(input, subinput, chapterTempPath, output, -1, out string clipath);
 
             ProcessApi.RunProcess(clipath, common, DataReceived, Exited, Pided);
-            void DataReceived(string data, bool processIsExited)
+            void DataReceived(string data, string qid, bool processIsExited)
             {
                 datarecevied += data;
                 if (!string.IsNullOrEmpty(data) && !processIsExited)

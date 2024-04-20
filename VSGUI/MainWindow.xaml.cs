@@ -1190,20 +1190,20 @@ namespace VSGUI
                         //使用实时的配置
                         clipath = envpath;
                     }
-                    ProcessApi.RunProcess(clipath, QueueApi.GetQueueListitem(queueid, "command"), DataReceived, Exited, Pided);
+                    ProcessApi.RunProcess(clipath, QueueApi.GetQueueListitem(queueid, "command"), DataReceived, Exited, Pided, queueid: queueid);
 
 
 
-                    void DataReceived(string data, bool processIsExited)
+                    void DataReceived(string data, string queueid, bool processIsExited)
                     {
                         if (!string.IsNullOrEmpty(data) && !processIsExited)
                         {
                             UpdateLogBox();
-                            if ((new DateTimeOffset(DateTime.UtcNow).ToUnixTimeMilliseconds() - QueueApi.lastUpdateTime) < 1000)
+                            if (QueueApi.lastUpdateTime.ContainsKey(queueid) && (new DateTimeOffset(DateTime.UtcNow).ToUnixTimeMilliseconds() - QueueApi.lastUpdateTime[queueid]) < 1000)
                             {
                                 return;
                             }
-                            QueueApi.lastUpdateTime = new DateTimeOffset(DateTime.UtcNow).ToUnixTimeMilliseconds();
+                            QueueApi.lastUpdateTime[queueid] = new DateTimeOffset(DateTime.UtcNow).ToUnixTimeMilliseconds();
                             QueueApi.UpdateProgressStatus(queueid, data);
                             UpdateQueueList();
                         }

@@ -97,7 +97,7 @@ namespace VSGUI.API
                     }
                     string fullcommon = defaultcommon + "-i " + "\"" + inputpath + "\"" + commonParameter;
                     ProcessApi.RunProcess(clipath, fullcommon, DataReceived, Exited, Pided);
-                    void DataReceived(string data, bool processIsExited)
+                    void DataReceived(string data, string qid, bool processIsExited)
                     {
                         //if (!string.IsNullOrEmpty(data) && !processIsExited)
                         //{
@@ -208,7 +208,7 @@ namespace VSGUI.API
                 }
                 Directory.CreateDirectory(Path.GetDirectoryName(inputpath) + @"\" + Path.GetFileNameWithoutExtension(inputpath) + @"\");
                 ProcessApi.RunProcess(clipath, common, DataReceived, Exited, Pided);
-                void DataReceived(string data, bool processIsExited)
+                void DataReceived(string data, string qid, bool processIsExited)
                 {
                     datarecevied += data + "\n";
                     if (data != null && data.StartsWith("process:"))
@@ -326,7 +326,7 @@ namespace VSGUI.API
                     }
                     string fullcommon = @"mkvextract.exe --ui-language en " + "\"" + inputpath + "\"" + @" tracks " + commonParameter;
                     ProcessApi.RunProcess(clipath, fullcommon, DataReceived, Exited, Pided);
-                    void DataReceived(string data, bool processIsExited)
+                    void DataReceived(string data, string qid, bool processIsExited)
                     {
                         //if (!string.IsNullOrEmpty(data) && !processIsExited)
                         //{

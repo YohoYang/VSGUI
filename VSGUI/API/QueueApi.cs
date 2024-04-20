@@ -18,7 +18,8 @@ namespace VSGUI.API
     {
         public static JsonArray queueListJson;
         public static int runningQueueCount = 0;
-        public static long lastUpdateTime = 0;
+        //public static long lastUpdateTime = 0;
+        public static Dictionary<string, long> lastUpdateTime = new Dictionary<string, long>();
 
         public static ObservableCollection<QueueMember> GetQueueMember()
         {

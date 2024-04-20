@@ -237,7 +237,7 @@ namespace VSGUI.API
         //}
 
 
-        public static async void RunProcess(string clipath, string common, Action<string, bool> inDataReceived, Action inExited, Action<string> processid, Encoding? outputEncoding = null, bool isQueueJob = true)
+        public static async void RunProcess(string clipath, string common, Action<string, string, bool> inDataReceived, Action inExited, Action<string> processid, Encoding? outputEncoding = null, string queueid = "")
         {
             if (outputEncoding == null)
             {
@@ -259,13 +259,13 @@ namespace VSGUI.API
                         QueueApi.runningQueueCount += 1;
                         break;
                     case StandardOutputCommandEvent stdOut:
-                        inDataReceived(stdOut.Text, isexited);
+                        inDataReceived(stdOut.Text, queueid, isexited);
                         //Debug.WriteLine("[" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "] " + stdOut.Text);
                         tempLogStr += "[" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "] " + stdOut.Text + "\n";
                         MainWindow.logBoxStr += "\r\n" + "[" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "] " + stdOut.Text;
                         break;
                     case StandardErrorCommandEvent stdErr:
-                        inDataReceived(stdErr.Text, isexited);
+                        inDataReceived(stdErr.Text, queueid, isexited);
                         //Debug.WriteLine("[" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "] " + stdErr.Text);
                         tempLogStr += "[" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "] " + stdErr.Text + "\n";
                         MainWindow.logBoxStr += "\r\n" + "[" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "] " + stdErr.Text;
