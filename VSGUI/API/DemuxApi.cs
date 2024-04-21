@@ -6,10 +6,6 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Windows;
-using MessageBox = HandyControl.Controls.MessageBox;
 
 namespace VSGUI.API
 {

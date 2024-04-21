@@ -3,6 +3,7 @@ using System.Windows;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Globalization;
 
 
 namespace VSGUI.API
@@ -47,12 +48,14 @@ namespace VSGUI.API
 
         public static void SystemLanguageCheck()
         {
-            string lang = System.Threading.Thread.CurrentThread.CurrentCulture.Name.ToLower();
+            CultureInfo currentCulture = CultureInfo.CurrentCulture;
+            string lang = currentCulture.Name; // 返回如 "en-US" 的字符串
+            //string lang = System.Threading.Thread.CurrentThread.CurrentCulture.Name.ToLower();
             if (map.ContainsValue(lang))
             {
                 foreach (var item in map)
                 {
-                    if (item.Value == lang)
+                    if (item.Value == lang.ToLower())
                     {
                         SwitchLanguage(item.Key);
                         break;
@@ -61,7 +64,7 @@ namespace VSGUI.API
             }
             else
             {
-                SwitchLanguage("English");
+                SwitchLanguage("简体中文");
             }
         }
 
