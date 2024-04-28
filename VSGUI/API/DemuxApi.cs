@@ -127,14 +127,19 @@ namespace VSGUI.API
                 var x = Regex.Matches(info, @"(\d+): (.*?)[, ] (.*)\s");
                 if (x.Count > 0)
                 {
+                    bool videoFound = false;
                     string commonParameter = "";
                     for (int i = 0; i < x.Count; i++)
                     {
                         string ext = x[i].Groups[2].Value.ToLower();
                         string spext = "";
                         //进行格式的设置
-                        if (x[i].Groups[1].Value == "1")
+                        if (videoFound == false)
                         {
+                            if (ext.Contains("chapters"))
+                            {
+                                continue;
+                            }
                             //视频流
                             if (ext.Contains(@"/"))
                             {
@@ -144,6 +149,7 @@ namespace VSGUI.API
                             {
                                 spext = ext;
                             }
+                            videoFound = true;
                         }
                         else
                         {
