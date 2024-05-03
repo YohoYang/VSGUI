@@ -26,12 +26,19 @@ namespace VSGUI.API
         {
             if (!File.Exists(filepath))
             {
-                return new JsonObject();
+                return null;
             }
-            JsonObject obj = JsonNode.Parse(File.ReadAllText(filepath)).AsObject();
-            return obj;
-        }   
-        
+            try
+            {
+                JsonObject obj = JsonNode.Parse(File.ReadAllText(filepath)).AsObject();
+                return obj;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+
         public static JsonArray ReadJsonArrayFromFile(string filepath)
         {
             if (!File.Exists(filepath))

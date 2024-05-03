@@ -22,9 +22,14 @@ namespace VSGUI.API
             if (encoderJsonPub == null)
             {
                 string path = MainWindow.binpath + @"\json\encoderprofiles.json";
+                bool readSucc = false;
                 if (File.Exists(path))
                 {
                     encoderJsonPub = JsonApi.ReadJsonObjectFromFile(path);
+                    if (encoderJsonPub != null)
+                    {
+                        readSucc = true;
+                    }
                     //foreach (var item in encoderJsonPub)
                     //{
                     //    foreach (JsonObject jsonitem in item.Value as JsonArray)
@@ -40,7 +45,14 @@ namespace VSGUI.API
                     //    }
                     //}
                 }
-                return encoderJsonPub;
+                if (readSucc)
+                {
+                    return encoderJsonPub;
+                }
+                else
+                {
+                    return null;
+                }
             }
             else
             {
@@ -61,6 +73,10 @@ namespace VSGUI.API
                 return "mux";
             }
             var encoderJson = GetEncoderJson();
+            if (encoderJson == null)
+            {
+                return null;
+            }
             JsonObject thisJobj = encoderJson[type][encoderid].AsObject();
             string txt = thisJobj["encodername"].ToString();
             if (txt == "c")
@@ -92,6 +108,10 @@ namespace VSGUI.API
                 return "混流";
             }
             var encoderJson = GetEncoderJson();
+            if (encoderJson == null)
+            {
+                return null;
+            }
             JsonObject thisJobj = encoderJson[type][encoderid].AsObject();
             return thisJobj["name"].ToString();
         }
@@ -103,6 +123,10 @@ namespace VSGUI.API
                 return false;
             }
             var encoderJson = GetEncoderJson();
+            if (encoderJson == null)
+            {
+                return false;
+            }
             JsonObject thisJobj = encoderJson[type][encoderid].AsObject();
             return (bool)thisJobj["normalize"];
         }

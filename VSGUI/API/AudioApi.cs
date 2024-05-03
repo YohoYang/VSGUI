@@ -70,9 +70,22 @@ namespace VSGUI.API
                     if (x.Count >= 1)
                     {
                         //就取第一个
-                        int.TryParse(x[0].Value.Trim(), out int audioDuration);
-                        double.TryParse(fpsstr, out double fpsdouble);
-                        audioFramesCount = (int)Math.Round(((double)audioDuration / 1000 * fpsdouble), MidpointRounding.AwayFromZero) + 1;
+                        string audioDurationStr = x[0].Value.Replace("\r", "").Trim();
+                        int audioDuration = 0;
+                        decimal decimalNumber;
+                        if (decimal.TryParse(audioDurationStr, out decimalNumber))
+                        {
+                            audioDuration = (int)Math.Floor(decimalNumber);
+                        }
+                        if (audioDuration != 0)
+                        {
+                            double.TryParse(fpsstr, out double fpsdouble);
+                            audioFramesCount = (int)Math.Round(((double)audioDuration / 1000 * fpsdouble), MidpointRounding.AwayFromZero) + 1;
+                        }
+                        else
+                        {
+                            makeError = true;
+                        }
                     }
                 }
 
@@ -90,10 +103,17 @@ namespace VSGUI.API
                         }
                         script += @"__film = last" + "\r\n";
 
-                        //如果非视频输入，则需要增加这些参数
-                        script += @"__just_audio = __film" + "\r\n";
-                        script += @"__blank = BlankClip(length=" + audioFramesCount + ", fps=" + fpsstr + ")" + "\r\n";
-                        script += @"__film = AudioDub(__blank, __film)" + "\r\n";
+                        if (audioFramesCount != 0)
+                        {
+                            //不管是不是视频输入，均需要增加这些参数。因为vpy可能会改变视频的帧率，导致按帧切割错误（如ts）
+                            script += @"__just_audio = __film" + "\r\n";
+                            script += @"__blank = BlankClip(length=" + audioFramesCount + ", fps=" + fpsstr + ")" + "\r\n";
+                            script += @"__film = AudioDub(__blank, __film)" + "\r\n";
+                        }
+                        else
+                        {
+                            makeError = true;
+                        }
 
                         for (int i = 0; i < cutliststr.Length; i++)
                         {

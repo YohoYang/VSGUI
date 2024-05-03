@@ -408,14 +408,19 @@ namespace VSGUI.API
 
         public static async void UpdateEncoderProfiles(string url, Action Callback, Action CallError, string proxy)
         {
-            JsonObject localencoderjson;
+            JsonObject localencoderjson = null;
             JsonObject serverencoderjson;
             string jsonpath = MainWindow.binpath + @"\json\encoderprofiles.json";
+            bool localFileJsonCheck = false;
             if (File.Exists(jsonpath))
             {
                 localencoderjson = JsonApi.ReadJsonObjectFromFile(jsonpath);
+                if (localencoderjson != null)
+                {
+                    localFileJsonCheck = true;
+                }
             }
-            else
+            if (localFileJsonCheck == false)
             {
                 localencoderjson = JsonApi.ReadJsonFromString(@"{""video"":[{""name"":""Default"",""encodername"":""x264"",""parameter"":""--crf 22.5"",""suffix"":"".h264"",""tag"":""custom""}],""audio"":[{""name"":""Default"",""encodername"":""qaac"",""parameter"":""--tvbr 73"",""suffix"":"".aac"",""normalize"":true,""tag"":""custom""}]}");
             }
