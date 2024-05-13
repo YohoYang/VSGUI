@@ -30,7 +30,7 @@ namespace VSGUI
         {
             {"video","x264",".h264|.m4v|.mp4",@"\bin\encoder\x264\x264.exe","--demuxer y4m","- -o" },
             {"video","x265",".h265|.m4v|.mp4",@"\bin\encoder\x265\x265.exe","--y4m" ,"- -o"},
-            {"video","nvenc",".h264|.h265|.m4v|.mp4",@"\bin\encoder\NVEncC\NVEncC64.exe","--y4m","-o" },
+            {"video","nvenc",".h264|.h265|.m4v|.mp4",@"\bin\encoder\NVEncC\NVEncC64.exe","--y4m -i -","-o" },
             {"video","ffmpeg","",@"\bin\encoder\ffmpeg\ffmpeg.exe","-y -i -","" },
             {"audio","qaac",".aac|.m4a",@"\bin\encoder\qaac\qaac64.exe","" , "- -o"},
             {"audio","ffmpeg","",@"\bin\encoder\ffmpeg\ffmpeg.exe","-y -i -","" },
