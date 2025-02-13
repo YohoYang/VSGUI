@@ -7,6 +7,7 @@
 		<UseWPF>true</UseWPF>
 		<DebugType>portable</DebugType>
 		<ApplicationIcon>VSGUI.ico</ApplicationIcon>
+		<LangVersion>11</LangVersion>
 	</PropertyGroup>
 
 	<ItemGroup>

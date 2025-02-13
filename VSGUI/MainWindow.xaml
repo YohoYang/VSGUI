@@ -45,7 +45,7 @@
                                         <hc:TextBox x:Name="simplevideoinputbox" Grid.Column="1" PreviewDragOver="TextBox_PreviewDragOver" PreviewDrop="TextBox_PreviewDrop" LostFocus="simplevideoinputbox_LostFocus" hc:InfoElement.Placeholder="{DynamicResource simpleVideoInputPlaceholder}"/>
                                         <Path x:Name="simplevideoinputPbSucc" Data="{StaticResource SuccessGeometry}" Grid.Column="1" Width="20" Height="20" Stretch="Uniform" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,8,0" Fill="{DynamicResource SuccessBrush}" MouseLeftButtonUp="inputPbSucc_MouseLeftButtonUp" Visibility="Collapsed"/>
                                         <hc:CircleProgressBar x:Name="simplevideoinputPb" IsIndeterminate="True" Grid.Column="1" Width="20" Height="20" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,8,0" Visibility="Collapsed"/>
-                                        <Button x:Name="simplevideoinput" Grid.Column="2" Content="..." Margin="4,0,0,0" Click="OpenFileSelect_Click"/>
+                                        <Button x:Name="simplevideoinput" Grid.Column="2" Content="..." Margin="4,0,0,0" Click="OpenMultiFileSelect_Click"/>
                                     </Grid>
                                     <!--音频输入-->
                                     <Grid>
@@ -56,7 +56,7 @@
                                         </Grid.ColumnDefinitions>
                                         <TextBlock Grid.Column="0" VerticalAlignment="Center" Text="{DynamicResource audioinput}"/>
                                         <hc:TextBox x:Name="simpleaudioinputbox" Grid.Column="1" PreviewDragOver="TextBox_PreviewDragOver" PreviewDrop="TextBox_PreviewDrop" hc:InfoElement.Placeholder="{DynamicResource simpleAudioInputPlaceholder}"/>
-                                        <Button x:Name="simpleaudioinput" Grid.Column="2" Content="..." Margin="4,0,0,0" Click="OpenFileSelect_Click"/>
+                                        <Button x:Name="simpleaudioinput" Grid.Column="2" Content="..." Margin="4,0,0,0" Click="OpenMultiFileSelect_Click"/>
                                     </Grid>
                                     <!--视频编码参数-->
                                     <Grid>
@@ -126,7 +126,7 @@
                                         </Grid.ColumnDefinitions>
                                         <TextBlock Grid.Column="0" VerticalAlignment="Center" Text="{DynamicResource chapterfile}"/>
                                         <hc:TextBox x:Name="simplecapinputbox" Grid.Column="1" PreviewDragOver="TextBox_PreviewDragOver" PreviewDrop="TextBox_PreviewDrop" hc:InfoElement.Placeholder="{DynamicResource p024}"/>
-                                        <Button x:Name="simplecapinput" Grid.Column="2" Content="..." Margin="4,0,0,0" Click="OpenFileSelect_Click"/>
+                                        <Button x:Name="simplecapinput" Grid.Column="2" Content="..." Margin="4,0,0,0" Click="OpenMultiFileSelect_Click"/>
                                     </Grid>
                                     <!--封装格式-->
                                     <Grid>
@@ -157,7 +157,19 @@
                             <TextBlock Text="{DynamicResource output}" Margin="5,10,0,6" Foreground="#a3a3a3"/>
                             <Border Style="{StaticResource BorderRegion}">
                                 <hc:UniformSpacingPanel Spacing="6" Orientation="Vertical">
+                                    <!--视频输出目录-->
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="120"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Grid.Column="0" VerticalAlignment="Center" Text="{DynamicResource videooutputdir}"/>
+                                        <hc:TextBox x:Name="simplevideooutputdirbox" Foreground="#999999" IsReadOnly="True" Grid.Column="1" hc:InfoElement.Placeholder="{DynamicResource p054}"/>
+                                        <Button x:Name="simplevideooutputdir" Grid.Column="2" Content="..." Margin="4,0,0,0" Click="SaveFileDirSelect_Click"/>
+                                    </Grid>
                                     <!--视频输出-->
+
                                     <Grid>
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="120"/>
@@ -165,8 +177,8 @@
                                             <ColumnDefinition Width="auto"/>
                                         </Grid.ColumnDefinitions>
                                         <TextBlock Grid.Column="0" VerticalAlignment="Center" Text="{DynamicResource videooutput}"/>
-                                        <hc:TextBox x:Name="simplevideooutputbox" Grid.Column="1" hc:InfoElement.Placeholder="{DynamicResource p002}"/>
-                                        <Button x:Name="simplevideooutput" Grid.Column="2" Content="..." Margin="4,0,0,0" Tag="simplevideoout" Click="SaveFileSelect_Click"/>
+                                        <hc:TextBox x:Name="simplevideooutputbox" Grid.Column="1" hc:InfoElement.Placeholder="{DynamicResource p002}" Grid.ColumnSpan="2"/>
+                                        <!-- <Button x:Name="simplevideooutput" Grid.Column="2" Content="..." Margin="4,0,0,0" Tag="simplevideoout" Click="SaveFileSelect_Click" HorizontalAlignment="Left"/> -->
                                     </Grid>
                                     <!--其他操作-->
                                     <Grid>
@@ -394,6 +406,7 @@
                             </StackPanel>
                             <Grid Grid.Row="1">
                                 <WrapPanel HorizontalAlignment="Right">
+                                    <Button x:Name="ClearFinishedQueueAll" Margin="5" Click="ClearFinishedQueue_Click"  Style="{StaticResource ButtonDanger}" Visibility="Collapsed" Content="{DynamicResource clearfinishedalljob}" FontWeight="Bold" MinWidth="140"></Button>
                                     <Button x:Name="StartQueueAll" Margin="5" Click="StartQueueAll_Click" Style="{StaticResource ButtonPrimary}" Content="{DynamicResource startqueue}" MinWidth="140" FontWeight="Bold" IsEnabled="False"/>
                                     <Button x:Name="StopQueueAll" Margin="5" Click="StopQueueAll_Click"  Style="{StaticResource ButtonDanger}" Visibility="Collapsed" Content="{DynamicResource stopalljob}" FontWeight="Bold" MinWidth="140"></Button>
                                 </WrapPanel>

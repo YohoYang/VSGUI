@@ -26,20 +26,26 @@ namespace VSGUI
     {
         JsonObject tempObject;
         string ltype;
-        public static string[,] encoders =
-        {
-            {"video","x264",".h264|.m4v|.mp4",@"\bin\encoder\x264\x264.exe","--demuxer y4m","- -o" },
-            {"video","x265",".h265|.m4v|.mp4",@"\bin\encoder\x265\x265.exe","--y4m" ,"- -o"},
-            {"video","nvenc",".h264|.h265|.m4v|.mp4",@"\bin\encoder\NVEncC\NVEncC64.exe","--y4m -i -","-o" },
-            {"video","ffmpeg","",@"\bin\encoder\ffmpeg\ffmpeg.exe","-y -i -","" },
-            {"audio","qaac",".aac|.m4a",@"\bin\encoder\qaac\qaac64.exe","" , "- -o"},
-            {"audio","ffmpeg","",@"\bin\encoder\ffmpeg\ffmpeg.exe","-y -i -","" },
-        };
+        public static string[,] encoders;
 
+        public static void EncoderInit()
+        {
+            encoders = new [,]{
+                {"video","x264",".h264|.m4v|.mp4",@"\bin\encoder\x264\x264.exe","--demuxer y4m","- -o" },
+                {"video","x265",".h265|.m4v|.mp4",@"\bin\encoder\x265\x265.exe","--y4m" ,"- -o"},
+                {"video","nvenc",".h264|.h265|.m4v|.mp4",@"\bin\encoder\NVEncC\NVEncC64.exe","--y4m -i -","-o" },
+                {"video","ffmpeg","",@"\bin\encoder\ffmpeg\ffmpeg.exe","-y -i -","" },
+                {"audio","qaac",".aac|.m4a",@"\bin\encoder\qaac\qaac64.exe","" , "- -o"},
+                {"audio","ffmpeg","",@"\bin\encoder\ffmpeg\ffmpeg.exe","-y -i -","" },
+                {"audio",LanguageApi.FindRes("p053"),".wav",@"\bin\encoder\ffmpeg\ffmpeg.exe","-y -i -","" },
+            };
+        }
+        
         public EncoderWindow(string type)
         {
             InitializeComponent();
             ltype = type;
+            EncoderInit();
             Init();
         }
 
@@ -111,6 +117,11 @@ namespace VSGUI
             {
                 encodertypebox.Text = LanguageApi.FindRes("p009");
             }
+            else 
+            if (GetEncoderData(jsonObj, selectIndex, "encodername") == "p")
+            {
+                encodertypebox.Text = LanguageApi.FindRes("p053");
+            }
             else
             {
                 encodertypebox.Text = GetEncoderData(jsonObj, selectIndex, "encodername");
@@ -178,14 +189,36 @@ namespace VSGUI
                 return;
             }
             BrushConverter brushConverter = new BrushConverter();
-            if ((encodertypebox.SelectedIndex >= 0 && encodertypebox.SelectedValue.ToString().Equals(LanguageApi.FindRes("p009"))))
+
+            this.encoderpathbox.IsReadOnly = false;
+            this.pipeinputformatbox.IsReadOnly = false;
+            this.outputformatbox.IsReadOnly = false;
+            this.parameterbox.IsReadOnly = false;
+
+            suffixbox.ItemsSource = GetEncodersSuffix(encodertypebox.SelectedItem.ToString());
+            suffixbox.SelectedIndex = 0;
+            suffixbox.IsEnabled = true;
+            
+            if (encodertypebox.SelectedIndex >= 0 && encodertypebox.SelectedValue.ToString().Equals(LanguageApi.FindRes("p009")))
             {
-                this.encoderpathbox.IsReadOnly = false;
                 this.encoderpathbox.Foreground = (Brush)brushConverter.ConvertFromString("#212121");
-                this.pipeinputformatbox.IsReadOnly = false;
                 this.pipeinputformatbox.Foreground = (Brush)brushConverter.ConvertFromString("#212121");
-                this.outputformatbox.IsReadOnly = false;
                 this.outputformatbox.Foreground = (Brush)brushConverter.ConvertFromString("#212121");
+            }
+            else if (encodertypebox.SelectedIndex >= 0 && encodertypebox.SelectedValue.ToString().Equals(LanguageApi.FindRes("p053")))
+            {
+                this.encoderpathbox.IsReadOnly = true;
+                this.encoderpathbox.Foreground = (Brush)brushConverter.ConvertFromString("#808080");
+                this.pipeinputformatbox.IsReadOnly = true;
+                this.pipeinputformatbox.Foreground = (Brush)brushConverter.ConvertFromString("#808080");
+                this.outputformatbox.IsReadOnly = true;
+                this.outputformatbox.Foreground = (Brush)brushConverter.ConvertFromString("#808080");
+
+                suffixbox.IsEnabled = false;
+                this.parameterbox.Text = "-vn -c:a copy";
+                this.parameterbox.IsReadOnly = true;
+                this.parameterbox.Foreground = (Brush)brushConverter.ConvertFromString("#808080");
+
             }
             else
             {
@@ -199,8 +232,6 @@ namespace VSGUI
             encoderpathbox.Text = GetEncoderPath(encodertypebox.SelectedValue.ToString());
             pipeinputformatbox.Text = GetEncoderPipeinputformat(encodertypebox.SelectedValue.ToString());
             outputformatbox.Text = GetEncoderOutputformat(encodertypebox.SelectedValue.ToString());
-            suffixbox.ItemsSource = GetEncodersSuffix(encodertypebox.SelectedItem.ToString());
-            suffixbox.SelectedIndex = 0;
         }
 
         private List<string> GetEncodersType()
@@ -409,6 +440,7 @@ namespace VSGUI
                 MessageBoxApi.Show(LanguageApi.FindRes("p013"), LanguageApi.FindRes("error"));
                 return;
             }
+
             if (encoderpathbox.Text == "")
             {
                 MessageBoxApi.Show(LanguageApi.FindRes("p012"), LanguageApi.FindRes("error"));
@@ -424,8 +456,7 @@ namespace VSGUI
                         MessageBoxApi.Show(LanguageApi.FindRes("p015"), LanguageApi.FindRes("error"));
                         return;
                     }
-                }
-                else
+                } else
                 {
                     //相对
                     string pathtext = System.IO.Directory.GetCurrentDirectory() + encoderpathbox.Text;
@@ -441,6 +472,10 @@ namespace VSGUI
             if (encodertypebox.Text == LanguageApi.FindRes("p009"))
             {
                 obj.Add("encodername", "c");
+            }
+            else if (encodertypebox.Text == LanguageApi.FindRes("p053"))
+            {
+                obj.Add("encodername", "p");
             }
             else
             {
