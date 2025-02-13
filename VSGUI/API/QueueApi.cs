@@ -57,6 +57,12 @@ namespace VSGUI.API
                 {
                     fileinput = Path.GetFileName(fileinput);
                 }
+                
+                if (new[]{"deep"}.Contains(jsona[i]["status"]?.ToString()))
+                {
+                            
+                }
+                
                 queueItemData.Add(new QueueMember()
                 {
                     Index = queueidstr,
@@ -69,6 +75,7 @@ namespace VSGUI.API
                     ProgressValue = int.Parse(jsona[i]["processvalue"].ToString()),
                     ProgressVisibility = pVisibility,
                     StatusText = jsona[i]["statustext"].ToString(),
+                    Status = jsona[i]["status"].ToString(),
                 });
             }
             return queueItemData;
@@ -230,7 +237,6 @@ namespace VSGUI.API
                     jobchapinput = CommonApi.GetAppTempPath() + "Job_" + newid + ".txt";
                 }
             }
-
             JsonObject newqueue = new JsonObject();
             string tempoutputpath;
             newqueue.Add("queueid", newid);
@@ -1260,5 +1266,6 @@ namespace VSGUI.API
         public int? ProgressValue { get; set; }
         public Visibility? ProgressVisibility { get; set; }
         public string? StatusText { get; set; }
+        public string? Status { get; set; }
     }
 }
