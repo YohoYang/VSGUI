@@ -118,7 +118,7 @@ namespace VSGUI
                 encodertypebox.Text = LanguageApi.FindRes("p009");
             }
             else 
-            if (GetEncoderData(jsonObj, selectIndex, "encodername") == "p")
+            if (GetEncoderData(jsonObj, selectIndex, "encodername") == "copy")
             {
                 encodertypebox.Text = LanguageApi.FindRes("p053");
             }
@@ -475,7 +475,7 @@ namespace VSGUI
             }
             else if (encodertypebox.Text == LanguageApi.FindRes("p053"))
             {
-                obj.Add("encodername", "p");
+                obj.Add("encodername", "copy");
             }
             else
             {

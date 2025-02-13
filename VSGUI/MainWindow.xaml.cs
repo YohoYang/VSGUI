@@ -29,7 +29,7 @@ namespace VSGUI
         public static string binpath = Directory.GetCurrentDirectory() + @"\bin";
         public static string envpath = null;
         private bool forcedStop = false;
-        private string coreversion = "v1.0.15";
+        private string coreversion = "v1.0.18";
         public static string logBoxStr = "";
         private string[] videoMultiInputLists, audioMultiInputLists;
 
@@ -43,13 +43,13 @@ namespace VSGUI
         {
             LanguageApi.Init();
 
-            //System.Diagnostics.Process[] thisProcesses = System.Diagnostics.Process.GetProcessesByName("VSGUI");//获取指定的进程名   
-            //if (thisProcesses.Length > 1) //如果可以获取到知道的进程名则说明已经启动
-            //{
-            //    MessageBox.Show(LanguageApi.FindRes("programNotAllowedToRunRepeatedly"), LanguageApi.FindRes("error"));
-            //    this.Close();
-            //    return;
-            //}
+            System.Diagnostics.Process[] thisProcesses = System.Diagnostics.Process.GetProcessesByName("VSGUI");//获取指定的进程名   
+            if (thisProcesses.Length > 1) //如果可以获取到知道的进程名则说明已经启动
+            {
+                MessageBox.Show(LanguageApi.FindRes("programNotAllowedToRunRepeatedly"), LanguageApi.FindRes("error"));
+                this.Close();
+                return;
+            }
 
             windowcontrol.Title = windowcontrol.Title + " " + coreversion;
             coreversionshowtextblock.Text = coreversion;
@@ -281,14 +281,14 @@ namespace VSGUI
             var controlname = ((TextBox)sender).Name;
             var toTextBox = (TextBox)this.FindName(controlname);
 
-            if (new [] { "simplecapinputbox", "simpleasspathinputbox" }.Contains(controlname))
+            if (new[] { "simplecapinputbox", "simpleasspathinputbox" }.Contains(controlname))
             {
                 string localstr = toTextBox.Text ?? "";
                 localstr += string.Join("|", filename);
                 toTextBox.Text = localstr;
                 return;
             }
-        
+
             if (controlname == "simplevideoinputbox")
             {
                 ((TextBox)sender).Text = string.Join("|", ((TextBox)sender).Text, string.Join("|", filename));
@@ -303,7 +303,8 @@ namespace VSGUI
                 }
                 else
                 {
-                    var filterList = filename.Select(name => {
+                    var filterList = filename.Select(name =>
+                    {
                         QueueApi.SimpleEncodeAudioFileInputCheck(name, out bool isError);
                         if (isError)
                         {
@@ -464,7 +465,7 @@ namespace VSGUI
             }
 
 
-            if (new [] { "simplecapinputbox", "simpleasspathinputbox" }.Contains(controlname))
+            if (new[] { "simplecapinputbox", "simpleasspathinputbox" }.Contains(controlname))
             {
                 string localstr = toTextBox.Text ?? "";
                 localstr += string.Join("|", files);
@@ -487,7 +488,8 @@ namespace VSGUI
                 }
                 else
                 {
-                    var filterList = files.Select(name => {
+                    var filterList = files.Select(name =>
+                    {
                         QueueApi.SimpleEncodeAudioFileInputCheck(name, out bool isError);
                         if (isError)
                         {
@@ -728,13 +730,14 @@ namespace VSGUI
                         {
                             this.simpleAddQueueBtn.IsEnabled = true;
                             this.simplePreviewBtn.IsEnabled = true;
-                            var filterList = list.Where(item => {
+                            var filterList = list.Where(item =>
+                            {
                                 var a = item["videoinput"];
                                 var b = item["audioinput"];
                                 if (item["videoinput"] != "")
                                 {
                                     var outputfilename = UpdateEncoderSuffix("simpleencode", item["videoinput"], @"_vsgui." + simplemuxsuffixbox.Text.ToLower(), true);
-                                    if(list.Count > 1)
+                                    if (list.Count > 1)
                                     {
                                         if (string.IsNullOrWhiteSpace(simplevideooutputdirbox.Text))
                                         {
@@ -751,7 +754,7 @@ namespace VSGUI
                                 }
                                 return false;
                             }).ToList();
-                     
+
                             simplevideoinputbox.Text = string.Join("|", filterList.Select(item => item["videoinput"]));
                             simpleaudioinputbox.Text = string.Join("|", filterList.Select(item => item["audioinput"]));
                             this.simplevideoinputPb.Visibility = Visibility.Collapsed;
@@ -786,7 +789,7 @@ namespace VSGUI
             var toTextBox = (TextBox)this.FindName(controlname);
             toTextBox.Text = CallSaveDirDialog();
         }
-            
+
 
         /// <summary>
         /// 保存文件按钮事件
@@ -1108,13 +1111,13 @@ namespace VSGUI
                 MessageBoxApi.Show(LanguageApi.FindRes("videoOutputIsEmpty"), LanguageApi.FindRes("error"));
                 return;
             }
-                
+
             if (simplevideoencoderbox.SelectedIndex == -1)
             {
                 MessageBoxApi.Show(LanguageApi.FindRes("noEncoderProfilesSelected"), LanguageApi.FindRes("error"));
                 return;
             }
-       
+
             if (simpleaudioinputbox.Text == "")
             {
                 MessageBoxApi.Show(LanguageApi.FindRes("audioInputIsEmpty"), LanguageApi.FindRes("error"));
@@ -1136,8 +1139,8 @@ namespace VSGUI
 
             var videoInputs = simplevideoinputbox.Text.Split('|');
             var audioInputs = simpleaudioinputbox.Text.Split('|');
-            string[] asspathList = !string.IsNullOrWhiteSpace(simpleasspathinputbox.Text) ? simpleasspathinputbox.Text.Split("|") : new string[] {};
-            string[] capinputList = !string.IsNullOrWhiteSpace(simplecapinputbox.Text) ? simplecapinputbox.Text.Split("|") : new string[] {};
+            string[] asspathList = !string.IsNullOrWhiteSpace(simpleasspathinputbox.Text) ? simpleasspathinputbox.Text.Split("|") : new string[] { };
+            string[] capinputList = !string.IsNullOrWhiteSpace(simplecapinputbox.Text) ? simplecapinputbox.Text.Split("|") : new string[] { };
 
             if (capinputList.Length > 0)
             {
@@ -1147,7 +1150,7 @@ namespace VSGUI
                     MessageBoxApi.Show(LanguageApi.FindRes("checkChapterLengthError"), LanguageApi.FindRes("error"));
                     return;
                 }
-                
+
                 foreach (var se in capinputList)
                 {
                     if (!File.Exists(se))
@@ -1161,8 +1164,8 @@ namespace VSGUI
                         return;
                     }
                 }
-         
-       
+
+
             }
             if (simpleresolutionbox.SelectedIndex != 0 && Regex.Matches(simpleresolutionbox.Text.ToUpper(), @"\d+P").Count < 1)
             {
@@ -1172,7 +1175,7 @@ namespace VSGUI
             if (asspathList.Length > 0)
             {
                 // 单视频文件允许多字幕  多视频文件不允许多字幕  只能1对1
-                if(videoInputs.Length > 1)
+                if (videoInputs.Length > 1)
                 {
                     if (asspathList.Length != videoInputs.Length)
                     {
@@ -1180,7 +1183,7 @@ namespace VSGUI
                         return;
                     }
                 }
-         
+
 
                 foreach (var item in asspathList)
                 {
@@ -1205,7 +1208,7 @@ namespace VSGUI
                 xyvsfilterEnable = "true";
             }
 
-            if(audioInputs.Length > videoInputs.Length)
+            if (audioInputs.Length > videoInputs.Length)
             {
                 audioInputs = audioInputs.Take(videoInputs.Length).ToArray();
             }
@@ -1214,7 +1217,13 @@ namespace VSGUI
             {
                 var vinput = videoInputs[i];
                 var ainput = audioInputs[i];
-                var assinput = asspathList[i];
+
+                string assinput = "";
+                if (asspathList.Length > i) //增加容错，考虑不输入字幕的情况
+                {
+                    assinput = asspathList[i];
+                }
+
                 string result = ProcessApi.RunSyncProcess(MainWindow.binpath + @"\tools\mediainfo\", @"MediaInfo.exe" + " " + "\"" + ainput + "\"");
                 bool isAudio = true;
                 if (result != null)
@@ -1321,7 +1330,8 @@ namespace VSGUI
                     {
                         //使用实时的配置
                         clipath = envpath;
-                    } else if (QueueApi.GetQueueListitem(queueid, "type") == "audio")
+                    }
+                    else if (QueueApi.GetQueueListitem(queueid, "type") == "audio")
                     {
 
                     }
@@ -1475,8 +1485,9 @@ namespace VSGUI
         {
             var list = QueueApi.GetQueueMember();
             var flag = false;
-            var final_list = (from item in list group item by item.Index into p 
-                select (Key: p.Key, Data: p.ToList())).ToList();
+            var final_list = (from item in list
+                              group item by item.Index into p
+                              select (Key: p.Key, Data: p.ToList())).ToList();
             foreach (var (key, data) in final_list)
             {
                 if (data.All(item => item.Status == "finish"))
@@ -1492,7 +1503,7 @@ namespace VSGUI
                 QueueApi.SaveQueueList();
             }
         }
-        
+
         /// <summary>
         /// 停止并清除全部任务
         /// </summary>
