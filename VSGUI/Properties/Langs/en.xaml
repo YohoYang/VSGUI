@@ -161,7 +161,7 @@
     <system:String x:Key="enableCustomPyenv">Use custom Python Environment</system:String>
 
     <system:String x:Key="p001">Whether to restart the resource manager immediately to take effect immediately</system:String>
-    <system:String x:Key="p002">It will be filled in automatically after you put it into the input file, or you can set it manually.</system:String>
+    <system:String x:Key="p002">Can be set when inputting a single file, not available for multiple files. Does not include the extension.</system:String>
     <system:String x:Key="p003">An unexpected error occurred</system:String>
     <system:String x:Key="p004">A fatal error has been encountered and will exit. If everything goes smoothly, the crash log will be saved to the log directory. Please submit an issue to help me improve it.</system:String>
     <system:String x:Key="p005">Encoder path</system:String>
@@ -212,6 +212,6 @@
     <system:String x:Key="p051">Subtitle input</system:String>
     <system:String x:Key="p052">The package output target already exists and cannot be overwritten</system:String>
     <system:String x:Key="p053">Copy audio stream</system:String>
-    <system:String x:Key="p054">It will be filled in automatically after you put it into the input dir, or you can set it manually.</system:String>
-
+    <system:String x:Key="p054">It will be filled in automatically after the input file is put in, and can also be set manually.</system:String>
+    <system:String x:Key="p055">Mixed output file name</system:String>
 </ResourceDictionary>

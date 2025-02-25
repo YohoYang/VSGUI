@@ -161,7 +161,7 @@
     <system:String x:Key="enableCustomPyenv">使用自定义Python 环境</system:String>
 
     <system:String x:Key="p001">是否立刻重启资源管理器以马上生效</system:String>
-    <system:String x:Key="p002">放入输入文件后会自动填写，也可以手动设置</system:String>
+    <system:String x:Key="p002">单文件输入时可设置，多文件不可用。不含扩展名。</system:String>
     <system:String x:Key="p003">发生了意料之外的错误</system:String>
     <system:String x:Key="p004">遇到致命错误，即将退出。如果顺利Crash日志将保存至log目录，麻烦提交issue协助我改进。</system:String>
     <system:String x:Key="p005">编码器路径</system:String>
@@ -212,6 +212,7 @@
     <system:String x:Key="p051">字幕输入</system:String>
     <system:String x:Key="p052">封装输出目标已存在且无法覆盖</system:String>
     <system:String x:Key="p053">复制音频流</system:String>
-    <system:String x:Key="p054">放入输入文件夹后会自动填写，也可以手动设置</system:String>
+    <system:String x:Key="p054">放入输入文件后会自动填写，也可以手动设置。</system:String>
+    <system:String x:Key="p055">混流输出文件名</system:String>
 
 </ResourceDictionary>

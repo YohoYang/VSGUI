@@ -29,7 +29,7 @@ namespace VSGUI
         public static string binpath = Directory.GetCurrentDirectory() + @"\bin";
         public static string envpath = null;
         private bool forcedStop = false;
-        private string coreversion = "v1.0.18";
+        private string coreversion = "v1.0.19";
         public static string logBoxStr = "";
         private string[] videoMultiInputLists, audioMultiInputLists;
 
@@ -721,8 +721,14 @@ namespace VSGUI
                         var dict = new Dictionary<string, string>();
                         dict.Add("videoinput", videoinputboxText);
                         dict.Add("audioinput", audioinputboxtext);
+                        if (string.IsNullOrEmpty(filename)||string.IsNullOrEmpty(videoinputboxText) || string.IsNullOrEmpty(audioinputboxtext))
+                        {
+                            return null; // 返回 null 表示跳过
+                        }
                         return dict;
-                    }).ToList();
+                    })
+                    .Where(dict => dict != null)
+                    .ToList();
 
                     try
                     {
@@ -744,11 +750,13 @@ namespace VSGUI
                                             simplevideooutputdirbox.Text = Path.GetDirectoryName(outputfilename);
                                         }
                                         simplevideooutputbox.Text = String.Empty;
+                                        simplevideooutputbox.IsEnabled = false;
                                     }
                                     else
                                     {
                                         simplevideooutputdirbox.Text = Path.GetDirectoryName(outputfilename);
-                                        simplevideooutputbox.Text = Path.GetFileName(outputfilename);
+                                        simplevideooutputbox.Text = Path.GetFileNameWithoutExtension(outputfilename);
+                                        simplevideooutputbox.IsEnabled = true;
                                     }
                                     return true;
                                 }
@@ -1248,8 +1256,19 @@ namespace VSGUI
                     tmpInput = new[] { tempvideopath, tempaudiopath };
                 }
 
+                //区分单文件输入时和多文件输入时的输出文件名
+                string outputFileName;
+                if (videoInputs.Length>1)
+                {
+                    outputFileName = simplevideooutputdirbox.Text + @"\" + Path.GetFileNameWithoutExtension(outputfilename) + @"_mux." + simplemuxsuffixbox.Text.ToLower();
+                }
+                else
+                {
+                    outputFileName = simplevideooutputdirbox.Text + @"\" + simplevideooutputbox.Text + @"_mux." + simplemuxsuffixbox.Text.ToLower();
+                }
+
                 //再添加一个混流任务
-                QueueApi.AddQueueList("mux", 0, tmpInput, simplevideooutputdirbox.Text + @"\" + Path.GetFileNameWithoutExtension(outputfilename) + @"_mux." + simplemuxsuffixbox.Text.ToLower(), chapinput: simplecapinputbox.Text, deletefile: string.Join("|", tmpInput), group: groupname);
+                QueueApi.AddQueueList("mux", 0, tmpInput, outputFileName, chapinput: simplecapinputbox.Text, deletefile: string.Join("|", tmpInput), group: groupname);
             }
 
             UpdateQueueList();
