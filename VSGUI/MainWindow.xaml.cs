@@ -316,6 +316,10 @@ namespace VSGUI
                     simpleaudioinputbox.Text = tmp;
                 }
             }
+            else
+            {
+                ((TextBox)sender).Text = filename[0];
+            }
         }
 
         /// <summary>
