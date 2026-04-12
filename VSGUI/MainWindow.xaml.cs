@@ -1,6 +1,7 @@
 ﻿using HandyControl.Data;
 using Microsoft.Win32;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -13,6 +14,7 @@ using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
+using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Navigation;
@@ -725,7 +727,7 @@ namespace VSGUI
                         var dict = new Dictionary<string, string>();
                         dict.Add("videoinput", videoinputboxText);
                         dict.Add("audioinput", audioinputboxtext);
-                        if (string.IsNullOrEmpty(filename)||string.IsNullOrEmpty(videoinputboxText) || string.IsNullOrEmpty(audioinputboxtext))
+                        if (string.IsNullOrEmpty(filename) || string.IsNullOrEmpty(videoinputboxText) || string.IsNullOrEmpty(audioinputboxtext))
                         {
                             return null; // 返回 null 表示跳过
                         }
@@ -1262,7 +1264,7 @@ namespace VSGUI
 
                 //区分单文件输入时和多文件输入时的输出文件名
                 string outputFileName;
-                if (videoInputs.Length>1)
+                if (videoInputs.Length > 1)
                 {
                     outputFileName = simplevideooutputdirbox.Text + @"\" + Path.GetFileNameWithoutExtension(outputfilename) + @"_mux." + simplemuxsuffixbox.Text.ToLower();
                 }
@@ -1716,7 +1718,20 @@ namespace VSGUI
                 }
             }
             smuxStartButton.IsEnabled = false;
-            MuxApi.StartSMux(new string[] { smuxvideoinputbox.Text, smuxaudioinputbox.Text }, smuxsubinputbox.Text, smuxchapterinputbox.Text, smuxsuffixbox.Text.ToLower(), WhenDataReceived, WhenExited);
+
+            ArrayList input = new ArrayList();
+            input.Add(smuxvideoinputbox.Text);
+            string[] audioinput = smuxaudioinputbox.Text.Split('|');
+            foreach (var item in audioinput)
+            {
+                if (item.ToString() != "")
+                {
+                    input.Add(item.ToString());
+                }
+            }
+            string[] inputList = (string[])input.ToArray(typeof(string));
+
+            MuxApi.StartSMux(inputList, smuxsubinputbox.Text, smuxchapterinputbox.Text, smuxsuffixbox.Text.ToLower(), WhenDataReceived, WhenExited);
             void WhenDataReceived(string message)
             {
                 Dispatcher.Invoke(() =>
