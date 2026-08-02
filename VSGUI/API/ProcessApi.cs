@@ -69,6 +69,13 @@ namespace VSGUI.API
                 }
                 Process.GetProcessById(itemProcessId).Kill();
             }
+            else
+            {
+                QueueApi.SetQueueListitem(queueid, "processTheadId", "");
+                QueueApi.SetQueueListitem(queueid, "status", "stop");
+                QueueApi.SetQueueListitem(queueid, "statustext", "");
+                QueueApi.SetQueueListitem(queueid, "processvalue", "0");
+            }
             static int[] GetChildProcess(int ParentPID)
             {
                 var proc = new ProcessWindowsAPI.WindowsProcess();
